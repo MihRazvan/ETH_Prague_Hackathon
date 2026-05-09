@@ -6,6 +6,8 @@
   "scripts": {
     "build": "pnpm --filter @trustless-state/prover build && pnpm --filter @trustless-state/webapp build",
     "test": "pnpm --filter @trustless-state/prover test",
-    "dev:web": "pnpm --filter @trustless-state/webapp dev"
+    "dev:web": "pnpm --filter @trustless-state/webapp dev",
+    "dev:game": "pnpm --filter @trustless-state/game dev",
+    "build:game": "pnpm --filter @trustless-state/game build"
   }
 }
