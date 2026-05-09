@@ -1,10 +1,17 @@
 import { EthereumRpcClient } from "./eth-getProof.js";
 import { type Hex } from "viem";
 
+import {
+  BeaconApiRequestError,
+  BeaconBlockNotFoundError,
+  BeaconResponseShapeError,
+  DestinationAnchorNotFoundError,
+} from "./errors.js";
 import type {
   BeaconExecutionAnchor,
   BeaconHeader,
   ExecutionPayloadHeader,
+  PreflightReport,
   ProverConfig,
 } from "./types.js";
 import { buildExecutionPayloadProof } from "./ssz-prove.js";
@@ -67,6 +74,69 @@ export class BeaconApiClient {
     this.#destinationSearchWindowBlocks = config.destinationSearchWindowBlocks ?? 2_048;
   }
 
+  async preflight(sourceRpc: EthereumRpcClient, destinationRpc: EthereumRpcClient | null): Promise<PreflightReport> {
+    const report: PreflightReport = {
+      source: { ok: false },
+      beacon: { ok: false },
+      overallOk: false,
+    };
+
+    try {
+      const latestBlockNumber = await sourceRpc.getBlockNumber();
+      const latestBlock = await sourceRpc.getBlockByNumber(latestBlockNumber);
+      report.source = {
+        ok: true,
+        latestBlockNumber,
+        latestBlockHash: latestBlock.hash,
+        latestBlockTimestamp: latestBlock.timestamp,
+      };
+    } catch (error) {
+      report.source = {
+        ok: false,
+        error: toErrorMessage(error),
+      };
+    }
+
+    try {
+      const head = await this.#fetchJson<BeaconHeaderResponse>("/eth/v1/beacon/headers/head");
+      const headMessage = expectObject(
+        expectObject(expectObject(expectObject(head, "beacon head response").data, "beacon head response.data").header, "beacon head response.data.header").message,
+        "beacon head response.data.header.message",
+      );
+      report.beacon = {
+        ok: true,
+        headSlot: parseBigIntField(headMessage.slot, "beacon head response.data.header.message.slot"),
+      };
+    } catch (error) {
+      report.beacon = {
+        ok: false,
+        error: toErrorMessage(error),
+      };
+    }
+
+    if (destinationRpc) {
+      try {
+        const latestBlockNumber = await destinationRpc.getBlockNumber();
+        const header = await destinationRpc.getBlockHeaderByNumber(latestBlockNumber);
+        report.destination = {
+          ok: true,
+          latestBlockNumber,
+          latestBlockHash: header.hash,
+          latestBlockTimestamp: header.timestamp,
+          supportsBeaconRootField: header.parentBeaconRoot !== null,
+        };
+      } catch (error) {
+        report.destination = {
+          ok: false,
+          error: toErrorMessage(error),
+        };
+      }
+    }
+
+    report.overallOk = report.source.ok && report.beacon.ok && (report.destination?.ok ?? true);
+    return report;
+  }
+
   async findExecutionAnchor(blockHash: Hex): Promise<BeaconExecutionAnchor> {
     const head = await this.#fetchJson<BeaconHeaderResponse>("/eth/v1/beacon/headers/head");
     const headMessage = expectObject(
@@ -98,8 +168,9 @@ export class BeaconApiClient {
       };
     }
 
-    throw new Error(
+    throw new BeaconBlockNotFoundError(
       `Could not find beacon block for execution block ${blockHash} within the last ${this.#searchWindowSlots} slots`,
+      { blockHash, searchWindowSlots: this.#searchWindowSlots },
     );
   }
 
@@ -140,8 +211,13 @@ export class BeaconApiClient {
       }
     }
 
-    throw new Error(
+    throw new DestinationAnchorNotFoundError(
       `Could not find destination-chain timestamp for beacon root ${targetBeaconRoot} within ${this.#destinationSearchWindowBlocks} blocks of destination block ${anchorBlockNumber.toString()}`,
+      {
+        beaconRoot: targetBeaconRoot,
+        anchorBlockNumber,
+        searchWindowBlocks: this.#destinationSearchWindowBlocks,
+      },
     );
   }
 
@@ -210,7 +286,10 @@ export class BeaconApiClient {
   async #fetchJson<T>(path: string): Promise<T> {
     const response = await fetch(`${this.config.beaconApiUrl}${path}`);
     if (!response.ok) {
-      throw new Error(`Beacon API request failed for ${path} with status ${response.status}`);
+      throw new BeaconApiRequestError(`Beacon API request failed for ${path} with status ${response.status}`, {
+        path,
+        status: response.status,
+      });
     }
     return (await response.json()) as T;
   }
@@ -221,7 +300,10 @@ export class BeaconApiClient {
       return null;
     }
     if (!response.ok) {
-      throw new Error(`Beacon API request failed for ${path} with status ${response.status}`);
+      throw new BeaconApiRequestError(`Beacon API request failed for ${path} with status ${response.status}`, {
+        path,
+        status: response.status,
+      });
     }
     return (await response.json()) as T;
   }
@@ -229,26 +311,26 @@ export class BeaconApiClient {
 
 function expectObject(value: unknown, field: string): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`Malformed beacon API response: expected ${field} to be an object`);
+    throw new BeaconResponseShapeError(`Malformed beacon API response: expected ${field} to be an object`, field);
   }
   return value as Record<string, unknown>;
 }
 
 function expectHex(value: unknown, field: string): Hex {
   if (typeof value !== "string" || !value.startsWith("0x")) {
-    throw new Error(`Malformed beacon API response: expected ${field} to be a hex string`);
+    throw new BeaconResponseShapeError(`Malformed beacon API response: expected ${field} to be a hex string`, field);
   }
   return value as Hex;
 }
 
 function parseBigIntField(value: unknown, field: string): bigint {
   if (typeof value !== "string") {
-    throw new Error(`Malformed beacon API response: expected ${field} to be a string`);
+    throw new BeaconResponseShapeError(`Malformed beacon API response: expected ${field} to be a string`, field);
   }
   try {
     return BigInt(value);
   } catch {
-    throw new Error(`Malformed beacon API response: expected ${field} to be bigint-compatible`);
+    throw new BeaconResponseShapeError(`Malformed beacon API response: expected ${field} to be bigint-compatible`, field);
   }
 }
 
@@ -257,4 +339,8 @@ function parseOptionalBigIntField(value: unknown, field: string, fallback: bigin
     return fallback;
   }
   return parseBigIntField(value, field);
+}
+
+function toErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }

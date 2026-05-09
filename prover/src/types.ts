@@ -49,6 +49,30 @@ export interface ProveStorageSlotArgs {
   blockNumber?: bigint;
 }
 
+export interface PreflightReport {
+  source: {
+    ok: boolean;
+    latestBlockNumber?: bigint;
+    latestBlockHash?: `0x${string}`;
+    latestBlockTimestamp?: bigint;
+    error?: string;
+  };
+  beacon: {
+    ok: boolean;
+    headSlot?: bigint;
+    error?: string;
+  };
+  destination?: {
+    ok: boolean;
+    latestBlockNumber?: bigint;
+    latestBlockHash?: `0x${string}`;
+    latestBlockTimestamp?: bigint;
+    supportsBeaconRootField?: boolean;
+    error?: string;
+  };
+  overallOk: boolean;
+}
+
 export interface BeaconHeader {
   root: `0x${string}`;
   slot: bigint;

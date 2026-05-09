@@ -1,5 +1,6 @@
 import { numberToHex, pad, type Address, type Hex } from "viem";
 
+import { RpcRequestError, RpcResponseShapeError } from "./errors.js";
 import type { EthGetProofResult } from "./types.js";
 
 interface RpcRequest<T> {
@@ -93,7 +94,10 @@ export class EthereumRpcClient {
         });
 
         if (!response.ok) {
-          const error = new Error(`RPC ${request.method} to ${this.rpcUrl} failed with status ${response.status}`);
+          const error = new RpcRequestError(
+            `RPC ${request.method} to ${this.rpcUrl} failed with status ${response.status}`,
+            { method: request.method, url: this.rpcUrl, status: response.status },
+          );
           if (response.status >= 500 && attempt < 4) {
             lastError = error;
             await sleep(attempt * 250);
@@ -104,7 +108,10 @@ export class EthereumRpcClient {
 
         const json = await response.json();
         if (json.error) {
-          throw new Error(`RPC ${request.method} to ${this.rpcUrl} failed: ${json.error.message}`);
+          throw new RpcRequestError(
+            `RPC ${request.method} to ${this.rpcUrl} failed: ${json.error.message}`,
+            { method: request.method, url: this.rpcUrl },
+          );
         }
 
         return request.parser(json.result);
@@ -127,21 +134,21 @@ function sleep(ms: number): Promise<void> {
 
 function expectObject(value: unknown, field: string): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`Malformed RPC response: expected ${field} to be an object`);
+    throw new RpcResponseShapeError(`Malformed RPC response: expected ${field} to be an object`, field);
   }
   return value as Record<string, unknown>;
 }
 
 function expectArray(value: unknown, field: string): unknown[] {
   if (!Array.isArray(value)) {
-    throw new Error(`Malformed RPC response: expected ${field} to be an array`);
+    throw new RpcResponseShapeError(`Malformed RPC response: expected ${field} to be an array`, field);
   }
   return value;
 }
 
 function expectHex(value: unknown, field: string): Hex {
   if (typeof value !== "string" || !value.startsWith("0x")) {
-    throw new Error(`Malformed RPC response: expected ${field} to be a hex string`);
+    throw new RpcResponseShapeError(`Malformed RPC response: expected ${field} to be a hex string`, field);
   }
   return value as Hex;
 }
@@ -152,11 +159,11 @@ function expectHexArray(value: unknown, field: string): Hex[] {
 
 function parseBigIntField(value: unknown, field: string): bigint {
   if (typeof value !== "string") {
-    throw new Error(`Malformed RPC response: expected ${field} to be a string`);
+    throw new RpcResponseShapeError(`Malformed RPC response: expected ${field} to be a string`, field);
   }
   try {
     return BigInt(value);
   } catch {
-    throw new Error(`Malformed RPC response: expected ${field} to be bigint-compatible`);
+    throw new RpcResponseShapeError(`Malformed RPC response: expected ${field} to be bigint-compatible`, field);
   }
 }

@@ -1,12 +1,12 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
-import { encodeAbiParameters, getAddress, isAddress, keccak256, pad, type Address, type Hex } from "viem";
+import { getAddress, isAddress, pad, type Address, type Hex } from "viem";
 
-import { Prover } from "./index.js";
+import { ElsewareClient, computeMappingSlot } from "./index.js";
 import type { ProofBundle, ProverConfig } from "./types.js";
 
-type Command = "prove-slot" | "vault-slot";
+type Command = "prove-slot" | "vault-slot" | "doctor";
 
 async function main(): Promise<void> {
   const [command, ...rest] = process.argv.slice(2) as [Command | undefined, ...string[]];
@@ -29,12 +29,12 @@ async function main(): Promise<void> {
 
   if (command === "prove-slot") {
     const config = loadConfig(args);
-    const prover = new Prover(config);
+    const client = new ElsewareClient(config);
     const account = requiredAddress(args.account, "--account");
     const slot = requiredHex32(args.slot, "--slot");
     const blockNumber = args["block-number"] ? BigInt(args["block-number"]) : undefined;
 
-    const bundle = await prover.proveStorageSlot({ account, slot, blockNumber });
+    const bundle = await client.proveStorageSlot({ account, slot, blockNumber });
     const output = {
       bundle: normalizeBundle(bundle),
       metadata: {
@@ -49,6 +49,17 @@ async function main(): Promise<void> {
 
     await maybeWriteJson(args.out, output);
     console.log(JSON.stringify(output, null, 2));
+    return;
+  }
+
+  if (command === "doctor") {
+    const config = loadConfig(args);
+    const client = new ElsewareClient(config);
+    const report = await client.preflight();
+    console.log(JSON.stringify(normalizeUnknown(report), null, 2));
+    if (!report.overallOk) {
+      process.exitCode = 1;
+    }
     return;
   }
 
@@ -113,17 +124,15 @@ function requiredHex32(value: string | undefined, flagName: string): Hex {
   return pad(value as Hex);
 }
 
-function computeMappingSlot(address: Address, mappingSlot: bigint): Hex {
-  const encoded = encodeAbiParameters(
-    [{ type: "address" }, { type: "uint256" }],
-    [address, mappingSlot],
-  );
-  return keccak256(encoded);
-}
-
 function normalizeBundle(bundle: ProofBundle) {
   return JSON.parse(
     JSON.stringify(bundle, (_, value) => (typeof value === "bigint" ? value.toString() : value)),
+  ) as Record<string, unknown>;
+}
+
+function normalizeUnknown(payload: unknown) {
+  return JSON.parse(
+    JSON.stringify(payload, (_, value) => (typeof value === "bigint" ? value.toString() : value)),
   ) as Record<string, unknown>;
 }
 
@@ -141,6 +150,7 @@ function printHelp(): void {
   console.log(`Usage:
   pnpm --filter @elseware/prover cli vault-slot --borrower 0x... [--mapping-slot 0] [--out tmp/slot.json]
   pnpm --filter @elseware/prover cli prove-slot --account 0x... --slot 0x... [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
+  pnpm --filter @elseware/prover cli doctor [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL]
 
 Environment variables:
   ETH_RPC_URL
