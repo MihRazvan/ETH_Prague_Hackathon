@@ -4,6 +4,15 @@
   "private": false,
   "description": "TypeScript SDK for assembling Elseware proof bundles for trustless Ethereum state verification on EIP-4788 destination chains.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elsewarexyz/elseware.git",
+    "directory": "prover"
+  },
+  "homepage": "https://github.com/elsewarexyz/elseware",
+  "bugs": {
+    "url": "https://github.com/elsewarexyz/elseware/issues"
+  },
   "keywords": [
     "ethereum",
     "eip-4788",
@@ -43,6 +52,7 @@
     "live-demo": "node ./dist/live-demo.js",
     "capture-fixture": "node ./dist/capture-fixture.js",
     "smoke-pack": "node ./scripts/smoke-pack.mjs",
+    "publish:dry-run": "pnpm publish --dry-run --access public --no-git-checks",
     "prepublishOnly": "pnpm build && pnpm test"
   },
   "dependencies": {

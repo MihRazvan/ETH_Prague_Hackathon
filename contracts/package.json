@@ -4,6 +4,15 @@
   "private": false,
   "description": "Solidity verifier contracts for Elseware trustless Ethereum state verification.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elsewarexyz/elseware.git",
+    "directory": "contracts"
+  },
+  "homepage": "https://github.com/elsewarexyz/elseware",
+  "bugs": {
+    "url": "https://github.com/elsewarexyz/elseware/issues"
+  },
   "keywords": [
     "solidity",
     "ethereum",
@@ -18,7 +27,16 @@
     "README.md",
     "LICENSE"
   ],
+  "engines": {
+    "node": ">=20"
+  },
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "test": "forge test",
+    "smoke-pack": "node ./scripts/smoke-pack.mjs",
+    "publish:dry-run": "pnpm publish --dry-run --access public --no-git-checks",
+    "prepublishOnly": "pnpm test"
   }
 }

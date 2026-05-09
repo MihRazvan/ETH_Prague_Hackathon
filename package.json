@@ -7,6 +7,12 @@
     "build": "pnpm --filter @elseware/prover build && pnpm --filter @elseware/webapp build",
     "test": "pnpm test:contracts && pnpm --filter @elseware/prover test",
     "test:contracts": "cd contracts && forge test",
+    "release:check:prover": "pnpm --filter @elseware/prover build && pnpm --filter @elseware/prover test && pnpm --filter @elseware/prover smoke-pack",
+    "release:check:solidity": "cd contracts && pnpm test && pnpm smoke-pack",
+    "release:check": "pnpm release:check:prover && pnpm release:check:solidity",
+    "release:dry-run:prover": "pnpm --filter @elseware/prover publish:dry-run",
+    "release:dry-run:solidity": "cd contracts && pnpm publish:dry-run",
+    "release:dry-run": "pnpm release:dry-run:prover && pnpm release:dry-run:solidity",
     "dev:web": "pnpm --filter @elseware/webapp dev",
     "dev:game": "pnpm --filter @elseware/game dev",
     "build:game": "pnpm --filter @elseware/game build"
