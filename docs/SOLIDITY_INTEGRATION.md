@@ -1,6 +1,6 @@
 # Solidity Integration
 
-Elseware’s Solidity surface is the onchain verifier:
+Anyware’s Solidity surface is the onchain verifier:
 
 - [contracts/src/BeaconStateProof.sol](/Users/razvan/Repos/ETH_Prague_Hackathon/contracts/src/BeaconStateProof.sol)
 - [contracts/src/interfaces/IBeaconStateProof.sol](/Users/razvan/Repos/ETH_Prague_Hackathon/contracts/src/interfaces/IBeaconStateProof.sol)

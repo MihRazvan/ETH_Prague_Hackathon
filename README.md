@@ -1,4 +1,4 @@
-# elseware
+# anyware
 
 Trustless cross-chain state verification for Ethereum-aligned rollups. This repo contains:
 
@@ -59,14 +59,14 @@ pnpm dev
 Compute the Sepolia vault slot for a borrower:
 
 ```bash
-pnpm --filter @elseware/prover cli vault-slot \
+pnpm --filter anyware-prover cli vault-slot \
   --borrower 0xYourBorrowerAddress
 ```
 
 Generate a live proof bundle for a known slot:
 
 ```bash
-pnpm --filter @elseware/prover cli prove-slot \
+pnpm --filter anyware-prover cli prove-slot \
   --account 0xVaultAddress \
   --slot 0xYourComputedSlotKey \
   --block-number 10821452 \
@@ -76,7 +76,7 @@ pnpm --filter @elseware/prover cli prove-slot \
 Generate a vault lock proof directly:
 
 ```bash
-pnpm --filter @elseware/prover cli prove-vault-lock \
+pnpm --filter anyware-prover cli prove-vault-lock \
   --vault 0xVaultAddress \
   --borrower 0xYourBorrowerAddress \
   --out tmp/bundle.json
@@ -85,13 +85,13 @@ pnpm --filter @elseware/prover cli prove-vault-lock \
 Check endpoint compatibility first:
 
 ```bash
-pnpm --filter @elseware/prover cli doctor
+pnpm --filter anyware-prover cli doctor
 ```
 
 Run the scripted lock-and-borrow flow after deployment:
 
 ```bash
-pnpm --filter @elseware/prover live-demo
+pnpm --filter anyware-prover live-demo
 ```
 
 The live scripts read defaults from [.env.example](/Users/razvan/Repos/ETH_Prague_Hackathon/.env.example).

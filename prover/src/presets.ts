@@ -1,4 +1,4 @@
-import type { ElsewareClientConfig, NetworkPresetName, ProverConfig, ProverPresetConfig } from "./types.js";
+import type { AnywareClientConfig, NetworkPresetName, ProverConfig, ProverPresetConfig } from "./types.js";
 
 export const NETWORK_PRESETS: Record<NetworkPresetName, ProverConfig> = {
   "sepolia-base-sepolia": {
@@ -8,14 +8,14 @@ export const NETWORK_PRESETS: Record<NetworkPresetName, ProverConfig> = {
   },
 };
 
-export function resolveProverConfig(config: ElsewareClientConfig): ProverConfig {
+export function resolveProverConfig(config: AnywareClientConfig): ProverConfig {
   if (!("network" in config)) {
     return config;
   }
 
   const preset = NETWORK_PRESETS[config.network];
   if (!preset) {
-    throw new Error(`Unknown Elseware network preset: ${config.network}`);
+    throw new Error(`Unknown Anyware network preset: ${config.network}`);
   }
   return {
     ...preset,

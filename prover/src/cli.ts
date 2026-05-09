@@ -4,7 +4,7 @@ import { dirname, resolve } from "node:path";
 import { getAddress, isAddress, pad, type Address, type Hex } from "viem";
 
 import { serializeUnknown } from "./format.js";
-import { ElsewareClient, computeMappingSlot } from "./index.js";
+import { AnywareClient, computeMappingSlot } from "./index.js";
 import { resolveProverConfig } from "./presets.js";
 import type { NetworkPresetName, ProverConfig } from "./types.js";
 
@@ -31,7 +31,7 @@ async function main(): Promise<void> {
 
   if (command === "prove-slot") {
     const config = loadConfig(args);
-    const client = new ElsewareClient(config);
+    const client = new AnywareClient(config);
     const account = requiredAddress(args.account, "--account");
     const slot = requiredHex32(args.slot, "--slot");
     const blockNumber = args["block-number"] ? BigInt(args["block-number"]) : undefined;
@@ -56,7 +56,7 @@ async function main(): Promise<void> {
 
   if (command === "prove-vault-lock") {
     const config = loadConfig(args);
-    const client = new ElsewareClient(config);
+    const client = new AnywareClient(config);
     const vault = requiredAddress(args.vault, "--vault");
     const borrower = requiredAddress(args.borrower, "--borrower");
     const mappingSlot = args["mapping-slot"] ? BigInt(args["mapping-slot"]) : 0n;
@@ -84,7 +84,7 @@ async function main(): Promise<void> {
 
   if (command === "doctor") {
     const config = loadConfig(args);
-    const client = new ElsewareClient(config);
+    const client = new AnywareClient(config);
     const report = await client.preflight();
     if (args.json) {
       console.log(JSON.stringify(serializeUnknown(report), null, 2));
@@ -188,7 +188,7 @@ async function maybeWriteJson(out: string | undefined, payload: unknown): Promis
 
 function printDoctorReport(report: DoctorReport, config: ProverConfig): void {
   const lines = [
-    "Elseware doctor",
+    "anyware doctor",
     `  source RPC: ${report.source.ok ? "ok" : "failed"} (${config.ethRpcUrl})`,
     report.source.ok
       ? `    latest block: ${report.source.latestBlockNumber} @ ${report.source.latestBlockTimestamp}`
@@ -245,10 +245,10 @@ type DoctorReport = {
 
 function printHelp(): void {
   console.log(`Usage:
-  pnpm --filter @elseware/prover cli vault-slot --borrower 0x... [--mapping-slot 0] [--out tmp/slot.json]
-  pnpm --filter @elseware/prover cli prove-slot --account 0x... --slot 0x... [--network sepolia-base-sepolia] [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
-  pnpm --filter @elseware/prover cli prove-vault-lock --vault 0x... --borrower 0x... [--network sepolia-base-sepolia] [--mapping-slot 0] [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
-  pnpm --filter @elseware/prover cli doctor [--network sepolia-base-sepolia] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--json]
+  pnpm --filter anyware-prover cli vault-slot --borrower 0x... [--mapping-slot 0] [--out tmp/slot.json]
+  pnpm --filter anyware-prover cli prove-slot --account 0x... --slot 0x... [--network sepolia-base-sepolia] [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
+  pnpm --filter anyware-prover cli prove-vault-lock --vault 0x... --borrower 0x... [--network sepolia-base-sepolia] [--mapping-slot 0] [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
+  pnpm --filter anyware-prover cli doctor [--network sepolia-base-sepolia] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--json]
 
 Environment variables:
   ELSEWARE_NETWORK

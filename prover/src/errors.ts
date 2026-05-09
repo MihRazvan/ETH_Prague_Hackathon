@@ -1,4 +1,4 @@
-export class ElsewareError extends Error {
+export class AnywareError extends Error {
   readonly code: string;
   readonly cause?: unknown;
 
@@ -10,7 +10,7 @@ export class ElsewareError extends Error {
   }
 }
 
-export class RpcRequestError extends ElsewareError {
+export class RpcRequestError extends AnywareError {
   readonly method: string;
   readonly url: string;
   readonly status?: number;
@@ -23,7 +23,7 @@ export class RpcRequestError extends ElsewareError {
   }
 }
 
-export class RpcResponseShapeError extends ElsewareError {
+export class RpcResponseShapeError extends AnywareError {
   readonly field: string;
 
   constructor(message: string, field: string, cause?: unknown) {
@@ -32,7 +32,7 @@ export class RpcResponseShapeError extends ElsewareError {
   }
 }
 
-export class BeaconApiRequestError extends ElsewareError {
+export class BeaconApiRequestError extends AnywareError {
   readonly path: string;
   readonly status: number;
 
@@ -43,7 +43,7 @@ export class BeaconApiRequestError extends ElsewareError {
   }
 }
 
-export class BeaconResponseShapeError extends ElsewareError {
+export class BeaconResponseShapeError extends AnywareError {
   readonly field: string;
 
   constructor(message: string, field: string, cause?: unknown) {
@@ -52,7 +52,7 @@ export class BeaconResponseShapeError extends ElsewareError {
   }
 }
 
-export class BeaconBlockNotFoundError extends ElsewareError {
+export class BeaconBlockNotFoundError extends AnywareError {
   readonly blockHash: string;
   readonly searchWindowSlots: number;
 
@@ -63,7 +63,7 @@ export class BeaconBlockNotFoundError extends ElsewareError {
   }
 }
 
-export class DestinationAnchorNotFoundError extends ElsewareError {
+export class DestinationAnchorNotFoundError extends AnywareError {
   readonly beaconRoot: string;
   readonly anchorBlockNumber: bigint;
   readonly searchWindowBlocks: number;

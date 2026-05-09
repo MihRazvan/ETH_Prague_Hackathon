@@ -1,9 +1,9 @@
-# Elseware Release Flow
+# Anyware Release Flow
 
-This is the pre-publication path for the two developer-facing Elseware packages:
+This is the pre-publication path for the two developer-facing Anyware packages:
 
-- `@elseware/prover`
-- `@elseware/solidity`
+- `anyware-prover`
+- `anyware-solidity`
 
 ## 1. Run the full release checks
 
@@ -39,14 +39,14 @@ pnpm release:dry-run:solidity
 After `release:check` and `release:dry-run` both pass:
 
 ```bash
-git tag -a prover-v0.1.0 -m "@elseware/prover v0.1.0"
-git tag -a solidity-v0.1.0 -m "@elseware/solidity v0.1.0"
+git tag -a prover-v0.1.0 -m "anyware-prover v0.1.0"
+git tag -a solidity-v0.1.0 -m "anyware-solidity v0.1.0"
 ```
 
 If both packages move together, you can also tag the repo-level release:
 
 ```bash
-git tag -a v0.1.0 -m "Elseware v0.1.0"
+git tag -a v0.1.0 -m "Anyware v0.1.0"
 ```
 
 Push tags:

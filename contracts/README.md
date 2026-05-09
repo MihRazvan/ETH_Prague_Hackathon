@@ -1,6 +1,6 @@
-# @elseware/solidity
+# anyware-solidity
 
-Solidity verifier contracts for Elseware trustless recent Ethereum state verification on EIP-4788 destination chains.
+Solidity verifier contracts for Anyware trustless recent Ethereum state verification on EIP-4788 destination chains.
 
 Main public surfaces:
 

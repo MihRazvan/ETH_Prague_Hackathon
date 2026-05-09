@@ -69,7 +69,7 @@ The proof content still needs to feel like a real devtool.
 
 ### Hero Subhead
 
-- `elseware is a trustless cross-chain read stack built on EIP-4788, SSZ, and Merkle Patricia proofs. It verifies recent Ethereum storage directly on Base using Ethereum's own consensus root.`
+- `anyware is a trustless cross-chain read stack built on EIP-4788, SSZ, and Merkle Patricia proofs. It verifies recent Ethereum storage directly on Base using Ethereum's own consensus root.`
 
 ### Primary CTA
 

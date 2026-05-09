@@ -1,4 +1,4 @@
-import { ElsewareClient } from "@elseware/prover";
+import { AnywareClient } from "anyware-prover";
 
 const vault = process.env.VAULT_ADDRESS;
 const borrower = process.env.BORROWER_ADDRESS;
@@ -7,7 +7,7 @@ if (!vault || !borrower) {
   throw new Error("Set VAULT_ADDRESS and BORROWER_ADDRESS before running this example.");
 }
 
-const client = new ElsewareClient({
+const client = new AnywareClient({
   network: "sepolia-base-sepolia",
 });
 

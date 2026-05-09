@@ -1,17 +1,17 @@
 {
-  "name": "@elseware/solidity",
+  "name": "anyware-solidity",
   "version": "0.1.0",
   "private": false,
-  "description": "Solidity verifier contracts for Elseware trustless Ethereum state verification.",
+  "description": "Solidity verifier contracts for Anyware trustless Ethereum state verification.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/elsewarexyz/elseware.git",
+    "url": "https://github.com/anywarexyz/anyware.git",
     "directory": "contracts"
   },
-  "homepage": "https://github.com/elsewarexyz/elseware",
+  "homepage": "https://github.com/anywarexyz/anyware",
   "bugs": {
-    "url": "https://github.com/elsewarexyz/elseware/issues"
+    "url": "https://github.com/anywarexyz/anyware/issues"
   },
   "keywords": [
     "solidity",

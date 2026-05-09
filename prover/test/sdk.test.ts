@@ -1,18 +1,18 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { BUNDLE_VERSION, ElsewareClient, NETWORK_PRESETS, RpcResponseShapeError } from "../src/index.js";
+import { AnywareClient, BUNDLE_VERSION, NETWORK_PRESETS, RpcResponseShapeError } from "../src/index.js";
 
 const SOURCE_RPC_URL = "https://source.example";
 const DESTINATION_RPC_URL = "https://destination.example";
 const BEACON_API_URL = "https://beacon.example";
 
-describe("ElsewareClient", () => {
+describe("AnywareClient", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
   });
 
   it("computes mapping slots via the public SDK surface", () => {
-    const client = new ElsewareClient({
+    const client = new AnywareClient({
       ethRpcUrl: SOURCE_RPC_URL,
       beaconApiUrl: BEACON_API_URL,
     });
@@ -23,7 +23,7 @@ describe("ElsewareClient", () => {
   });
 
   it("resolves tested network presets into concrete endpoints", () => {
-    const client = new ElsewareClient({
+    const client = new AnywareClient({
       network: "sepolia-base-sepolia",
     });
 
@@ -31,7 +31,7 @@ describe("ElsewareClient", () => {
   });
 
   it("lets explicit endpoint overrides win over preset defaults", () => {
-    const client = new ElsewareClient({
+    const client = new AnywareClient({
       network: "sepolia-base-sepolia",
       destinationRpcUrl: DESTINATION_RPC_URL,
     });
@@ -44,7 +44,7 @@ describe("ElsewareClient", () => {
   });
 
   it("exposes a stable bundle version and envelope helper", () => {
-    const client = new ElsewareClient({
+    const client = new AnywareClient({
       ethRpcUrl: SOURCE_RPC_URL,
       beaconApiUrl: BEACON_API_URL,
     });
@@ -151,7 +151,7 @@ describe("ElsewareClient", () => {
       throw new Error(`Unhandled fetch request: ${url}`);
     }));
 
-    const client = new ElsewareClient({
+    const client = new AnywareClient({
       ethRpcUrl: SOURCE_RPC_URL,
       beaconApiUrl: BEACON_API_URL,
       destinationRpcUrl: DESTINATION_RPC_URL,
@@ -191,7 +191,7 @@ describe("ElsewareClient", () => {
       throw new Error(`Unhandled fetch request: ${url}`);
     }));
 
-    const client = new ElsewareClient({
+    const client = new AnywareClient({
       ethRpcUrl: SOURCE_RPC_URL,
       beaconApiUrl: BEACON_API_URL,
     });
@@ -206,7 +206,7 @@ describe("ElsewareClient", () => {
   });
 
   it("builds the same vault slot through the opinionated vault-lock flow", async () => {
-    const client = new ElsewareClient({
+    const client = new AnywareClient({
       ethRpcUrl: SOURCE_RPC_URL,
       beaconApiUrl: BEACON_API_URL,
     });

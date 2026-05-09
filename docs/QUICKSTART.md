@@ -1,17 +1,17 @@
-# Elseware Quickstart
+# Anyware Quickstart
 
 This is the shortest path for an integrator who wants to prove one recent Ethereum storage slot and verify it on an EIP-4788 destination chain.
 
 ## 1. Install the SDK
 
 ```bash
-pnpm add @elseware/prover viem
+pnpm add anyware-prover viem
 ```
 
 ## 2. Check your endpoints
 
 ```bash
-pnpm --filter @elseware/prover cli doctor \
+pnpm --filter anyware-prover cli doctor \
   --network sepolia-base-sepolia
 ```
 
@@ -22,7 +22,7 @@ If `overall: ready`, your source RPC, beacon API, and destination RPC are good e
 Known slot:
 
 ```bash
-pnpm --filter @elseware/prover cli prove-slot \
+pnpm --filter anyware-prover cli prove-slot \
   --account 0xVaultAddress \
   --slot 0xStorageSlotKey \
   --eth-rpc "$ETH_RPC_URL" \
@@ -33,7 +33,7 @@ pnpm --filter @elseware/prover cli prove-slot \
 Vault-style mapping entry:
 
 ```bash
-pnpm --filter @elseware/prover cli prove-vault-lock \
+pnpm --filter anyware-prover cli prove-vault-lock \
   --vault 0xVaultAddress \
   --borrower 0xBorrowerAddress \
   --network sepolia-base-sepolia
@@ -63,7 +63,7 @@ Your app logic then decides what to do with that proven fact.
 
 Typical flow:
 
-1. offchain app generates bundle with `@elseware/prover`
+1. offchain app generates bundle with `anyware-prover`
 2. offchain app submits bundle to destination contract
 3. destination contract calls `BeaconStateProof.verifyStorageSlot`
 4. consumer contract checks `sourceAccount` and `sourceSlot`
@@ -74,7 +74,7 @@ Typical flow:
 - `RpcRequestError`
   Source or destination endpoint is down / timing out / returning 5xx.
 - `RpcResponseShapeError`
-  Endpoint responded, but not in the format Elseware expects.
+  Endpoint responded, but not in the format Anyware expects.
 - `BeaconApiRequestError`
   Beacon API request failed.
 - `BeaconResponseShapeError`

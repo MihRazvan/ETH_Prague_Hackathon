@@ -1,6 +1,6 @@
-import { ElsewareClient } from "@elseware/prover";
+import { AnywareClient } from "anyware-prover";
 
-const client = new ElsewareClient({
+const client = new AnywareClient({
   network: "sepolia-base-sepolia",
 });
 

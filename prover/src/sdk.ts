@@ -4,7 +4,7 @@ import { Prover } from "./prover.js";
 import { BUNDLE_VERSION, serializeBundle, toBundleEnvelope, type ProofBundleEnvelope, type SerializedProofBundle } from "./format.js";
 import { resolveProverConfig } from "./presets.js";
 import type {
-  ElsewareClientConfig,
+  AnywareClientConfig,
   PreflightReport,
   ProofBundle,
   ProveMappingValueArgs,
@@ -13,11 +13,11 @@ import type {
   ProverConfig,
 } from "./types.js";
 
-export class ElsewareClient {
+export class AnywareClient {
   readonly #prover: Prover;
   readonly config: ProverConfig;
 
-  constructor(config: ElsewareClientConfig) {
+  constructor(config: AnywareClientConfig) {
     this.config = resolveProverConfig(config);
     this.#prover = new Prover(this.config);
   }
@@ -68,8 +68,8 @@ export class ElsewareClient {
   }
 }
 
-export function createElsewareClient(config: ElsewareClientConfig): ElsewareClient {
-  return new ElsewareClient(config);
+export function createAnywareClient(config: AnywareClientConfig): AnywareClient {
+  return new AnywareClient(config);
 }
 
 export function computeMappingSlot(address: Address, mappingSlot = 0n): Hex {

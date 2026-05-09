@@ -1,5 +1,5 @@
 export {
-  ElsewareError,
+  AnywareError,
   RpcRequestError,
   RpcResponseShapeError,
   BeaconApiRequestError,
@@ -15,9 +15,9 @@ export {
   type SerializedProofBundle,
 } from "./format.js";
 export { NETWORK_PRESETS } from "./presets.js";
-export { ElsewareClient, createElsewareClient, computeMappingSlot } from "./sdk.js";
+export { AnywareClient, createAnywareClient, computeMappingSlot } from "./sdk.js";
 export type {
-  ElsewareClientConfig,
+  AnywareClientConfig,
   ExecutionPayloadHeader,
   NetworkPresetName,
   PreflightReport,

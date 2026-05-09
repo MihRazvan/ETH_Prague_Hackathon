@@ -4,7 +4,7 @@ import { join, resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 
 const contractsDir = resolve(new URL("../", import.meta.url).pathname);
-const tempDir = mkdtempSync(join(tmpdir(), "elseware-solidity-smoke-"));
+const tempDir = mkdtempSync(join(tmpdir(), "anyware-solidity-smoke-"));
 
 try {
   execFileSync("pnpm", ["pack", "--pack-destination", tempDir], { cwd: contractsDir, stdio: "inherit" });
@@ -14,7 +14,7 @@ try {
     join(tempDir, "package.json"),
     JSON.stringify(
       {
-        name: "elseware-solidity-smoke",
+        name: "anyware-solidity-smoke",
         private: true,
       },
       null,
@@ -24,7 +24,7 @@ try {
 
   execFileSync("pnpm", ["add", join(tempDir, tarball)], { cwd: tempDir, stdio: "inherit" });
 
-  const packageRoot = join(tempDir, "node_modules", "@elseware", "solidity");
+  const packageRoot = join(tempDir, "node_modules", "anyware-solidity");
   assertFile(join(packageRoot, "src", "BeaconStateProof.sol"));
   assertFile(join(packageRoot, "src", "interfaces", "IBeaconStateProof.sol"));
   assertFile(join(packageRoot, "src", "examples", "VerifiedSlotConsumer.sol"));

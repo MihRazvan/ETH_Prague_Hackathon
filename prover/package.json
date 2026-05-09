@@ -1,17 +1,17 @@
 {
-  "name": "@elseware/prover",
+  "name": "anyware-prover",
   "version": "0.1.0",
   "private": false,
-  "description": "TypeScript SDK for assembling Elseware proof bundles for trustless Ethereum state verification on EIP-4788 destination chains.",
+  "description": "TypeScript SDK for assembling Anyware proof bundles for trustless Ethereum state verification on EIP-4788 destination chains.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/elsewarexyz/elseware.git",
+    "url": "https://github.com/anywarexyz/anyware.git",
     "directory": "prover"
   },
-  "homepage": "https://github.com/elsewarexyz/elseware",
+  "homepage": "https://github.com/anywarexyz/anyware",
   "bugs": {
-    "url": "https://github.com/elsewarexyz/elseware/issues"
+    "url": "https://github.com/anywarexyz/anyware/issues"
   },
   "keywords": [
     "ethereum",
@@ -36,7 +36,7 @@
     "README.md"
   ],
   "bin": {
-    "elseware-prover": "./dist/cli.js"
+    "anyware-prover": "./dist/cli.js"
   },
   "sideEffects": false,
   "engines": {

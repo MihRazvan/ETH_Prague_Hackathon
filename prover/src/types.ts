@@ -55,7 +55,7 @@ export interface ProverPresetConfig {
   beaconVersion?: "deneb" | "electra" | "fulu";
 }
 
-export type ElsewareClientConfig = ProverConfig | ProverPresetConfig;
+export type AnywareClientConfig = ProverConfig | ProverPresetConfig;
 
 export interface ProveStorageSlotArgs {
   account: `0x${string}`;

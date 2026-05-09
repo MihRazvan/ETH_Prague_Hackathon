@@ -1,8 +1,8 @@
-# @elseware/prover
+# anyware-prover
 
-TypeScript SDK for assembling Elseware proof bundles for trustless recent Ethereum state verification on Ethereum-aligned destination chains that expose EIP-4788 beacon roots.
+TypeScript SDK for assembling Anyware proof bundles for trustless recent Ethereum state verification on Ethereum-aligned destination chains that expose EIP-4788 beacon roots.
 
-This package is the offchain half of Elseware:
+This package is the offchain half of Anyware:
 - fetches `eth_getProof` account/storage proofs from the source chain
 - finds the matching beacon block and builds the SSZ branch to `execution_payload_header`
 - resolves the destination-chain timestamp needed for EIP-4788 lookup
@@ -11,15 +11,15 @@ This package is the offchain half of Elseware:
 ## Install
 
 ```bash
-pnpm add @elseware/prover viem
+pnpm add anyware-prover viem
 ```
 
 ## Quickstart
 
 ```ts
-import { ElsewareClient } from "@elseware/prover";
+import { AnywareClient } from "anyware-prover";
 
-const client = new ElsewareClient({
+const client = new AnywareClient({
   network: "sepolia-base-sepolia",
 });
 
@@ -35,7 +35,7 @@ console.log(envelope.bundle.slotKey);
 
 ## Public API
 
-### `new ElsewareClient(config)`
+### `new AnywareClient(config)`
 
 Creates the SDK client.
 
@@ -83,17 +83,17 @@ Returns a versioned serialized envelope:
 After building or installing the package:
 
 ```bash
-elseware-prover doctor
-elseware-prover doctor --network sepolia-base-sepolia
-elseware-prover vault-slot --borrower 0x...
-elseware-prover prove-slot --account 0x... --slot 0x...
-elseware-prover prove-vault-lock --vault 0x... --borrower 0x...
+anyware-prover doctor
+anyware-prover doctor --network sepolia-base-sepolia
+anyware-prover vault-slot --borrower 0x...
+anyware-prover prove-slot --account 0x... --slot 0x...
+anyware-prover prove-vault-lock --vault 0x... --borrower 0x...
 ```
 
 JSON output:
 
 ```bash
-elseware-prover doctor --json
+anyware-prover doctor --json
 ```
 
 ## Error model
@@ -118,4 +118,4 @@ These are useful when you want to distinguish retryable endpoint issues from det
 ## Notes
 
 - This package assembles evidence offchain; it does not verify truth on its own.
-- The onchain verifier lives in the Solidity half of Elseware.
+- The onchain verifier lives in the Solidity half of Anyware.
