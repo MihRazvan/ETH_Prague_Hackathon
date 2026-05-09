@@ -136,7 +136,8 @@ async function main(): Promise<void> {
     ethRpcUrl,
     beaconApiUrl,
     destinationRpcUrl: baseRpcUrl,
-    searchWindowSlots: 256,
+    searchWindowSlots: 512,
+    destinationSearchWindowBlocks: 2048,
   });
   const bundle = await prover.proveStorageSlot({
     account: vaultAddress,

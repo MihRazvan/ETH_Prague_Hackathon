@@ -63,8 +63,8 @@ export class BeaconApiClient {
   readonly #destinationSearchWindowBlocks: number;
 
   constructor(private readonly config: ProverConfig) {
-    this.#searchWindowSlots = config.searchWindowSlots ?? 96;
-    this.#destinationSearchWindowBlocks = config.destinationSearchWindowBlocks ?? 6_000;
+    this.#searchWindowSlots = config.searchWindowSlots ?? 512;
+    this.#destinationSearchWindowBlocks = config.destinationSearchWindowBlocks ?? 2_048;
   }
 
   async findExecutionAnchor(blockHash: Hex): Promise<BeaconExecutionAnchor> {
@@ -99,24 +99,68 @@ export class BeaconApiClient {
     );
   }
 
-  async findDestinationTimestamp(destinationRpc: EthereumRpcClient, targetBeaconRoot: Hex): Promise<bigint> {
+  async findDestinationTimestamp(
+    destinationRpc: EthereumRpcClient,
+    targetBeaconRoot: Hex,
+    targetTimestamp: bigint,
+  ): Promise<bigint> {
     const latestDestinationBlock = await destinationRpc.getBlockNumber();
+    const anchorBlockNumber = await this.#findBlockAtOrBeforeTimestamp(
+      destinationRpc,
+      latestDestinationBlock,
+      targetTimestamp,
+    );
 
+    const normalizedTargetRoot = targetBeaconRoot.toLowerCase();
     for (let offset = 0; offset < this.#destinationSearchWindowBlocks; offset++) {
-      const blockNumber = latestDestinationBlock - BigInt(offset);
-      if (blockNumber < 0n) {
-        break;
+      const below = anchorBlockNumber - BigInt(offset);
+      if (below >= 0n) {
+        const header = await destinationRpc.getBlockHeaderByNumber(below);
+        if (header.parentBeaconRoot?.toLowerCase() === normalizedTargetRoot) {
+          return header.timestamp;
+        }
       }
 
-      const header = await destinationRpc.getBlockHeaderByNumber(blockNumber);
-      if (header.parentBeaconRoot?.toLowerCase() === targetBeaconRoot.toLowerCase()) {
+      if (offset === 0) {
+        continue;
+      }
+
+      const above = anchorBlockNumber + BigInt(offset);
+      if (above > latestDestinationBlock) {
+        continue;
+      }
+
+      const header = await destinationRpc.getBlockHeaderByNumber(above);
+      if (header.parentBeaconRoot?.toLowerCase() === normalizedTargetRoot) {
         return header.timestamp;
       }
     }
 
     throw new Error(
-      `Could not find destination-chain timestamp for beacon root ${targetBeaconRoot} within the last ${this.#destinationSearchWindowBlocks} destination blocks`,
+      `Could not find destination-chain timestamp for beacon root ${targetBeaconRoot} within ${this.#destinationSearchWindowBlocks} blocks of destination block ${anchorBlockNumber.toString()}`,
     );
+  }
+
+  async #findBlockAtOrBeforeTimestamp(
+    destinationRpc: EthereumRpcClient,
+    latestBlockNumber: bigint,
+    targetTimestamp: bigint,
+  ): Promise<bigint> {
+    let low = 0n;
+    let high = latestBlockNumber;
+
+    while (low < high) {
+      const mid = (low + high + 1n) / 2n;
+      const header = await destinationRpc.getBlockHeaderByNumber(mid);
+
+      if (header.timestamp <= targetTimestamp) {
+        low = mid;
+      } else {
+        high = mid - 1n;
+      }
+    }
+
+    return low;
   }
 
   async #fetchHeader(blockId: string): Promise<BeaconHeader> {

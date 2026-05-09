@@ -60,26 +60,50 @@ export class EthereumRpcClient {
   }
 
   async #request<T>(request: RpcRequest<T>): Promise<T> {
-    const response = await fetch(this.rpcUrl, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: 1,
-        method: request.method,
-        params: request.params,
-      }),
-    });
+    let lastError: Error | null = null;
 
-    if (!response.ok) {
-      throw new Error(`RPC ${request.method} to ${this.rpcUrl} failed with status ${response.status}`);
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      try {
+        const response = await fetch(this.rpcUrl, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: 1,
+            method: request.method,
+            params: request.params,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = new Error(`RPC ${request.method} to ${this.rpcUrl} failed with status ${response.status}`);
+          if (response.status >= 500 && attempt < 4) {
+            lastError = error;
+            await sleep(attempt * 250);
+            continue;
+          }
+          throw error;
+        }
+
+        const json = await response.json();
+        if (json.error) {
+          throw new Error(`RPC ${request.method} to ${this.rpcUrl} failed: ${json.error.message}`);
+        }
+
+        return request.parser(json.result);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        if (attempt >= 4) {
+          throw lastError;
+        }
+        await sleep(attempt * 250);
+      }
     }
 
-    const json = await response.json();
-    if (json.error) {
-      throw new Error(`RPC ${request.method} to ${this.rpcUrl} failed: ${json.error.message}`);
-    }
-
-    return request.parser(json.result);
+    throw lastError ?? new Error(`RPC ${request.method} to ${this.rpcUrl} failed`);
   }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

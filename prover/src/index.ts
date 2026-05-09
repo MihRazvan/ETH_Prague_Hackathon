@@ -25,6 +25,7 @@ export class Prover {
       anchor.destinationTimestamp = await this.#beacon.findDestinationTimestamp(
         this.#destination,
         anchor.header.root,
+        anchor.executionHeader.timestamp,
       );
     }
 

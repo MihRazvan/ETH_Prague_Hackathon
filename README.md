@@ -24,11 +24,13 @@ The lending demo uses a single packed storage slot per borrower so both the acti
 
 - Solidity contracts compile and the Foundry test suite passes.
 - The prover builds and can locate the matching blinded beacon block for a live Sepolia execution block, then generate the SSZ sibling path for `execution_payload_header`.
+- The prover can now assemble a full live Sepolia storage proof bundle and resolve the matching Base Sepolia EIP-4788 timestamp for on-chain verification.
+- The native demo flow has successfully borrowed against the real Base Sepolia lender using a proof sourced from Sepolia vault state.
 - The webapp builds as a static Next.js shell for the verifier and lending demo.
 
 ## Honest current limitation
 
-The missing end-to-end milestone is a full live Sepolia fixture that proves a non-zero storage slot all the way through `BeaconStateProof.verifyStorageSlot()` on-chain. The repo now has the contract shape, SSZ branch generation, MPT/RLP verifier, deploy scripts, and demo flow in place, so the next step is wiring a known contract slot and deployed Sepolia/Base contracts into an integration script.
+The live path is still RPC-sensitive. Historical `eth_getProof` support varies across Sepolia providers, and Base Sepolia public RPCs can intermittently return `502` during repeated block lookups. The prover now retries transient failures and uses a timestamp-guided destination scan, but for demos you should still prefer reliable RPC endpoints.
 
 ## Quick start
 
@@ -60,6 +62,7 @@ Generate a live proof bundle:
 pnpm --filter @trustless-state/prover cli prove-slot \
   --account 0xVaultAddress \
   --slot 0xYourComputedSlotKey \
+  --block-number 10821452 \
   --out tmp/bundle.json
 ```
 
@@ -70,6 +73,8 @@ pnpm --filter @trustless-state/prover live-demo
 ```
 
 The live scripts read defaults from [.env.example](/Users/razvan/Repos/ETH_Prague_Hackathon/.env.example).
+
+For live historical Sepolia proofs, `ETH_RPC_URL=https://sepolia.gateway.tenderly.co` is a safer default than many public endpoints.
 
 ## What I Need From You
 
