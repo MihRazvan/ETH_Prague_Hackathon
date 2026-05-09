@@ -96,51 +96,6 @@ const TREE_INSTANCES: Array<{ model: keyof typeof MODEL; position: Vec3; rotatio
   { model: "bigTreeCluster", position: [56, 0, 28], scale: 4.8 },
 ];
 
-const PROP_INSTANCES: Array<{ model: keyof typeof MODEL; position: Vec3; rotation?: Vec3; scale?: number; tint?: string }> = [
-  { model: "tent", position: [-37.4, 0, -12.4], rotation: [0, 0.2, 0], scale: 2.9 },
-  { model: "crate", position: [-35.2, 0, -11.7], scale: 1.9 },
-  { model: "barrel", position: [-34.1, 0, -13.5], scale: 1.7 },
-  { model: "flagBlue", position: [-39.5, 0, 9.4], scale: 2.5 },
-  { model: "tent", position: [-37.6, 0, 12.1], rotation: [0, -0.6, 0], scale: 2.8 },
-  { model: "tent", position: [-25.8, 0, 0.4], rotation: [0, 0.5, 0], scale: 2.4 },
-  { model: "wheelbarrow", position: [-23.8, 0, 2.4], rotation: [0, -0.55, 0], scale: 2.1 },
-  { model: "crate", position: [-24.6, 0, -2.3], scale: 1.55 },
-  { model: "weaponrack", position: [-9.8, 0, -12.2], rotation: [0, 0.22, 0], scale: 2.05 },
-  { model: "target", position: [-7.4, 0, -10.7], rotation: [0, -0.45, 0], scale: 2.05 },
-  { model: "lumber", position: [-8.1, 0, -14.0], scale: 1.7 },
-  { model: "stone", position: [18.1, 0, -11.3], scale: 1.95 },
-  { model: "arrows", position: [20.1, 0, -11.8], scale: 1.95 },
-  { model: "ladder", position: [22.7, 0, -10.4], rotation: [0, 0.1, 0], scale: 1.95 },
-  { model: "tent", position: [31.2, 0, 5.1], rotation: [0, -0.5, 0], scale: 2.55 },
-  { model: "crate", position: [29.4, 0, 2.2], scale: 1.75 },
-  { model: "barrel", position: [31.9, 0, 1.4], scale: 1.7 },
-  { model: "flagYellow", position: [33.1, 0, 4.2], scale: 2.35 },
-  { model: "flagGreen", position: [18.7, 0, 9.2], scale: 2.25 },
-  { model: "tent", position: [39.2, 0, -11.6], rotation: [0, -0.25, 0], scale: 2.9 },
-  { model: "crate", position: [41.4, 0, -12.7], scale: 1.9 },
-  { model: "flagYellow", position: [40.8, 0, 11.8], scale: 2.5 },
-  { model: "wheelbarrow", position: [37.9, 0, 14.2], rotation: [0, 0.7, 0], scale: 2.3 },
-  { model: "tent", position: [-57.2, 0, 22.8], rotation: [0, 0.35, 0], scale: 2.8 },
-  { model: "flagBlue", position: [-58.6, 0, 20.8], scale: 2.5 },
-  { model: "crate", position: [57.6, 0, -22.2], scale: 1.9 },
-  { model: "barrel", position: [56.3, 0, -20.9], scale: 1.8 },
-];
-
-const FENCE_INSTANCES: Array<{ model: keyof typeof MODEL; position: Vec3; rotation?: Vec3; scale?: number }> = [
-  { model: "woodFence", position: [-42.2, 0, -4.2], rotation: [0, 1.4, 0], scale: 2.6 },
-  { model: "woodFence", position: [-42.2, 0, -1.7], rotation: [0, 1.4, 0], scale: 2.6 },
-  { model: "woodFence", position: [-55.3, 0, 17.4], rotation: [0, 0.95, 0], scale: 2.7 },
-  { model: "woodFence", position: [-53.4, 0, 19.2], rotation: [0, 0.95, 0], scale: 2.7 },
-  { model: "woodFence", position: [-24.3, 0, 2.4], rotation: [0, 0.8, 0], scale: 2.4 },
-  { model: "woodFence", position: [-22.4, 0, 4.1], rotation: [0, 0.8, 0], scale: 2.4 },
-  { model: "stoneFence", position: [23.2, 0, 4.4], rotation: [0, 1.2, 0], scale: 2.6 },
-  { model: "stoneFence", position: [24.8, 0, 2.5], rotation: [0, 1.2, 0], scale: 2.6 },
-  { model: "stoneFence", position: [43.3, 0, 4.9], rotation: [0, 1.55, 0], scale: 2.8 },
-  { model: "stoneFence", position: [43.3, 0, 2.2], rotation: [0, 1.55, 0], scale: 2.8 },
-  { model: "stoneFence", position: [56.3, 0, -18.8], rotation: [0, 1.18, 0], scale: 2.85 },
-  { model: "stoneFence", position: [58.2, 0, -20.6], rotation: [0, 1.18, 0], scale: 2.85 },
-];
-
 const ROAD_LIGHTS: Vec3[] = [
   [-17, 0.04, -1.5],
   [-9, 0.04, 1.2],
@@ -264,21 +219,9 @@ function WorldBackdrop({ questIndex, victory }: { questIndex: number; victory: b
       <RoadNetwork questIndex={questIndex} victory={victory} />
       <River transferComplete={questIndex > 4 || victory} />
       <LargeScenery />
+      <SemanticRouteDressing />
       {TREE_INSTANCES.map((tree, index) => (
         <KayKitAsset key={`tree-${index}`} model={tree.model} position={tree.position} rotation={tree.rotation} scale={tree.scale ?? 1} />
-      ))}
-      {PROP_INSTANCES.map((prop, index) => (
-        <KayKitAsset
-          key={`prop-${index}`}
-          model={prop.model}
-          position={prop.position}
-          rotation={prop.rotation}
-          scale={prop.scale ?? 1}
-          tint={prop.tint}
-        />
-      ))}
-      {FENCE_INSTANCES.map((fence, index) => (
-        <KayKitAsset key={`fence-${index}`} model={fence.model} position={fence.position} rotation={fence.rotation} scale={fence.scale ?? 1} />
       ))}
       <CampFire position={[-21, 0, 2.8]} />
       <CampFire position={[28.3, 0, 2.1]} warm />
@@ -289,24 +232,24 @@ function WorldBackdrop({ questIndex, victory }: { questIndex: number; victory: b
 function Terrain() {
   return (
     <group>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-11, 0, 0]} receiveShadow>
-        <planeGeometry args={[78, 78]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-18, 0, 0]} receiveShadow>
+        <planeGeometry args={[46, 78]} />
         <meshStandardMaterial color="#edf7ff" roughness={1} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-11, 0.015, 0]} receiveShadow>
-        <planeGeometry args={[78, 78]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-18, 0.015, 0]} receiveShadow>
+        <planeGeometry args={[46, 78]} />
         <meshStandardMaterial color="#f7fbff" transparent opacity={0.24} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[21, 0, 0]} receiveShadow>
-        <planeGeometry args={[86, 78]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[30, 0, 0]} receiveShadow>
+        <planeGeometry args={[50, 78]} />
         <meshStandardMaterial color="#84c46f" roughness={1} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[21, 0.015, 0]} receiveShadow>
-        <planeGeometry args={[86, 78]} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[30, 0.015, 0]} receiveShadow>
+        <planeGeometry args={[50, 78]} />
         <meshStandardMaterial color="#d3e79e" transparent opacity={0.1} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[5, 0.01, 0]} receiveShadow>
-        <planeGeometry args={[18, 78]} />
+        <planeGeometry args={[14, 78]} />
         <meshStandardMaterial color="#1b3040" roughness={0.95} />
       </mesh>
     </group>
@@ -344,16 +287,9 @@ function WinterAccents() {
 function SummerAccents() {
   return (
     <group>
-      {[
-        [16, 0.03, -11],
-        [27, 0.03, 8],
-        [33, 0.03, -6],
-      ].map((position, index) => (
-        <mesh key={`summer-patch-${index}`} rotation={[-Math.PI / 2, 0, 0]} position={position as Vec3} receiveShadow>
-          <circleGeometry args={[4.2 - index * 0.25, 28]} />
-          <meshStandardMaterial color="#d7ec9c" transparent opacity={0.16} />
-        </mesh>
-      ))}
+      <KayKitAsset model="flagYellow" position={[14.4, 0, -11.7]} scale={1.8} />
+      <KayKitAsset model="flagGreen" position={[29.2, 0, 8.7]} scale={1.9} />
+      <KayKitAsset model="barrel" position={[31.6, 0, -7.3]} scale={1.35} />
     </group>
   );
 }
@@ -370,6 +306,22 @@ function WinterSetDressing() {
       <KayKitAsset model="treeBCut" position={[-14.8, 0, 15.8]} scale={2.8} tint="#ecf7fd" />
       <KayKitAsset model="waterPlantA" position={[1.8, 0, 11.5]} scale={2.1} tint="#cbe7f5" />
       <KayKitAsset model="waterPlantB" position={[8.2, 0, -12.8]} scale={2.1} tint="#cbe7f5" />
+    </group>
+  );
+}
+
+function SemanticRouteDressing() {
+  return (
+    <group>
+      <KayKitAsset model="woodFence" position={[-24.2, 0, 2.5]} rotation={[0, 0.88, 0]} scale={2.2} />
+      <KayKitAsset model="woodFence" position={[-22.5, 0, 4.25]} rotation={[0, 0.88, 0]} scale={2.2} />
+      <KayKitAsset model="weaponrack" position={[-8.1, 0, -11.2]} rotation={[0, -0.25, 0]} scale={1.85} />
+      <KayKitAsset model="lumber" position={[-7.6, 0, -13.5]} scale={1.6} />
+      <KayKitAsset model="stoneFence" position={[18.6, 0, 6.4]} rotation={[0, 1.1, 0]} scale={2.15} />
+      <KayKitAsset model="stoneFence" position={[20.2, 0, 4.7]} rotation={[0, 1.1, 0]} scale={2.15} />
+      <KayKitAsset model="crate" position={[28.7, 0, 2.5]} scale={1.5} />
+      <KayKitAsset model="barrel" position={[30.2, 0, 1.2]} scale={1.35} />
+      <KayKitAsset model="flagYellow" position={[31.7, 0, 4.3]} scale={1.9} />
     </group>
   );
 }
@@ -439,16 +391,12 @@ function RoadNetwork({ questIndex, victory }: { questIndex: number; victory: boo
         const unlocked = victory || questIndex >= index;
         return (
           <group key={`road-light-${index}`} position={position}>
-            <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-              <cylinderGeometry args={[2.65, 2.85, 0.06, 8]} />
-              <meshStandardMaterial color={index < 3 ? "#cad7dd" : "#a78f69"} />
-            </mesh>
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.06, 0]}>
-              <ringGeometry args={[1.25, 1.58, 24]} />
+            <mesh position={[0, 0.22, 0]} castShadow>
+              <octahedronGeometry args={[0.24]} />
               <meshStandardMaterial
                 color={unlocked ? "#ffe48a" : "#6c879b"}
                 emissive={unlocked ? "#ffd66a" : "#60798e"}
-                emissiveIntensity={unlocked ? 1.2 : 0.15}
+                emissiveIntensity={unlocked ? 1.05 : 0.1}
               />
             </mesh>
           </group>
@@ -511,8 +459,8 @@ function Hero({
 
   return (
     <group ref={groupRef} position={heroPosition}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]} receiveShadow>
-        <ringGeometry args={[0.5, 0.78, 32]} />
+      <mesh position={[0, 0.18, 0]} castShadow>
+        <octahedronGeometry args={[0.16]} />
         <meshStandardMaterial color="#f6e38d" emissive="#ffd86d" emissiveIntensity={0.65} />
       </mesh>
       <AnimatedCharacter
@@ -602,32 +550,30 @@ function Landmark({
   const markerX = markerOffset[0];
   const markerY = markerOffset[1];
   const markerZ = markerOffset[2];
-  const [ringInner, ringOuter] = interactable.markerRings ?? [1.6, 2.05];
+  const [, ringOuter] = interactable.markerRings ?? [1.6, 2.05];
   const beaconHeight = interactable.beaconHeight ?? 5.1;
   const clickRadius = interactable.clickRadius ?? Math.max(ringOuter, 2);
+  const highlightColor = "#ffd76d";
+  const highlighted = hovered || isObjective || victory;
 
   return (
     <group position={interactable.position}>
       <group onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)} onClick={handleClick}>
-        <LandmarkMesh interactable={interactable} hovered={hovered || isObjective || victory} completed={completed} />
+        <LandmarkMesh interactable={interactable} hovered={highlighted} completed={completed} highlightColor={highlightColor} />
         <mesh position={[markerX, 0.75 + markerY, markerZ]} visible={false}>
           <cylinderGeometry args={[clickRadius, clickRadius, 1.8, 24]} />
           <meshBasicMaterial transparent opacity={0} depthWrite={false} />
         </mesh>
       </group>
-      {(isObjective || hovered || victory) && (
+      {highlighted && (
         <>
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[markerX, 0.08 + markerY, markerZ]}>
-            <ringGeometry args={[ringInner, ringOuter, 40]} />
-            <meshStandardMaterial color={interactable.accent} emissive={interactable.accent} emissiveIntensity={isObjective ? 1.8 : 0.75} />
-          </mesh>
           <Float speed={2.2} floatIntensity={0.65} rotationIntensity={0.08}>
             <mesh position={[markerX, beaconHeight + markerY, markerZ]}>
               <octahedronGeometry args={[0.28]} />
-              <meshStandardMaterial color={interactable.accent} emissive={interactable.accent} emissiveIntensity={2} />
+              <meshStandardMaterial color={highlightColor} emissive={highlightColor} emissiveIntensity={2} />
             </mesh>
           </Float>
-          {isObjective && <ObjectiveBeacon accent={interactable.accent} position={[markerX, 0.1 + markerY, markerZ]} height={beaconHeight} />}
+          {isObjective && <ObjectiveBeacon accent={highlightColor} position={[markerX, 0.1 + markerY, markerZ]} height={beaconHeight} />}
         </>
       )}
       {unlocked && (
@@ -636,7 +582,7 @@ function Landmark({
           scale={[2.4, 2.8, 2.4]}
           size={3}
           speed={0.5}
-          color={interactable.accent}
+          color={highlighted ? highlightColor : interactable.accent}
           position={[markerX, 2.8 + markerY, markerZ]}
         />
       )}
@@ -648,13 +594,15 @@ function LandmarkMesh({
   interactable,
   hovered,
   completed,
+  highlightColor,
 }: {
   interactable: InteractableDefinition;
   hovered: boolean;
   completed: boolean;
+  highlightColor: string;
 }) {
   const glow = hovered ? 1.5 : 0.55;
-  const accent = interactable.accent;
+  const accent = hovered ? highlightColor : interactable.accent;
 
   switch (interactable.type) {
     case "npc":
@@ -784,13 +732,13 @@ function AnimatedLandmark({
 function LockSeal() {
   return (
     <group position={[0, 1.6, 0]}>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.58, 0.07, 12, 24]} />
-        <meshStandardMaterial color="#b7f1ff" emissive="#b7f1ff" emissiveIntensity={1.1} />
+      <mesh position={[0, 0.55, 0]} castShadow>
+        <octahedronGeometry args={[0.26]} />
+        <meshStandardMaterial color="#d7f7ff" emissive="#9cdfff" emissiveIntensity={0.95} />
       </mesh>
-      <mesh position={[0, 0.34, 0]}>
-        <boxGeometry args={[0.42, 0.42, 0.42]} />
-        <meshStandardMaterial color="#d7f7ff" emissive="#9cdfff" emissiveIntensity={0.9} />
+      <mesh position={[0, 0.12, 0]} castShadow>
+        <boxGeometry args={[0.24, 0.28, 0.24]} />
+        <meshStandardMaterial color="#b7f1ff" emissive="#8fd8ff" emissiveIntensity={0.85} />
       </mesh>
     </group>
   );
