@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "json": {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+      "number": "0xa524c6",
+      "hash": "0xacd1189e7253a2544d3df99c9fb7d279f993bd80ba1d152df530a7a0ea737a66"
+    }
+  }
+}

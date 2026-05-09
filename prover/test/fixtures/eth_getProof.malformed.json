@@ -1,0 +1,14 @@
+{
+  "status": 200,
+  "json": {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+      "address": "0x0dcc90c54b4c4ac9f8e490678843760006723bbd",
+      "accountProof": [
+        "0xf86e9d357a809cbcfb2eb840569dd84431507468ca68829e03ba04fa4dd98e66b84ef84c0188016345785d8a0000a01ec83fe2fffa676e88a4d276ffed878ebd97a6b2fe87f9cca338e5aeb3b479dca09f34d58ab0d396a0f6654a5eb9bdc28ec2126f4ce07af3daef03a96859dd2792"
+      ],
+      "storageProof": []
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "status": 200,
+  "json": {
+    "version": "fulu",
+    "execution_optimistic": false,
+    "finalized": false,
+    "data": {
+      "message": {
+        "slot": "10218922",
+        "proposer_index": "606",
+        "parent_root": "0x969f740cdff448df1e2c678df2f0c24d7e4979f08c822dc88e1a9e4d286a2487",
+        "state_root": "0x8d3adf98ba418249fb9c89b56f1a57a1724a20aaadb69c818f29a37f43454cd2",
+        "body": {
+          "execution_payload_header": {
+            "parent_hash": "not-a-hex-value",
+            "fee_recipient": "0x455e5aa18469bc6ccef49594645666c587a3a71b",
+            "state_root": "0xde230c2f2bf28f5066120f35f24c679a53dd8cd13ab30f1e3d9b7fe9e9f77b31",
+            "receipts_root": "0xb176d7155fc4008cbd82567b06a035b1d49903a1586c051fe0b1f1aaaf844c3c",
+            "logs_bloom": "0x14b47851808480820201b20a91d4525c1a852512b483260c0b10347e6c1233d6450a5160c180a2f398c5505620e1483ea091900c1a0c4001001a44aa7a6d9c4e52e151d07ec8c340a238318ac32b002540450f0a60ea25c6684218488a750793844601572a1905f8435115986673486030468a80145f374095190014762e07018102081a43346a4d2104404811030b0904090c414a4bc80d1004447329091b038689110162e0014004640d68090d220c3085288c3b8a012445a34312986c2dae4e0500061d886624dbe9122b484321a478043894058991ba1c405902682c24048416025f4c920c2288549b74a4add1041060531168944746b104a420cc609389",
+            "prev_randao": "0xe06b02d0318f498a8aae355d32ce6661b219655230b13ef9a1a470ebe4645251",
+            "block_number": "10822854",
+            "gas_limit": "59882873",
+            "gas_used": "21185517",
+            "timestamp": "1778360664",
+            "extra_data": "0x4e65746865726d696e642076312e33362e30",
+            "base_fee_per_gas": "18",
+            "block_hash": "0xacd1189e7253a2544d3df99c9fb7d279f993bd80ba1d152df530a7a0ea737a66",
+            "transactions_root": "0xc6cf8677f41f2652c2b19878a7e47e798030277b0577b81b14654766b0239aad",
+            "withdrawals_root": "0x73154b4844eb607220f8d5869b7f78a0ed8ae31bdb858d2bd0cb4173d439e37c",
+            "blob_gas_used": "393216",
+            "excess_blob_gas": "0"
+          }
+        }
+      }
+    }
+  }
+}

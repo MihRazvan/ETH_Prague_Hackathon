@@ -165,35 +165,41 @@ export class BeaconApiClient {
 
   async #fetchHeader(blockId: string): Promise<BeaconHeader> {
     const header = await this.#fetchJson<BeaconHeaderResponse>(`/eth/v1/beacon/headers/${blockId}`);
+    const message = expectObject(
+      expectObject(expectObject(expectObject(header, "beacon header response").data, "beacon header response.data").header, "beacon header response.data.header").message,
+      "beacon header response.data.header.message",
+    );
+
     return {
-      root: header.data.root,
-      slot: BigInt(header.data.header.message.slot),
-      proposerIndex: BigInt(header.data.header.message.proposer_index),
-      parentRoot: header.data.header.message.parent_root,
-      stateRoot: header.data.header.message.state_root,
-      bodyRoot: header.data.header.message.body_root,
+      root: expectHex(expectObject(expectObject(header, "beacon header response").data, "beacon header response.data").root, "beacon header response.data.root"),
+      slot: parseBigIntField(message.slot, "beacon header response.data.header.message.slot"),
+      proposerIndex: parseBigIntField(message.proposer_index, "beacon header response.data.header.message.proposer_index"),
+      parentRoot: expectHex(message.parent_root, "beacon header response.data.header.message.parent_root"),
+      stateRoot: expectHex(message.state_root, "beacon header response.data.header.message.state_root"),
+      bodyRoot: expectHex(message.body_root, "beacon header response.data.header.message.body_root"),
     };
   }
 
   #parseExecutionHeader(payload: BlindedBlockResponse["data"]["message"]["body"]["execution_payload_header"]): ExecutionPayloadHeader {
+    const header = expectObject(payload, "blinded block execution_payload_header");
     return {
-      parentHash: payload.parent_hash,
-      feeRecipient: payload.fee_recipient,
-      stateRoot: payload.state_root,
-      receiptsRoot: payload.receipts_root,
-      logsBloom: payload.logs_bloom,
-      prevRandao: payload.prev_randao,
-      blockNumber: BigInt(payload.block_number),
-      gasLimit: BigInt(payload.gas_limit),
-      gasUsed: BigInt(payload.gas_used),
-      timestamp: BigInt(payload.timestamp),
-      extraData: payload.extra_data,
-      baseFeePerGas: BigInt(payload.base_fee_per_gas),
-      blockHash: payload.block_hash,
-      transactionsRoot: payload.transactions_root,
-      withdrawalsRoot: payload.withdrawals_root,
-      blobGasUsed: BigInt(payload.blob_gas_used ?? "0"),
-      excessBlobGas: BigInt(payload.excess_blob_gas ?? "0"),
+      parentHash: expectHex(header.parent_hash, "blinded block execution_payload_header.parent_hash"),
+      feeRecipient: expectHex(header.fee_recipient, "blinded block execution_payload_header.fee_recipient"),
+      stateRoot: expectHex(header.state_root, "blinded block execution_payload_header.state_root"),
+      receiptsRoot: expectHex(header.receipts_root, "blinded block execution_payload_header.receipts_root"),
+      logsBloom: expectHex(header.logs_bloom, "blinded block execution_payload_header.logs_bloom"),
+      prevRandao: expectHex(header.prev_randao, "blinded block execution_payload_header.prev_randao"),
+      blockNumber: parseBigIntField(header.block_number, "blinded block execution_payload_header.block_number"),
+      gasLimit: parseBigIntField(header.gas_limit, "blinded block execution_payload_header.gas_limit"),
+      gasUsed: parseBigIntField(header.gas_used, "blinded block execution_payload_header.gas_used"),
+      timestamp: parseBigIntField(header.timestamp, "blinded block execution_payload_header.timestamp"),
+      extraData: expectHex(header.extra_data, "blinded block execution_payload_header.extra_data"),
+      baseFeePerGas: parseBigIntField(header.base_fee_per_gas, "blinded block execution_payload_header.base_fee_per_gas"),
+      blockHash: expectHex(header.block_hash, "blinded block execution_payload_header.block_hash"),
+      transactionsRoot: expectHex(header.transactions_root, "blinded block execution_payload_header.transactions_root"),
+      withdrawalsRoot: expectHex(header.withdrawals_root, "blinded block execution_payload_header.withdrawals_root"),
+      blobGasUsed: parseOptionalBigIntField(header.blob_gas_used, "blinded block execution_payload_header.blob_gas_used", 0n),
+      excessBlobGas: parseOptionalBigIntField(header.excess_blob_gas, "blinded block execution_payload_header.excess_blob_gas", 0n),
     };
   }
 
@@ -215,4 +221,36 @@ export class BeaconApiClient {
     }
     return (await response.json()) as T;
   }
+}
+
+function expectObject(value: unknown, field: string): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`Malformed beacon API response: expected ${field} to be an object`);
+  }
+  return value as Record<string, unknown>;
+}
+
+function expectHex(value: unknown, field: string): Hex {
+  if (typeof value !== "string" || !value.startsWith("0x")) {
+    throw new Error(`Malformed beacon API response: expected ${field} to be a hex string`);
+  }
+  return value as Hex;
+}
+
+function parseBigIntField(value: unknown, field: string): bigint {
+  if (typeof value !== "string") {
+    throw new Error(`Malformed beacon API response: expected ${field} to be a string`);
+  }
+  try {
+    return BigInt(value);
+  } catch {
+    throw new Error(`Malformed beacon API response: expected ${field} to be bigint-compatible`);
+  }
+}
+
+function parseOptionalBigIntField(value: unknown, field: string, fallback: bigint): bigint {
+  if (value === undefined) {
+    return fallback;
+  }
+  return parseBigIntField(value, field);
 }

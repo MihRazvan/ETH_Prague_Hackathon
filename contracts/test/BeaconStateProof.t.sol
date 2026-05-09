@@ -7,6 +7,7 @@ import { BeaconStateProof } from "../src/BeaconStateProof.sol";
 import { IBeaconStateProof } from "../src/interfaces/IBeaconStateProof.sol";
 import { SSZ } from "../src/lib/SSZ.sol";
 import { MockBeaconRoots } from "./mocks/MockBeaconRoots.sol";
+import { UnexpectedString, ContentLengthMismatch } from "../src/lib/RLPErrors.sol";
 
 contract BeaconStateProofTest is Test {
     using stdJson for string;
@@ -121,6 +122,24 @@ contract BeaconStateProofTest is Test {
         proof.storageProof = new bytes[](0);
 
         vm.expectRevert();
+        verifier.verifyStorageSlot(proof, 0);
+    }
+
+    function test_revertsForMalformedAccountProofNodeRlp() external {
+        IBeaconStateProof.ProofBundle memory proof = fixtureProof;
+        _setAnchorRoot(proof);
+        proof.accountProof[0] = hex"80";
+
+        vm.expectRevert(UnexpectedString.selector);
+        verifier.verifyStorageSlot(proof, 0);
+    }
+
+    function test_revertsForMalformedStorageProofNodeRlp() external {
+        IBeaconStateProof.ProofBundle memory proof = fixtureProof;
+        _setAnchorRoot(proof);
+        proof.storageProof[0] = hex"c1";
+
+        vm.expectRevert(ContentLengthMismatch.selector);
         verifier.verifyStorageSlot(proof, 0);
     }
 

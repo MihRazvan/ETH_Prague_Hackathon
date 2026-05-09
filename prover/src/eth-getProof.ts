@@ -23,10 +23,13 @@ export class EthereumRpcClient {
     return this.#request({
       method: "eth_getBlockByNumber",
       params: [numberToHex(blockNumber), false],
-      parser: (value) => ({
-        hash: value.hash as Hex,
-        timestamp: BigInt(value.timestamp),
-      }),
+      parser: (value) => {
+        const block = expectObject(value, "block");
+        return {
+          hash: expectHex(block.hash, "block.hash"),
+          timestamp: parseBigIntField(block.timestamp, "block.timestamp"),
+        };
+      },
     });
   }
 
@@ -36,15 +39,17 @@ export class EthereumRpcClient {
     return this.#request({
       method: "eth_getBlockByNumber",
       params: [numberToHex(blockNumber), false],
-      parser: (value) => ({
-        number: BigInt(value.number),
-        hash: value.hash as Hex,
-        timestamp: BigInt(value.timestamp),
-        parentBeaconRoot:
-          (value.parentBeaconRoot as Hex | undefined) ??
-          (value.parentBeaconBlockRoot as Hex | undefined) ??
-          null,
-      }),
+      parser: (value) => {
+        const block = expectObject(value, "block header");
+        const parentBeaconRoot = block.parentBeaconRoot ?? block.parentBeaconBlockRoot ?? null;
+
+        return {
+          number: parseBigIntField(block.number, "block.number"),
+          hash: expectHex(block.hash, "block.hash"),
+          timestamp: parseBigIntField(block.timestamp, "block.timestamp"),
+          parentBeaconRoot: parentBeaconRoot === null ? null : expectHex(parentBeaconRoot, "block.parentBeaconRoot"),
+        };
+      },
     });
   }
 
@@ -52,10 +57,22 @@ export class EthereumRpcClient {
     return this.#request({
       method: "eth_getProof",
       params: [account, [pad(slotKey)], numberToHex(blockNumber)],
-      parser: (value) => ({
-        accountProof: value.accountProof as Hex[],
-        storageProof: (value.storageProof?.[0]?.proof ?? []) as Hex[],
-      }),
+      parser: (value) => {
+        const proof = expectObject(value, "eth_getProof result");
+        const accountProof = expectHexArray(proof.accountProof, "eth_getProof.accountProof");
+        const storageEntries = expectArray(proof.storageProof, "eth_getProof.storageProof");
+        if (storageEntries.length === 0) {
+          throw new Error("Malformed eth_getProof response: eth_getProof.storageProof must contain at least one entry");
+        }
+
+        const firstEntry = expectObject(storageEntries[0], "eth_getProof.storageProof[0]");
+        const storageProof = expectHexArray(firstEntry.proof, "eth_getProof.storageProof[0].proof");
+
+        return {
+          accountProof,
+          storageProof,
+        };
+      },
     });
   }
 
@@ -106,4 +123,40 @@ export class EthereumRpcClient {
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function expectObject(value: unknown, field: string): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`Malformed RPC response: expected ${field} to be an object`);
+  }
+  return value as Record<string, unknown>;
+}
+
+function expectArray(value: unknown, field: string): unknown[] {
+  if (!Array.isArray(value)) {
+    throw new Error(`Malformed RPC response: expected ${field} to be an array`);
+  }
+  return value;
+}
+
+function expectHex(value: unknown, field: string): Hex {
+  if (typeof value !== "string" || !value.startsWith("0x")) {
+    throw new Error(`Malformed RPC response: expected ${field} to be a hex string`);
+  }
+  return value as Hex;
+}
+
+function expectHexArray(value: unknown, field: string): Hex[] {
+  return expectArray(value, field).map((item, index) => expectHex(item, `${field}[${index}]`));
+}
+
+function parseBigIntField(value: unknown, field: string): bigint {
+  if (typeof value !== "string") {
+    throw new Error(`Malformed RPC response: expected ${field} to be a string`);
+  }
+  try {
+    return BigInt(value);
+  } catch {
+    throw new Error(`Malformed RPC response: expected ${field} to be bigint-compatible`);
+  }
 }
