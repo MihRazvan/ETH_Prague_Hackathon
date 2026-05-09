@@ -1,0 +1,7 @@
+{
+  "status": 404,
+  "json": {
+    "code": 404,
+    "message": "not found"
+  }
+}

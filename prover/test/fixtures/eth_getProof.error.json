@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "json": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "error": {
+      "code": -32000,
+      "message": "header not found"
+    }
+  }
+}

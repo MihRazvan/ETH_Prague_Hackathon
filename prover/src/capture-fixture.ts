@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 
 import { encodeAbiParameters, getAddress, keccak256, type Address, type Hex } from "viem";
@@ -15,6 +16,21 @@ type DestinationHeaderRecord = {
   timestamp: string;
   parentBeaconRoot: Hex | null;
 };
+
+export interface ContractsFixturePayload {
+  bundle: Record<string, unknown>;
+  expected: {
+    verifiedValue: Hex;
+    sourceBlockNumber: string;
+    sourceAccount: Address;
+    sourceSlot: Hex;
+  };
+  metadata: {
+    borrower: Address;
+    destinationBlockNumber: string | null;
+    destinationTimestamp: string;
+  };
+}
 
 async function main(): Promise<void> {
   const config = loadConfig();
@@ -97,20 +113,16 @@ async function main(): Promise<void> {
   await writeFile(
     contractsFixturePath,
     JSON.stringify(
-      {
+      buildContractsFixturePayload({
         bundle: normalizedBundle,
-        expected: {
-          verifiedValue: expectedValue,
-          sourceBlockNumber: blockNumber.toString(),
-          sourceAccount: account,
-          sourceSlot: slot,
-        },
-        metadata: {
-          borrower,
-          destinationBlockNumber: destinationMetadata?.destinationBlockNumber.toString() ?? null,
-          destinationTimestamp: destinationMetadata?.destinationTimestamp.toString() ?? bundle.timestamp.toString(),
-        },
-      },
+        expectedValue,
+        sourceBlockNumber: blockNumber,
+        sourceAccount: account,
+        sourceSlot: slot,
+        borrower,
+        destinationBlockNumber: destinationMetadata?.destinationBlockNumber ?? null,
+        destinationTimestamp: destinationMetadata?.destinationTimestamp ?? bundle.timestamp,
+      }),
       null,
       2,
     ) + "\n",
@@ -137,7 +149,7 @@ async function main(): Promise<void> {
   );
 }
 
-async function captureDestinationWindow(
+export async function captureDestinationWindow(
   destinationRpc: EthereumRpcClient,
   targetBeaconRoot: Hex,
   targetTimestamp: bigint,
@@ -243,7 +255,7 @@ function requiredAddress(value: string | undefined, label: string): Address {
   return getAddress(value);
 }
 
-function computeVaultSlot(borrower: Address): Hex {
+export function computeVaultSlot(borrower: Address): Hex {
   return keccak256(
     encodeAbiParameters(
       [{ type: "address" }, { type: "uint256" }],
@@ -252,13 +264,13 @@ function computeVaultSlot(borrower: Address): Hex {
   );
 }
 
-function normalizeBundle(bundle: ProofBundle) {
+export function normalizeBundle(bundle: ProofBundle) {
   return JSON.parse(
     JSON.stringify(bundle, (_, value) => (typeof value === "bigint" ? value.toString() : value)),
   ) as Record<string, unknown>;
 }
 
-function extractExpectedValue(proofRaw: Awaited<ReturnType<typeof rpcRequest>>): Hex {
+export function extractExpectedValue(proofRaw: Awaited<ReturnType<typeof rpcRequest>>): Hex {
   const value = (proofRaw.json as any).result?.storageProof?.[0]?.value as string | undefined;
   if (!value) {
     throw new Error("Could not extract storage value from eth_getProof response.");
@@ -270,7 +282,35 @@ function toHex(value: bigint): Hex {
   return `0x${value.toString(16)}`;
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error));
-  process.exitCode = 1;
-});
+export function buildContractsFixturePayload(args: {
+  bundle: Record<string, unknown>;
+  expectedValue: Hex;
+  sourceBlockNumber: bigint;
+  sourceAccount: Address;
+  sourceSlot: Hex;
+  borrower: Address;
+  destinationBlockNumber: bigint | null;
+  destinationTimestamp: bigint;
+}): ContractsFixturePayload {
+  return {
+    bundle: args.bundle,
+    expected: {
+      verifiedValue: args.expectedValue,
+      sourceBlockNumber: args.sourceBlockNumber.toString(),
+      sourceAccount: args.sourceAccount,
+      sourceSlot: args.sourceSlot,
+    },
+    metadata: {
+      borrower: args.borrower,
+      destinationBlockNumber: args.destinationBlockNumber?.toString() ?? null,
+      destinationTimestamp: args.destinationTimestamp.toString(),
+    },
+  };
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  });
+}

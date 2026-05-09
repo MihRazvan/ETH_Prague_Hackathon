@@ -15,8 +15,11 @@ const ethGetProofFixture = readJson("fixtures/eth_getProof.source.json") as RpcF
 const beaconHeadFixture = readJson("fixtures/beacon_headers_head.json") as RestFixture;
 const beaconHeaderFixture = readJson("fixtures/beacon_header_10218922.json") as RestFixture;
 const blindedBlockFixture = readJson("fixtures/beacon_blinded_block_10218922.json") as RestFixture;
+const blindedBlock404Fixture = readJson("fixtures/beacon_blinded_block_404.json") as RestFixture;
 const destinationHeadersFixture = readJson("fixtures/base_headers_search_window.json") as DestinationHeaderFixture[];
+const destinationHeadersNoMatchFixture = readJson("fixtures/base_headers_no_match.json") as DestinationHeaderFixture[];
 const liveBundleFixture = readLiveBundleFixture();
+const ethGetProofErrorFixture = readJson("fixtures/eth_getProof.error.json") as RpcFixture;
 
 const SOURCE_RPC_URL = "https://source.example";
 const DESTINATION_RPC_URL = "https://destination.example";
@@ -125,10 +128,7 @@ describe("record/replay integration", () => {
       if (url === SOURCE_RPC_URL) {
         const body = JSON.parse(String(init?.body ?? "{}")) as { method: string };
         if (body.method === "eth_getProof") {
-          return jsonResponse(
-            { jsonrpc: "2.0", id: 1, error: { code: -32000, message: "header not found" } },
-            200,
-          );
+          return jsonResponse(ethGetProofErrorFixture.json, ethGetProofErrorFixture.status);
         }
       }
 
@@ -156,7 +156,7 @@ describe("record/replay integration", () => {
           return jsonResponse(beaconHeadFixture.json, beaconHeadFixture.status);
         }
         if (path.startsWith("/eth/v1/beacon/blinded_blocks/")) {
-          return jsonResponse({ code: 404, message: "not found" }, 404);
+          return jsonResponse(blindedBlock404Fixture.json, blindedBlock404Fixture.status);
         }
       }
 
@@ -190,15 +190,16 @@ describe("record/replay integration", () => {
         if (body.method === "eth_getBlockByNumber") {
           const blockTag = body.params[0] as `0x${string}`;
           const blockNumber = BigInt(blockTag);
+          const recorded = destinationHeadersNoMatchFixture.find((entry) => BigInt(entry.number) === blockNumber);
           return jsonResponse(
             {
               jsonrpc: "2.0",
               id: 1,
               result: {
                 number: toHex(blockNumber),
-                hash: `0x${blockNumber.toString(16).padStart(64, "0")}`,
-                timestamp: toHex(syntheticDestinationTimestamp(blockNumber)),
-                parentBeaconRoot: null,
+                hash: recorded?.hash ?? `0x${blockNumber.toString(16).padStart(64, "0")}`,
+                timestamp: recorded ? toHex(BigInt(recorded.timestamp)) : toHex(syntheticDestinationTimestamp(blockNumber)),
+                parentBeaconRoot: recorded?.parentBeaconRoot ?? null,
               },
             },
             200,

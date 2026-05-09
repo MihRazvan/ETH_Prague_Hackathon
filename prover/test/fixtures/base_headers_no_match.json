@@ -1,0 +1,38 @@
+[
+  {
+    "number": "41296188",
+    "hash": "0x53da8420dbb39f9d901d154051045844bf99a1e76ce36ff840883bc12152d62e",
+    "timestamp": "1778360664",
+    "parentBeaconRoot": null
+  },
+  {
+    "number": "41296189",
+    "hash": "0x227d9d99808fef1f03ef41d295c10488c45a316d36fc56626dc947715ff1a3b6",
+    "timestamp": "1778360666",
+    "parentBeaconRoot": null
+  },
+  {
+    "number": "41296190",
+    "hash": "0xb73ec98e3ab5b5789828f796c81701fe0dfab6e837a9011f80306280cec78cbf",
+    "timestamp": "1778360668",
+    "parentBeaconRoot": null
+  },
+  {
+    "number": "41296191",
+    "hash": "0x9c8ec7f537889fefbb9e4a67b8fd3fefc5b77afea73d591ee5d5f2aba4840f02",
+    "timestamp": "1778360670",
+    "parentBeaconRoot": null
+  },
+  {
+    "number": "41296192",
+    "hash": "0x538b1bae90fd068f1053a11ffe55583066aa932743c6836ce88a9d314722ef54",
+    "timestamp": "1778360672",
+    "parentBeaconRoot": null
+  },
+  {
+    "number": "41296193",
+    "hash": "0xd5173fa646f0a2aec3e1679058097bc14aded8705046cec4958f01fbd94322ec",
+    "timestamp": "1778360674",
+    "parentBeaconRoot": null
+  }
+]
