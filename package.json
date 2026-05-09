@@ -5,7 +5,8 @@
   "packageManager": "pnpm@10.28.0",
   "scripts": {
     "build": "pnpm --filter @trustless-state/prover build && pnpm --filter @trustless-state/webapp build",
-    "test": "pnpm --filter @trustless-state/prover test",
+    "test": "pnpm test:contracts && pnpm --filter @trustless-state/prover test",
+    "test:contracts": "cd contracts && forge test",
     "dev:web": "pnpm --filter @trustless-state/webapp dev",
     "dev:game": "pnpm --filter @trustless-state/game dev",
     "build:game": "pnpm --filter @trustless-state/game build"
