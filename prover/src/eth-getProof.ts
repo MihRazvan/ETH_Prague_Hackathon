@@ -30,6 +30,24 @@ export class EthereumRpcClient {
     });
   }
 
+  async getBlockHeaderByNumber(
+    blockNumber: bigint,
+  ): Promise<{ number: bigint; hash: Hex; timestamp: bigint; parentBeaconRoot: Hex | null }> {
+    return this.#request({
+      method: "eth_getBlockByNumber",
+      params: [numberToHex(blockNumber), false],
+      parser: (value) => ({
+        number: BigInt(value.number),
+        hash: value.hash as Hex,
+        timestamp: BigInt(value.timestamp),
+        parentBeaconRoot:
+          (value.parentBeaconRoot as Hex | undefined) ??
+          (value.parentBeaconBlockRoot as Hex | undefined) ??
+          null,
+      }),
+    });
+  }
+
   async getProof(account: Address, slotKey: Hex, blockNumber: bigint): Promise<EthGetProofResult> {
     return this.#request({
       method: "eth_getProof",
@@ -54,12 +72,12 @@ export class EthereumRpcClient {
     });
 
     if (!response.ok) {
-      throw new Error(`RPC request failed with status ${response.status}`);
+      throw new Error(`RPC ${request.method} to ${this.rpcUrl} failed with status ${response.status}`);
     }
 
     const json = await response.json();
     if (json.error) {
-      throw new Error(`RPC ${request.method} failed: ${json.error.message}`);
+      throw new Error(`RPC ${request.method} to ${this.rpcUrl} failed: ${json.error.message}`);
     }
 
     return request.parser(json.result);

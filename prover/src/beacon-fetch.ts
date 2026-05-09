@@ -1,3 +1,4 @@
+import { EthereumRpcClient } from "./eth-getProof.js";
 import { type Hex } from "viem";
 
 import type {
@@ -59,9 +60,11 @@ interface BlindedBlockResponse {
 
 export class BeaconApiClient {
   readonly #searchWindowSlots: number;
+  readonly #destinationSearchWindowBlocks: number;
 
   constructor(private readonly config: ProverConfig) {
     this.#searchWindowSlots = config.searchWindowSlots ?? 96;
+    this.#destinationSearchWindowBlocks = config.destinationSearchWindowBlocks ?? 6_000;
   }
 
   async findExecutionAnchor(blockHash: Hex): Promise<BeaconExecutionAnchor> {
@@ -93,6 +96,26 @@ export class BeaconApiClient {
 
     throw new Error(
       `Could not find beacon block for execution block ${blockHash} within the last ${this.#searchWindowSlots} slots`,
+    );
+  }
+
+  async findDestinationTimestamp(destinationRpc: EthereumRpcClient, targetBeaconRoot: Hex): Promise<bigint> {
+    const latestDestinationBlock = await destinationRpc.getBlockNumber();
+
+    for (let offset = 0; offset < this.#destinationSearchWindowBlocks; offset++) {
+      const blockNumber = latestDestinationBlock - BigInt(offset);
+      if (blockNumber < 0n) {
+        break;
+      }
+
+      const header = await destinationRpc.getBlockHeaderByNumber(blockNumber);
+      if (header.parentBeaconRoot?.toLowerCase() === targetBeaconRoot.toLowerCase()) {
+        return header.timestamp;
+      }
+    }
+
+    throw new Error(
+      `Could not find destination-chain timestamp for beacon root ${targetBeaconRoot} within the last ${this.#destinationSearchWindowBlocks} destination blocks`,
     );
   }
 

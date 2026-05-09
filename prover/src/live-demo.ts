@@ -132,7 +132,12 @@ async function main(): Promise<void> {
 
   const slotKey = computeVaultSlot(borrower);
   const blockNumber = sourceBlockOverride ?? (await sepoliaPublic.getBlockNumber());
-  const prover = new Prover({ ethRpcUrl, beaconApiUrl, searchWindowSlots: 256 });
+  const prover = new Prover({
+    ethRpcUrl,
+    beaconApiUrl,
+    destinationRpcUrl: baseRpcUrl,
+    searchWindowSlots: 256,
+  });
   const bundle = await prover.proveStorageSlot({
     account: vaultAddress,
     slot: slotKey,

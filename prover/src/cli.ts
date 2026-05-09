@@ -85,7 +85,11 @@ function loadConfig(args: Record<string, string>): ProverConfig {
     ethRpcUrl: args["eth-rpc"] ?? process.env.ETH_RPC_URL ?? "https://ethereum-sepolia.publicnode.com",
     beaconApiUrl:
       args["beacon-api"] ?? process.env.BEACON_API_URL ?? "https://ethereum-sepolia-beacon-api.publicnode.com",
+    destinationRpcUrl: args["destination-rpc"] ?? process.env.BASE_RPC_URL,
     searchWindowSlots: args["search-window"] ? Number(args["search-window"]) : undefined,
+    destinationSearchWindowBlocks: args["destination-search-window"]
+      ? Number(args["destination-search-window"])
+      : undefined,
   };
 }
 
@@ -136,11 +140,12 @@ async function maybeWriteJson(out: string | undefined, payload: unknown): Promis
 function printHelp(): void {
   console.log(`Usage:
   pnpm --filter @trustless-state/prover cli vault-slot --borrower 0x... [--mapping-slot 0] [--out tmp/slot.json]
-  pnpm --filter @trustless-state/prover cli prove-slot --account 0x... --slot 0x... [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--out tmp/bundle.json]
+  pnpm --filter @trustless-state/prover cli prove-slot --account 0x... --slot 0x... [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
 
 Environment variables:
   ETH_RPC_URL
   BEACON_API_URL
+  BASE_RPC_URL
 `);
 }
 

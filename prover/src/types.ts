@@ -37,7 +37,9 @@ export interface ProofBundle {
 export interface ProverConfig {
   ethRpcUrl: string;
   beaconApiUrl: string;
+  destinationRpcUrl?: string;
   searchWindowSlots?: number;
+  destinationSearchWindowBlocks?: number;
   beaconVersion?: "deneb" | "electra" | "fulu";
 }
 
@@ -61,6 +63,7 @@ export interface BeaconExecutionAnchor {
   executionHeader: ExecutionPayloadHeader;
   executionPayloadGIndex: bigint;
   executionHeaderProof: `0x${string}`[];
+  destinationTimestamp?: bigint;
 }
 
 export interface EthGetProofResult {

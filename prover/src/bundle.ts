@@ -1,15 +1,12 @@
 import type { BeaconExecutionAnchor, EthGetProofResult, ProofBundle, ProveStorageSlotArgs } from "./types.js";
 
-const EIP4788_PARENT_ROOT_TIMESTAMP_OFFSET = 12n;
-
 export function assembleBundle(
   args: ProveStorageSlotArgs,
   anchor: BeaconExecutionAnchor,
   ethProof: EthGetProofResult,
 ): ProofBundle {
   return {
-    // EIP-4788 exposes the parent beacon root keyed by the child execution timestamp.
-    timestamp: anchor.executionHeader.timestamp + EIP4788_PARENT_ROOT_TIMESTAMP_OFFSET,
+    timestamp: anchor.destinationTimestamp ?? anchor.executionHeader.timestamp + 12n,
     slot: anchor.header.slot,
     proposerIndex: anchor.header.proposerIndex,
     parentRoot: anchor.header.parentRoot,
