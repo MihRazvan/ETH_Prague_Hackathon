@@ -3,9 +3,10 @@ import { dirname, resolve } from "node:path";
 
 import { getAddress, isAddress, pad, type Address, type Hex } from "viem";
 
-import { ElsewareClient, computeMappingSlot, serializeUnknown } from "./index.js";
+import { serializeUnknown } from "./format.js";
+import { ElsewareClient, computeMappingSlot } from "./index.js";
 import { resolveProverConfig } from "./presets.js";
-import type { NetworkPresetName, ProverConfig } from "./index.js";
+import type { NetworkPresetName, ProverConfig } from "./types.js";
 
 type Command = "prove-slot" | "prove-vault-lock" | "vault-slot" | "doctor";
 

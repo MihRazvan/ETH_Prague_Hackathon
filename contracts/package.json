@@ -22,7 +22,10 @@
     "cross-chain"
   ],
   "files": [
-    "src",
+    "src/BeaconStateProof.sol",
+    "src/examples/VerifiedSlotConsumer.sol",
+    "src/interfaces",
+    "src/lib",
     "foundry.toml",
     "README.md",
     "LICENSE"

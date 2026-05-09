@@ -2,7 +2,7 @@ import { createPublicClient, createWalletClient, encodeAbiParameters, getAddress
 import { privateKeyToAccount } from "viem/accounts";
 import { baseSepolia, sepolia } from "viem/chains";
 
-import { Prover } from "./index.js";
+import { Prover } from "./prover.js";
 
 const vaultAbi = [
   {

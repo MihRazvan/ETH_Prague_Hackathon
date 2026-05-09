@@ -30,6 +30,7 @@ try {
   assertFile(join(packageRoot, "src", "examples", "VerifiedSlotConsumer.sol"));
   assertFile(join(packageRoot, "foundry.toml"));
   assertFile(join(packageRoot, "README.md"));
+  assertMissing(join(packageRoot, "src", "demo", "Lender.sol"));
 
   const readme = readFileSync(join(packageRoot, "README.md"), "utf8");
   if (!readme.includes("VerifiedSlotConsumer.sol")) {
@@ -50,5 +51,11 @@ function expectedTarballName() {
 function assertFile(path) {
   if (!existsSync(path)) {
     throw new Error(`Expected packaged file missing: ${path}`);
+  }
+}
+
+function assertMissing(path) {
+  if (existsSync(path)) {
+    throw new Error(`Unexpected packaged file present: ${path}`);
   }
 }

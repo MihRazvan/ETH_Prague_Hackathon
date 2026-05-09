@@ -1,6 +1,6 @@
 import { encodeAbiParameters, getAddress, isAddress, keccak256, type Address, type Hex } from "viem";
 
-import { Prover } from "./index.js";
+import { Prover } from "./prover.js";
 import { BUNDLE_VERSION, serializeBundle, toBundleEnvelope, type ProofBundleEnvelope, type SerializedProofBundle } from "./format.js";
 import { resolveProverConfig } from "./presets.js";
 import type {

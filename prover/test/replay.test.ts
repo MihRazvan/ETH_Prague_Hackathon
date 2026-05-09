@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { BeaconApiClient } from "../src/beacon-fetch.js";
 import { EthereumRpcClient } from "../src/eth-getProof.js";
-import { Prover } from "../src/index.js";
+import { Prover } from "../src/prover.js";
 import type { ProofBundle } from "../src/types.js";
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
