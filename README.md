@@ -7,6 +7,13 @@ Trustless cross-chain state verification for Ethereum-aligned rollups. This repo
 - `webapp/`: a thin Next.js demo shell for the verifier playground and lending flow
 - `docs/`: architecture and demo notes
 
+## For integrators
+
+Start here:
+- [docs/QUICKSTART.md](/Users/razvan/Repos/ETH_Prague_Hackathon/docs/QUICKSTART.md)
+- [docs/SOLIDITY_INTEGRATION.md](/Users/razvan/Repos/ETH_Prague_Hackathon/docs/SOLIDITY_INTEGRATION.md)
+- [prover/README.md](/Users/razvan/Repos/ETH_Prague_Hackathon/prover/README.md)
+
 ## Current v1 shape
 
 This first build focuses on the contract architecture and the prover boundary. The verifier contract is fully structured around:
@@ -32,7 +39,7 @@ The lending demo uses a single packed storage slot per borrower so both the acti
 
 The live path is still RPC-sensitive. Historical `eth_getProof` support varies across Sepolia providers, and Base Sepolia public RPCs can intermittently return `502` during repeated block lookups. The prover now retries transient failures and uses a timestamp-guided destination scan, but for demos you should still prefer reliable RPC endpoints.
 
-## Quick start
+## Workspace quick start
 
 ```bash
 cd contracts
@@ -47,7 +54,7 @@ pnpm install
 pnpm dev
 ```
 
-## Live proof commands
+## SDK / CLI highlights
 
 Compute the Sepolia vault slot for a borrower:
 
@@ -56,7 +63,7 @@ pnpm --filter @elseware/prover cli vault-slot \
   --borrower 0xYourBorrowerAddress
 ```
 
-Generate a live proof bundle:
+Generate a live proof bundle for a known slot:
 
 ```bash
 pnpm --filter @elseware/prover cli prove-slot \
@@ -64,6 +71,21 @@ pnpm --filter @elseware/prover cli prove-slot \
   --slot 0xYourComputedSlotKey \
   --block-number 10821452 \
   --out tmp/bundle.json
+```
+
+Generate a vault lock proof directly:
+
+```bash
+pnpm --filter @elseware/prover cli prove-vault-lock \
+  --vault 0xVaultAddress \
+  --borrower 0xYourBorrowerAddress \
+  --out tmp/bundle.json
+```
+
+Check endpoint compatibility first:
+
+```bash
+pnpm --filter @elseware/prover cli doctor
 ```
 
 Run the scripted lock-and-borrow flow after deployment:
@@ -75,18 +97,6 @@ pnpm --filter @elseware/prover live-demo
 The live scripts read defaults from [.env.example](/Users/razvan/Repos/ETH_Prague_Hackathon/.env.example).
 
 For live historical Sepolia proofs, `ETH_RPC_URL=https://sepolia.gateway.tenderly.co` is a safer default than many public endpoints.
-
-## What I Need From You
-
-To finish the real Sepolia/Base run, I need one of these:
-
-1. A funded demo `PRIVATE_KEY` in your shell env so I can deploy and execute the flow here.
-2. Existing deployed addresses for `Vault`, `BeaconStateProof`, and `Lender` if you already have them on Sepolia/Base Sepolia.
-
-Optional but helpful:
-
-- Your preferred Sepolia RPC and Base Sepolia RPC if you do not want to use the public defaults.
-- A specific demo wallet address if you want the vault slot and proof bundle prepared for that account.
 
 ## Repo map
 

@@ -1,16 +1,48 @@
 {
   "name": "@elseware/prover",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "description": "TypeScript SDK for assembling Elseware proof bundles for trustless Ethereum state verification on EIP-4788 destination chains.",
+  "license": "MIT",
+  "keywords": [
+    "ethereum",
+    "eip-4788",
+    "proofs",
+    "merkle-patricia-trie",
+    "ssz",
+    "cross-chain"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "bin": {
+    "elseware-prover": "./dist/cli.js"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "cli": "node ./dist/cli.js",
     "live-demo": "node ./dist/live-demo.js",
-    "capture-fixture": "node ./dist/capture-fixture.js"
+    "capture-fixture": "node ./dist/capture-fixture.js",
+    "prepublishOnly": "pnpm build && pnpm test"
   },
   "dependencies": {
     "@chainsafe/persistent-merkle-tree": "^1.1.0",
