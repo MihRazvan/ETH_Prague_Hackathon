@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+dist
+coverage
+pnpm-lock.yaml
+contracts/lib
+contracts/out
+contracts/cache
+.env
+.DS_Store

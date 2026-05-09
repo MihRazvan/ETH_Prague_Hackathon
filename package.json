@@ -1,0 +1,11 @@
+{
+  "name": "trustless-state",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.28.0",
+  "scripts": {
+    "build": "pnpm --filter @trustless-state/prover build && pnpm --filter @trustless-state/webapp build",
+    "test": "pnpm --filter @trustless-state/prover test",
+    "dev:web": "pnpm --filter @trustless-state/webapp dev"
+  }
+}

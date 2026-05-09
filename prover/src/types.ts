@@ -1,0 +1,69 @@
+export interface ExecutionPayloadHeader {
+  parentHash: `0x${string}`;
+  feeRecipient: `0x${string}`;
+  stateRoot: `0x${string}`;
+  receiptsRoot: `0x${string}`;
+  logsBloom: `0x${string}`;
+  prevRandao: `0x${string}`;
+  blockNumber: bigint;
+  gasLimit: bigint;
+  gasUsed: bigint;
+  timestamp: bigint;
+  extraData: `0x${string}`;
+  baseFeePerGas: bigint;
+  blockHash: `0x${string}`;
+  transactionsRoot: `0x${string}`;
+  withdrawalsRoot: `0x${string}`;
+  blobGasUsed: bigint;
+  excessBlobGas: bigint;
+}
+
+export interface ProofBundle {
+  timestamp: bigint;
+  slot: bigint;
+  proposerIndex: bigint;
+  parentRoot: `0x${string}`;
+  stateRoot: `0x${string}`;
+  bodyRoot: `0x${string}`;
+  executionPayloadGIndex: bigint;
+  executionHeader: ExecutionPayloadHeader;
+  executionHeaderProof: `0x${string}`[];
+  account: `0x${string}`;
+  slotKey: `0x${string}`;
+  accountProof: `0x${string}`[];
+  storageProof: `0x${string}`[];
+}
+
+export interface ProverConfig {
+  ethRpcUrl: string;
+  beaconApiUrl: string;
+  searchWindowSlots?: number;
+  beaconVersion?: "deneb" | "electra" | "fulu";
+}
+
+export interface ProveStorageSlotArgs {
+  account: `0x${string}`;
+  slot: `0x${string}`;
+  blockNumber?: bigint;
+}
+
+export interface BeaconHeader {
+  root: `0x${string}`;
+  slot: bigint;
+  proposerIndex: bigint;
+  parentRoot: `0x${string}`;
+  stateRoot: `0x${string}`;
+  bodyRoot: `0x${string}`;
+}
+
+export interface BeaconExecutionAnchor {
+  header: BeaconHeader;
+  executionHeader: ExecutionPayloadHeader;
+  executionPayloadGIndex: bigint;
+  executionHeaderProof: `0x${string}`[];
+}
+
+export interface EthGetProofResult {
+  accountProof: `0x${string}`[];
+  storageProof: `0x${string}`[];
+}
