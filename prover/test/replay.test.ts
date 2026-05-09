@@ -96,6 +96,136 @@ describe("record/replay integration", () => {
     expect(bundle.storageProof).toEqual(liveBundleFixture.bundle.storageProof);
     expect(bundle.timestamp).toBe(DESTINATION_TIMESTAMP);
   });
+
+  it("retries transient 500s on the source RPC", async () => {
+    let attempts = 0;
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === SOURCE_RPC_URL) {
+        const body = JSON.parse(String(init?.body ?? "{}")) as { method: string };
+        if (body.method === "eth_getBlockByNumber" && attempts++ === 0) {
+          return jsonResponse({ error: "temporary" }, 500);
+        }
+      }
+
+      return routeFetch(url, init);
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+    const rpc = new EthereumRpcClient(SOURCE_RPC_URL);
+    const block = await rpc.getBlockByNumber(BigInt(liveBundleFixture.expected.sourceBlockNumber));
+
+    expect(block.hash).toBe(liveBundleFixture.bundle.executionHeader.blockHash);
+    expect(attempts).toBe(2);
+  });
+
+  it("surfaces JSON-RPC errors from eth_getProof", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === SOURCE_RPC_URL) {
+        const body = JSON.parse(String(init?.body ?? "{}")) as { method: string };
+        if (body.method === "eth_getProof") {
+          return jsonResponse(
+            { jsonrpc: "2.0", id: 1, error: { code: -32000, message: "header not found" } },
+            200,
+          );
+        }
+      }
+
+      return routeFetch(url, init);
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+    const rpc = new EthereumRpcClient(SOURCE_RPC_URL);
+
+    await expect(
+      rpc.getProof(
+        liveBundleFixture.bundle.account,
+        liveBundleFixture.bundle.slotKey,
+        BigInt(liveBundleFixture.expected.sourceBlockNumber),
+      ),
+    ).rejects.toThrow("header not found");
+  });
+
+  it("fails cleanly when the beacon API cannot find a matching execution block", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.startsWith(BEACON_API_URL)) {
+        const path = url.slice(BEACON_API_URL.length);
+        if (path === "/eth/v1/beacon/headers/head") {
+          return jsonResponse(beaconHeadFixture.json, beaconHeadFixture.status);
+        }
+        if (path.startsWith("/eth/v1/beacon/blinded_blocks/")) {
+          return jsonResponse({ code: 404, message: "not found" }, 404);
+        }
+      }
+
+      throw new Error(`Unhandled fetch request: ${url}`);
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+    const client = new BeaconApiClient({
+      ethRpcUrl: SOURCE_RPC_URL,
+      beaconApiUrl: BEACON_API_URL,
+      searchWindowSlots: 4,
+    });
+
+    await expect(client.findExecutionAnchor(liveBundleFixture.bundle.executionHeader.blockHash)).rejects.toThrow(
+      "Could not find beacon block",
+    );
+  });
+
+  it("fails when the destination window never exposes the target beacon root", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === DESTINATION_RPC_URL) {
+        const body = JSON.parse(String(init?.body ?? "{}")) as {
+          method: string;
+          params: unknown[];
+        };
+
+        if (body.method === "eth_blockNumber") {
+          return jsonResponse({ jsonrpc: "2.0", id: 1, result: toHex(DESTINATION_BLOCK_NUMBER) }, 200);
+        }
+        if (body.method === "eth_getBlockByNumber") {
+          const blockTag = body.params[0] as `0x${string}`;
+          const blockNumber = BigInt(blockTag);
+          return jsonResponse(
+            {
+              jsonrpc: "2.0",
+              id: 1,
+              result: {
+                number: toHex(blockNumber),
+                hash: `0x${blockNumber.toString(16).padStart(64, "0")}`,
+                timestamp: toHex(syntheticDestinationTimestamp(blockNumber)),
+                parentBeaconRoot: null,
+              },
+            },
+            200,
+          );
+        }
+      }
+
+      throw new Error(`Unhandled fetch request: ${url}`);
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+    const client = new BeaconApiClient({
+      ethRpcUrl: SOURCE_RPC_URL,
+      beaconApiUrl: BEACON_API_URL,
+      destinationRpcUrl: DESTINATION_RPC_URL,
+      destinationSearchWindowBlocks: 8,
+    });
+    const destinationRpc = new EthereumRpcClient(DESTINATION_RPC_URL);
+
+    await expect(
+      client.findDestinationTimestamp(
+        destinationRpc,
+        TARGET_BEACON_ROOT,
+        TARGET_EXECUTION_TIMESTAMP,
+      ),
+    ).rejects.toThrow("Could not find destination-chain timestamp");
+  });
 });
 
 function routeFetch(url: string, init?: RequestInit): Promise<Response> {

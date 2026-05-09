@@ -106,6 +106,24 @@ contract BeaconStateProofTest is Test {
         verifier.verifyStorageSlot(proof, 0);
     }
 
+    function test_revertsForEmptyAccountProof() external {
+        IBeaconStateProof.ProofBundle memory proof = fixtureProof;
+        _setAnchorRoot(proof);
+        proof.accountProof = new bytes[](0);
+
+        vm.expectRevert();
+        verifier.verifyStorageSlot(proof, 0);
+    }
+
+    function test_revertsForEmptyStorageProof() external {
+        IBeaconStateProof.ProofBundle memory proof = fixtureProof;
+        _setAnchorRoot(proof);
+        proof.storageProof = new bytes[](0);
+
+        vm.expectRevert();
+        verifier.verifyStorageSlot(proof, 0);
+    }
+
     function _setAnchorRoot(IBeaconStateProof.ProofBundle memory proof) internal {
         bytes32 headerRoot =
             SSZ.beaconBlockHeaderRoot(proof.slot, proof.proposerIndex, proof.parentRoot, proof.stateRoot, proof.bodyRoot);
