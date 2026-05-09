@@ -1,0 +1,24 @@
+{
+  "name": "@elseware/solidity",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Solidity verifier contracts for Elseware trustless Ethereum state verification.",
+  "license": "MIT",
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "eip-4788",
+    "ssz",
+    "merkle-patricia-trie",
+    "cross-chain"
+  ],
+  "files": [
+    "src",
+    "foundry.toml",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

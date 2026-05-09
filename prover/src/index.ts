@@ -5,6 +5,7 @@ import type { PreflightReport, ProofBundle, ProveStorageSlotArgs, ProverConfig }
 
 export * from "./errors.js";
 export * from "./format.js";
+export * from "./presets.js";
 export * from "./sdk.js";
 export * from "./types.js";
 

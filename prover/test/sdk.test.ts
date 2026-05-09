@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { BUNDLE_VERSION, ElsewareClient, RpcResponseShapeError } from "../src/index.js";
+import { BUNDLE_VERSION, ElsewareClient, NETWORK_PRESETS, RpcResponseShapeError } from "../src/index.js";
 
 const SOURCE_RPC_URL = "https://source.example";
 const DESTINATION_RPC_URL = "https://destination.example";
@@ -20,6 +20,27 @@ describe("ElsewareClient", () => {
     expect(client.computeMappingSlot("0x92AAe0857979a139344f5b6F008e71F27A507522")).toBe(
       "0x72b3e5216fb2e942730ef6ca919ec6b688ed45f0e881ff7d07f299fd8e722e18",
     );
+  });
+
+  it("resolves tested network presets into concrete endpoints", () => {
+    const client = new ElsewareClient({
+      network: "sepolia-base-sepolia",
+    });
+
+    expect(client.config).toEqual(NETWORK_PRESETS["sepolia-base-sepolia"]);
+  });
+
+  it("lets explicit endpoint overrides win over preset defaults", () => {
+    const client = new ElsewareClient({
+      network: "sepolia-base-sepolia",
+      destinationRpcUrl: DESTINATION_RPC_URL,
+    });
+
+    expect(client.config).toMatchObject({
+      ethRpcUrl: NETWORK_PRESETS["sepolia-base-sepolia"].ethRpcUrl,
+      beaconApiUrl: NETWORK_PRESETS["sepolia-base-sepolia"].beaconApiUrl,
+      destinationRpcUrl: DESTINATION_RPC_URL,
+    });
   });
 
   it("exposes a stable bundle version and envelope helper", () => {

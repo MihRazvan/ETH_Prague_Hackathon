@@ -12,9 +12,7 @@ pnpm add @elseware/prover viem
 
 ```bash
 pnpm --filter @elseware/prover cli doctor \
-  --eth-rpc "$ETH_RPC_URL" \
-  --beacon-api "$BEACON_API_URL" \
-  --destination-rpc "$BASE_RPC_URL"
+  --network sepolia-base-sepolia
 ```
 
 If `overall: ready`, your source RPC, beacon API, and destination RPC are good enough for proof generation.
@@ -38,9 +36,7 @@ Vault-style mapping entry:
 pnpm --filter @elseware/prover cli prove-vault-lock \
   --vault 0xVaultAddress \
   --borrower 0xBorrowerAddress \
-  --eth-rpc "$ETH_RPC_URL" \
-  --beacon-api "$BEACON_API_URL" \
-  --destination-rpc "$BASE_RPC_URL"
+  --network sepolia-base-sepolia
 ```
 
 Both commands output a versioned bundle envelope.

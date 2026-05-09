@@ -42,6 +42,7 @@
     "cli": "node ./dist/cli.js",
     "live-demo": "node ./dist/live-demo.js",
     "capture-fixture": "node ./dist/capture-fixture.js",
+    "smoke-pack": "node ./scripts/smoke-pack.mjs",
     "prepublishOnly": "pnpm build && pnpm test"
   },
   "dependencies": {

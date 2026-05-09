@@ -1,0 +1,12 @@
+{
+  "name": "@elseware/example-prover-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "doctor": "node ./doctor.mjs",
+    "prove": "node ./prove-vault-lock.mjs"
+  },
+  "dependencies": {
+    "@elseware/prover": "workspace:*"
+  }
+}

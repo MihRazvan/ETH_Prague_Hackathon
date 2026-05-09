@@ -4,7 +4,8 @@ import { dirname, resolve } from "node:path";
 import { getAddress, isAddress, pad, type Address, type Hex } from "viem";
 
 import { ElsewareClient, computeMappingSlot, serializeUnknown } from "./index.js";
-import type { ProverConfig } from "./index.js";
+import { resolveProverConfig } from "./presets.js";
+import type { NetworkPresetName, ProverConfig } from "./index.js";
 
 type Command = "prove-slot" | "prove-vault-lock" | "vault-slot" | "doctor";
 
@@ -128,6 +129,20 @@ function parseArgs(argv: string[]): Record<string, string> & { help?: string; js
 }
 
 function loadConfig(args: Record<string, string>): ProverConfig {
+  const network = (args.network ?? process.env.ELSEWARE_NETWORK) as NetworkPresetName | undefined;
+  if (network) {
+    return resolveProverConfig({
+      network,
+      ethRpcUrl: args["eth-rpc"] ?? process.env.ETH_RPC_URL,
+      beaconApiUrl: args["beacon-api"] ?? process.env.BEACON_API_URL,
+      destinationRpcUrl: args["destination-rpc"] ?? process.env.BASE_RPC_URL,
+      searchWindowSlots: args["search-window"] ? Number(args["search-window"]) : undefined,
+      destinationSearchWindowBlocks: args["destination-search-window"]
+        ? Number(args["destination-search-window"])
+        : undefined,
+    });
+  }
+
   return {
     ethRpcUrl: args["eth-rpc"] ?? process.env.ETH_RPC_URL ?? "https://ethereum-sepolia.publicnode.com",
     beaconApiUrl:
@@ -230,11 +245,12 @@ type DoctorReport = {
 function printHelp(): void {
   console.log(`Usage:
   pnpm --filter @elseware/prover cli vault-slot --borrower 0x... [--mapping-slot 0] [--out tmp/slot.json]
-  pnpm --filter @elseware/prover cli prove-slot --account 0x... --slot 0x... [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
-  pnpm --filter @elseware/prover cli prove-vault-lock --vault 0x... --borrower 0x... [--mapping-slot 0] [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
-  pnpm --filter @elseware/prover cli doctor [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--json]
+  pnpm --filter @elseware/prover cli prove-slot --account 0x... --slot 0x... [--network sepolia-base-sepolia] [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
+  pnpm --filter @elseware/prover cli prove-vault-lock --vault 0x... --borrower 0x... [--network sepolia-base-sepolia] [--mapping-slot 0] [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
+  pnpm --filter @elseware/prover cli doctor [--network sepolia-base-sepolia] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--json]
 
 Environment variables:
+  ELSEWARE_NETWORK
   ETH_RPC_URL
   BEACON_API_URL
   BASE_RPC_URL

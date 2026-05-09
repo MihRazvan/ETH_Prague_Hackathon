@@ -2,7 +2,9 @@ import { encodeAbiParameters, getAddress, isAddress, keccak256, type Address, ty
 
 import { Prover } from "./index.js";
 import { BUNDLE_VERSION, serializeBundle, toBundleEnvelope, type ProofBundleEnvelope, type SerializedProofBundle } from "./format.js";
+import { resolveProverConfig } from "./presets.js";
 import type {
+  ElsewareClientConfig,
   PreflightReport,
   ProofBundle,
   ProveMappingValueArgs,
@@ -13,9 +15,11 @@ import type {
 
 export class ElsewareClient {
   readonly #prover: Prover;
+  readonly config: ProverConfig;
 
-  constructor(private readonly config: ProverConfig) {
-    this.#prover = new Prover(config);
+  constructor(config: ElsewareClientConfig) {
+    this.config = resolveProverConfig(config);
+    this.#prover = new Prover(this.config);
   }
 
   proveStorageSlot(args: ProveStorageSlotArgs): Promise<ProofBundle> {
@@ -64,7 +68,7 @@ export class ElsewareClient {
   }
 }
 
-export function createElsewareClient(config: ProverConfig): ElsewareClient {
+export function createElsewareClient(config: ElsewareClientConfig): ElsewareClient {
   return new ElsewareClient(config);
 }
 

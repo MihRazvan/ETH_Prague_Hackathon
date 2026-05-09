@@ -43,6 +43,20 @@ export interface ProverConfig {
   beaconVersion?: "deneb" | "electra" | "fulu";
 }
 
+export type NetworkPresetName = "sepolia-base-sepolia";
+
+export interface ProverPresetConfig {
+  network: NetworkPresetName;
+  ethRpcUrl?: string;
+  beaconApiUrl?: string;
+  destinationRpcUrl?: string;
+  searchWindowSlots?: number;
+  destinationSearchWindowBlocks?: number;
+  beaconVersion?: "deneb" | "electra" | "fulu";
+}
+
+export type ElsewareClientConfig = ProverConfig | ProverPresetConfig;
+
 export interface ProveStorageSlotArgs {
   account: `0x${string}`;
   slot: `0x${string}`;

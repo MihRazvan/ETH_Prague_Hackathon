@@ -20,9 +20,7 @@ pnpm add @elseware/prover viem
 import { ElsewareClient } from "@elseware/prover";
 
 const client = new ElsewareClient({
-  ethRpcUrl: process.env.ETH_RPC_URL!,
-  beaconApiUrl: process.env.BEACON_API_URL!,
-  destinationRpcUrl: process.env.BASE_RPC_URL!,
+  network: "sepolia-base-sepolia",
 });
 
 const bundle = await client.proveVaultLock({
@@ -42,6 +40,7 @@ console.log(envelope.bundle.slotKey);
 Creates the SDK client.
 
 Config fields:
+- `network?`
 - `ethRpcUrl`
 - `beaconApiUrl`
 - `destinationRpcUrl`
@@ -85,6 +84,7 @@ After building or installing the package:
 
 ```bash
 elseware-prover doctor
+elseware-prover doctor --network sepolia-base-sepolia
 elseware-prover vault-slot --borrower 0x...
 elseware-prover prove-slot --account 0x... --slot 0x...
 elseware-prover prove-vault-lock --vault 0x... --borrower 0x...
