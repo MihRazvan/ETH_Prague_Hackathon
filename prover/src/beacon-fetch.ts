@@ -70,7 +70,10 @@ export class BeaconApiClient {
 
     for (let offset = 0; offset < this.#searchWindowSlots; offset++) {
       const slot = headSlot - BigInt(offset);
-      const block = await this.#fetchJson<BlindedBlockResponse>(`/eth/v1/beacon/blinded_blocks/${slot.toString()}`);
+      const block = await this.#tryFetchJson<BlindedBlockResponse>(`/eth/v1/beacon/blinded_blocks/${slot.toString()}`);
+      if (!block) {
+        continue;
+      }
       const executionHeader = this.#parseExecutionHeader(block.data.message.body.execution_payload_header);
 
       if (executionHeader.blockHash.toLowerCase() !== blockHash.toLowerCase()) {
@@ -129,6 +132,17 @@ export class BeaconApiClient {
 
   async #fetchJson<T>(path: string): Promise<T> {
     const response = await fetch(`${this.config.beaconApiUrl}${path}`);
+    if (!response.ok) {
+      throw new Error(`Beacon API request failed for ${path} with status ${response.status}`);
+    }
+    return (await response.json()) as T;
+  }
+
+  async #tryFetchJson<T>(path: string): Promise<T | null> {
+    const response = await fetch(`${this.config.beaconApiUrl}${path}`);
+    if (response.status === 404) {
+      return null;
+    }
     if (!response.ok) {
       throw new Error(`Beacon API request failed for ${path} with status ${response.status}`);
     }

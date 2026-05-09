@@ -49,6 +49,6 @@ describe("assembleBundle", () => {
     expect(bundle.executionPayloadGIndex).toBe(25n);
     expect(bundle.accountProof).toEqual(["0xdd"]);
     expect(bundle.storageProof).toEqual(["0xee"]);
-    expect(bundle.timestamp).toBe(50n);
+    expect(bundle.timestamp).toBe(62n);
   });
 });

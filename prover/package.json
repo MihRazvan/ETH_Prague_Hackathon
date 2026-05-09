@@ -7,7 +7,9 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "cli": "node ./dist/cli.js",
+    "live-demo": "node ./dist/live-demo.js"
   },
   "dependencies": {
     "@chainsafe/persistent-merkle-tree": "^1.1.0",
@@ -15,6 +17,7 @@
     "viem": "^2.38.5"
   },
   "devDependencies": {
+    "@types/node": "^24.10.1",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   }

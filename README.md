@@ -45,6 +45,44 @@ pnpm install
 pnpm dev
 ```
 
+## Live proof commands
+
+Compute the Sepolia vault slot for a borrower:
+
+```bash
+pnpm --filter @trustless-state/prover cli vault-slot \
+  --borrower 0xYourBorrowerAddress
+```
+
+Generate a live proof bundle:
+
+```bash
+pnpm --filter @trustless-state/prover cli prove-slot \
+  --account 0xVaultAddress \
+  --slot 0xYourComputedSlotKey \
+  --out tmp/bundle.json
+```
+
+Run the scripted lock-and-borrow flow after deployment:
+
+```bash
+pnpm --filter @trustless-state/prover live-demo
+```
+
+The live scripts read defaults from [.env.example](/Users/razvan/Repos/ETH_Prague_Hackathon/.env.example).
+
+## What I Need From You
+
+To finish the real Sepolia/Base run, I need one of these:
+
+1. A funded demo `PRIVATE_KEY` in your shell env so I can deploy and execute the flow here.
+2. Existing deployed addresses for `Vault`, `BeaconStateProof`, and `Lender` if you already have them on Sepolia/Base Sepolia.
+
+Optional but helpful:
+
+- Your preferred Sepolia RPC and Base Sepolia RPC if you do not want to use the public defaults.
+- A specific demo wallet address if you want the vault slot and proof bundle prepared for that account.
+
 ## Repo map
 
 ```text
