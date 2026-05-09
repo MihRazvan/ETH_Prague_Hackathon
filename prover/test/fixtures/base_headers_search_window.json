@@ -1,0 +1,206 @@
+[
+  {
+    "number": "41296188",
+    "hash": "0x53da8420dbb39f9d901d154051045844bf99a1e76ce36ff840883bc12152d62e",
+    "timestamp": "1778360664",
+    "parentBeaconRoot": "0xa05d4e72563de5726700ce6df4317eda1ce775c1009e94425cdcb5dfa5838641"
+  },
+  {
+    "number": "41296189",
+    "hash": "0x227d9d99808fef1f03ef41d295c10488c45a316d36fc56626dc947715ff1a3b6",
+    "timestamp": "1778360666",
+    "parentBeaconRoot": "0xa05d4e72563de5726700ce6df4317eda1ce775c1009e94425cdcb5dfa5838641"
+  },
+  {
+    "number": "41296190",
+    "hash": "0xb73ec98e3ab5b5789828f796c81701fe0dfab6e837a9011f80306280cec78cbf",
+    "timestamp": "1778360668",
+    "parentBeaconRoot": "0xa05d4e72563de5726700ce6df4317eda1ce775c1009e94425cdcb5dfa5838641"
+  },
+  {
+    "number": "41296191",
+    "hash": "0x9c8ec7f537889fefbb9e4a67b8fd3fefc5b77afea73d591ee5d5f2aba4840f02",
+    "timestamp": "1778360670",
+    "parentBeaconRoot": "0x282a57c3e363463d27855a39a3c5431c39f374ac99476f6847345c54fdc69438"
+  },
+  {
+    "number": "41296192",
+    "hash": "0x538b1bae90fd068f1053a11ffe55583066aa932743c6836ce88a9d314722ef54",
+    "timestamp": "1778360672",
+    "parentBeaconRoot": "0x282a57c3e363463d27855a39a3c5431c39f374ac99476f6847345c54fdc69438"
+  },
+  {
+    "number": "41296193",
+    "hash": "0xd5173fa646f0a2aec3e1679058097bc14aded8705046cec4958f01fbd94322ec",
+    "timestamp": "1778360674",
+    "parentBeaconRoot": "0x282a57c3e363463d27855a39a3c5431c39f374ac99476f6847345c54fdc69438"
+  },
+  {
+    "number": "41296194",
+    "hash": "0x714ce5332da6b4763346e770e196cdea47162f0e35adc866844de49e473b5fd1",
+    "timestamp": "1778360676",
+    "parentBeaconRoot": "0x282a57c3e363463d27855a39a3c5431c39f374ac99476f6847345c54fdc69438"
+  },
+  {
+    "number": "41296195",
+    "hash": "0x95a68d4669fd02b458e3102ecc8fd4357bf4168a72f2aec6390d3f603efb3652",
+    "timestamp": "1778360678",
+    "parentBeaconRoot": "0x282a57c3e363463d27855a39a3c5431c39f374ac99476f6847345c54fdc69438"
+  },
+  {
+    "number": "41296196",
+    "hash": "0xa7ecdadf413af2219426c722a7f5d995b5fa695f6e44a3c1e57580f8bada83b1",
+    "timestamp": "1778360680",
+    "parentBeaconRoot": "0x282a57c3e363463d27855a39a3c5431c39f374ac99476f6847345c54fdc69438"
+  },
+  {
+    "number": "41296197",
+    "hash": "0xb39cfb4911a4119b7f89df9687cd9b02215ca14ad0162c58af0059dc2f4aca80",
+    "timestamp": "1778360682",
+    "parentBeaconRoot": "0x051034d99049a038d9bf86fc38d474f32057a1e8653cfe8040e2c49973905b30"
+  },
+  {
+    "number": "41296198",
+    "hash": "0x2389afbd457e00647931206857cad14219e6d1262d44855b002b576211f16f53",
+    "timestamp": "1778360684",
+    "parentBeaconRoot": "0x051034d99049a038d9bf86fc38d474f32057a1e8653cfe8040e2c49973905b30"
+  },
+  {
+    "number": "41296199",
+    "hash": "0x7622b90d46dc607f97081a619bacaee56e7d779fc0c714ffb7415ed3a62efc06",
+    "timestamp": "1778360686",
+    "parentBeaconRoot": "0x051034d99049a038d9bf86fc38d474f32057a1e8653cfe8040e2c49973905b30"
+  },
+  {
+    "number": "41296200",
+    "hash": "0xeadf9f934928b3928aa75fe35eeb7867d68f54b095e4f1475b4fa4fdefac1011",
+    "timestamp": "1778360688",
+    "parentBeaconRoot": "0x051034d99049a038d9bf86fc38d474f32057a1e8653cfe8040e2c49973905b30"
+  },
+  {
+    "number": "41296201",
+    "hash": "0x3a639709e8e5a5e37aaf6abadddfc7cf05f2149cb1497724a7552bdd65833935",
+    "timestamp": "1778360690",
+    "parentBeaconRoot": "0x051034d99049a038d9bf86fc38d474f32057a1e8653cfe8040e2c49973905b30"
+  },
+  {
+    "number": "41296202",
+    "hash": "0x30030213e735578ab55d993c46a907bf6ec2b483cc202b6afec1fd776ff86bb4",
+    "timestamp": "1778360692",
+    "parentBeaconRoot": "0x051034d99049a038d9bf86fc38d474f32057a1e8653cfe8040e2c49973905b30"
+  },
+  {
+    "number": "41296203",
+    "hash": "0x506d1d7cd014503990d1e18bc63daea31dca9cfea7706574e454042cfd6308b3",
+    "timestamp": "1778360694",
+    "parentBeaconRoot": "0x114dd4529cd2e118183a9fe69b154ad07ba9683fde62eba5499a532c99b2c6b5"
+  },
+  {
+    "number": "41296204",
+    "hash": "0x5cfa4283979408f4044af17ce109915fb103849dcd0d99791b5a42f0a24e0509",
+    "timestamp": "1778360696",
+    "parentBeaconRoot": "0x114dd4529cd2e118183a9fe69b154ad07ba9683fde62eba5499a532c99b2c6b5"
+  },
+  {
+    "number": "41296205",
+    "hash": "0x8d1e79496a876f878afb7ca874aeb9b157cfb34a6923a2abf7e6ae6baadecb83",
+    "timestamp": "1778360698",
+    "parentBeaconRoot": "0x114dd4529cd2e118183a9fe69b154ad07ba9683fde62eba5499a532c99b2c6b5"
+  },
+  {
+    "number": "41296206",
+    "hash": "0x2643e8dd0a38b8471f2d8fef1a039480a0c7582f0a2996b64ea2f00595812da9",
+    "timestamp": "1778360700",
+    "parentBeaconRoot": "0x114dd4529cd2e118183a9fe69b154ad07ba9683fde62eba5499a532c99b2c6b5"
+  },
+  {
+    "number": "41296207",
+    "hash": "0x0b0dfdbae3f9761c934ac4cae6d1718d392637e2d334dcbbf46317647160bbc6",
+    "timestamp": "1778360702",
+    "parentBeaconRoot": "0x114dd4529cd2e118183a9fe69b154ad07ba9683fde62eba5499a532c99b2c6b5"
+  },
+  {
+    "number": "41296208",
+    "hash": "0x6ab018714105779cbe8bd7e6edb4f9106a79b5a3bbb4df6482d0c8f9f4881959",
+    "timestamp": "1778360704",
+    "parentBeaconRoot": "0x114dd4529cd2e118183a9fe69b154ad07ba9683fde62eba5499a532c99b2c6b5"
+  },
+  {
+    "number": "41296209",
+    "hash": "0x7b53f55b3071980dca50631992f33486bee7aa3d4315d2747469d83828e1c673",
+    "timestamp": "1778360706",
+    "parentBeaconRoot": "0xbfb13df255c2e779f90d21a6ecd296501fcd35cdce728b7badb22877ae470088"
+  },
+  {
+    "number": "41296210",
+    "hash": "0xe0557ebbca41859f9ffb54e8b6b0012c5f2c1fbca554a1476dbf625663596729",
+    "timestamp": "1778360708",
+    "parentBeaconRoot": "0xbfb13df255c2e779f90d21a6ecd296501fcd35cdce728b7badb22877ae470088"
+  },
+  {
+    "number": "41296211",
+    "hash": "0x667235e4c1dd5890c35489cae4e421babbde95ae5fcb7b2dd331ecc10dce786b",
+    "timestamp": "1778360710",
+    "parentBeaconRoot": "0xbfb13df255c2e779f90d21a6ecd296501fcd35cdce728b7badb22877ae470088"
+  },
+  {
+    "number": "41296212",
+    "hash": "0x6bd45c8383d6fdeaa8f5a46ab762ab672b8aef2ce24b8f6f53d621c634d64ef5",
+    "timestamp": "1778360712",
+    "parentBeaconRoot": "0xbfb13df255c2e779f90d21a6ecd296501fcd35cdce728b7badb22877ae470088"
+  },
+  {
+    "number": "41296213",
+    "hash": "0x9e80a1bcc4ed039b367fde39b8308cd51ccb0325b567aa03f6048a8a96855374",
+    "timestamp": "1778360714",
+    "parentBeaconRoot": "0xbfb13df255c2e779f90d21a6ecd296501fcd35cdce728b7badb22877ae470088"
+  },
+  {
+    "number": "41296214",
+    "hash": "0xc4db1ab83a971dc15270811b236f6f3e54b3b562aa3dcd147557fa51582a805c",
+    "timestamp": "1778360716",
+    "parentBeaconRoot": "0xbfb13df255c2e779f90d21a6ecd296501fcd35cdce728b7badb22877ae470088"
+  },
+  {
+    "number": "41296215",
+    "hash": "0xa9f037b0d5e384d54dfaa90328005434457aaaadb247b65258168585582d8358",
+    "timestamp": "1778360718",
+    "parentBeaconRoot": "0x969f740cdff448df1e2c678df2f0c24d7e4979f08c822dc88e1a9e4d286a2487"
+  },
+  {
+    "number": "41296216",
+    "hash": "0x060d53aadbcb5685232c1f805d51bfeb318e30776e071fb657421060822b698a",
+    "timestamp": "1778360720",
+    "parentBeaconRoot": "0x969f740cdff448df1e2c678df2f0c24d7e4979f08c822dc88e1a9e4d286a2487"
+  },
+  {
+    "number": "41296217",
+    "hash": "0x281b13dc7df99bd4830970d5c681c94199fc3254c28c3af031ac35835ca61071",
+    "timestamp": "1778360722",
+    "parentBeaconRoot": "0x969f740cdff448df1e2c678df2f0c24d7e4979f08c822dc88e1a9e4d286a2487"
+  },
+  {
+    "number": "41296218",
+    "hash": "0xc149e3f8bdd9a0aaf4cbe4ba292613574e852c960ce59b018427e0dcb12049ef",
+    "timestamp": "1778360724",
+    "parentBeaconRoot": "0x969f740cdff448df1e2c678df2f0c24d7e4979f08c822dc88e1a9e4d286a2487"
+  },
+  {
+    "number": "41296219",
+    "hash": "0x0808f2900396481ab19989e7faf62296e393022a2084e4592dd9b503fc38fa82",
+    "timestamp": "1778360726",
+    "parentBeaconRoot": "0x969f740cdff448df1e2c678df2f0c24d7e4979f08c822dc88e1a9e4d286a2487"
+  },
+  {
+    "number": "41296220",
+    "hash": "0xa224bd4dc2838afadddcb130147d666f95c92fbdff3b967955ab4e6d8482746a",
+    "timestamp": "1778360728",
+    "parentBeaconRoot": "0x969f740cdff448df1e2c678df2f0c24d7e4979f08c822dc88e1a9e4d286a2487"
+  },
+  {
+    "number": "41296221",
+    "hash": "0xcd4730b16d57af9181784be5e4e94570e90e077fa862a135483f81985850740f",
+    "timestamp": "1778360730",
+    "parentBeaconRoot": "0x0eba3a8365a7172f3643410d75fffa2d742defd4998c25913f6fd59a74e8ec67"
+  }
+]

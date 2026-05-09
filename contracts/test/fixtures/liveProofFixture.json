@@ -53,5 +53,10 @@
     "sourceBlockNumber": "10822854",
     "sourceAccount": "0x0Dcc90C54b4c4AC9f8E490678843760006723Bbd",
     "sourceSlot": "0x72b3e5216fb2e942730ef6ca919ec6b688ed45f0e881ff7d07f299fd8e722e18"
+  },
+  "metadata": {
+    "borrower": "0x92AAe0857979a139344f5b6F008e71F27A507522",
+    "destinationBlockNumber": "41296221",
+    "destinationTimestamp": "1778360730"
   }
 }
