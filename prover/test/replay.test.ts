@@ -421,6 +421,57 @@ describe("record/replay integration", () => {
       ),
     ).rejects.toThrow("Malformed RPC response: expected block.timestamp to be a string");
   });
+
+  it("accepts destination headers that expose parentBeaconBlockRoot instead of parentBeaconRoot", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === DESTINATION_RPC_URL) {
+        const body = JSON.parse(String(init?.body ?? "{}")) as {
+          method: string;
+          params: unknown[];
+        };
+
+        if (body.method === "eth_blockNumber") {
+          return jsonResponse({ jsonrpc: "2.0", id: 1, result: toHex(DESTINATION_BLOCK_NUMBER) }, 200);
+        }
+
+        if (body.method === "eth_getBlockByNumber") {
+          const blockTag = body.params[0] as `0x${string}`;
+          const blockNumber = BigInt(blockTag);
+          const recorded = destinationHeadersFixture.find((entry) => BigInt(entry.number) === blockNumber);
+
+          return jsonResponse(
+            {
+              jsonrpc: "2.0",
+              id: 1,
+              result: {
+                number: toHex(blockNumber),
+                hash: recorded?.hash ?? `0x${blockNumber.toString(16).padStart(64, "0")}`,
+                timestamp: recorded ? toHex(BigInt(recorded.timestamp)) : toHex(syntheticDestinationTimestamp(blockNumber)),
+                parentBeaconBlockRoot: recorded?.parentBeaconRoot ?? null,
+              },
+            },
+            200,
+          );
+        }
+      }
+
+      throw new Error(`Unhandled fetch request: ${url}`);
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+    const client = new BeaconApiClient({
+      ethRpcUrl: SOURCE_RPC_URL,
+      beaconApiUrl: BEACON_API_URL,
+      destinationRpcUrl: DESTINATION_RPC_URL,
+      destinationSearchWindowBlocks: 64,
+    });
+    const destinationRpc = new EthereumRpcClient(DESTINATION_RPC_URL);
+
+    await expect(
+      client.findDestinationTimestamp(destinationRpc, TARGET_BEACON_ROOT, TARGET_EXECUTION_TIMESTAMP),
+    ).resolves.toBe(DESTINATION_TIMESTAMP);
+  });
 });
 
 function routeFetch(url: string, init?: RequestInit): Promise<Response> {

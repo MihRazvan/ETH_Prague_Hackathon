@@ -92,6 +92,66 @@ contract LenderTest is Test {
         assertTrue(active);
     }
 
+    function test_borrowRevertsForWrongSourceAccount() external {
+        bytes32 slot = keccak256(abi.encode(borrower, uint256(0)));
+        uint256 activeValue = (1 ether << 8) | 1;
+        mockVerifier.setResult(bytes32(activeValue), 10, address(0xCAFE), slot);
+
+        vm.expectRevert(abi.encodeWithSelector(Lender.InvalidSourceAccount.selector, vault, address(0xCAFE)));
+        vm.prank(borrower);
+        lender.borrow(_emptyProof());
+    }
+
+    function test_borrowRevertsForWrongSourceSlot() external {
+        uint256 activeValue = (1 ether << 8) | 1;
+        mockVerifier.setResult(bytes32(activeValue), 10, vault, bytes32(uint256(123)));
+
+        vm.expectRevert(
+            abi.encodeWithSelector(Lender.InvalidSourceSlot.selector, keccak256(abi.encode(borrower, uint256(0))), bytes32(uint256(123)))
+        );
+        vm.prank(borrower);
+        lender.borrow(_emptyProof());
+    }
+
+    function test_borrowRevertsForReleasedLockState() external {
+        bytes32 slot = keccak256(abi.encode(borrower, uint256(0)));
+        uint256 releasedValue = (1 ether << 8) | 2;
+        mockVerifier.setResult(bytes32(releasedValue), 10, vault, slot);
+
+        vm.expectRevert(abi.encodeWithSelector(Lender.InvalidLockState.selector, uint8(2)));
+        vm.prank(borrower);
+        lender.borrow(_emptyProof());
+    }
+
+    function test_borrowRevertsForZeroBorrowCapacity() external {
+        bytes32 slot = keccak256(abi.encode(borrower, uint256(0)));
+        uint256 tinyActiveValue = (1 << 8) | 1;
+        mockVerifier.setResult(bytes32(tinyActiveValue), 10, vault, slot);
+
+        vm.expectRevert(Lender.ZeroBorrowCapacity.selector);
+        vm.prank(borrower);
+        lender.borrow(_emptyProof());
+    }
+
+    function test_settleRevertsForInvalidSettlementAmount() external {
+        bytes32 slot = keccak256(abi.encode(borrower, uint256(0)));
+        uint256 activeValue = (1 ether << 8) | 1;
+        mockVerifier.setResult(bytes32(activeValue), 10, vault, slot);
+
+        vm.prank(borrower);
+        (uint256 loanId,) = lender.borrow(_emptyProof());
+
+        vm.prank(borrower);
+        lender.repay(loanId);
+
+        uint256 releasedWrongAmount = (2 ether << 8) | 2;
+        mockVerifier.setResult(bytes32(releasedWrongAmount), 11, vault, slot);
+
+        vm.expectRevert(abi.encodeWithSelector(Lender.InvalidSettlementAmount.selector, 1 ether, 2 ether));
+        vm.prank(borrower);
+        lender.settle(_emptyProof(), loanId);
+    }
+
     function _emptyProof() internal pure returns (IBeaconStateProof.ProofBundle memory proof) {
         proof.executionHeader.logsBloom = new bytes(256);
         return proof;
