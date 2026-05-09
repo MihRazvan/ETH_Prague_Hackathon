@@ -1,4 +1,4 @@
-# Trustless State
+# elseware
 
 Trustless cross-chain state verification for Ethereum-aligned rollups. This repo contains:
 
@@ -52,14 +52,14 @@ pnpm dev
 Compute the Sepolia vault slot for a borrower:
 
 ```bash
-pnpm --filter @trustless-state/prover cli vault-slot \
+pnpm --filter @elseware/prover cli vault-slot \
   --borrower 0xYourBorrowerAddress
 ```
 
 Generate a live proof bundle:
 
 ```bash
-pnpm --filter @trustless-state/prover cli prove-slot \
+pnpm --filter @elseware/prover cli prove-slot \
   --account 0xVaultAddress \
   --slot 0xYourComputedSlotKey \
   --block-number 10821452 \
@@ -69,7 +69,7 @@ pnpm --filter @trustless-state/prover cli prove-slot \
 Run the scripted lock-and-borrow flow after deployment:
 
 ```bash
-pnpm --filter @trustless-state/prover live-demo
+pnpm --filter @elseware/prover live-demo
 ```
 
 The live scripts read defaults from [.env.example](/Users/razvan/Repos/ETH_Prague_Hackathon/.env.example).

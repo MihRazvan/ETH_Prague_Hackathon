@@ -1,14 +1,14 @@
 {
-  "name": "trustless-state",
+  "name": "elseware",
   "private": true,
   "version": "0.1.0",
   "packageManager": "pnpm@10.28.0",
   "scripts": {
-    "build": "pnpm --filter @trustless-state/prover build && pnpm --filter @trustless-state/webapp build",
-    "test": "pnpm test:contracts && pnpm --filter @trustless-state/prover test",
+    "build": "pnpm --filter @elseware/prover build && pnpm --filter @elseware/webapp build",
+    "test": "pnpm test:contracts && pnpm --filter @elseware/prover test",
     "test:contracts": "cd contracts && forge test",
-    "dev:web": "pnpm --filter @trustless-state/webapp dev",
-    "dev:game": "pnpm --filter @trustless-state/game dev",
-    "build:game": "pnpm --filter @trustless-state/game build"
+    "dev:web": "pnpm --filter @elseware/webapp dev",
+    "dev:game": "pnpm --filter @elseware/game dev",
+    "build:game": "pnpm --filter @elseware/game build"
   }
 }

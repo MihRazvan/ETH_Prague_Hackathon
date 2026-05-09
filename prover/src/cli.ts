@@ -139,8 +139,8 @@ async function maybeWriteJson(out: string | undefined, payload: unknown): Promis
 
 function printHelp(): void {
   console.log(`Usage:
-  pnpm --filter @trustless-state/prover cli vault-slot --borrower 0x... [--mapping-slot 0] [--out tmp/slot.json]
-  pnpm --filter @trustless-state/prover cli prove-slot --account 0x... --slot 0x... [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
+  pnpm --filter @elseware/prover cli vault-slot --borrower 0x... [--mapping-slot 0] [--out tmp/slot.json]
+  pnpm --filter @elseware/prover cli prove-slot --account 0x... --slot 0x... [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
 
 Environment variables:
   ETH_RPC_URL

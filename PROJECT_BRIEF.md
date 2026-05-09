@@ -285,11 +285,11 @@ Internal modules:
 - `MPT.sol` — Merkle Patricia Trie verification (RLP decoding + path walking)
 - `BeaconStateProof.sol` — orchestrates the five-step chain
 
-### Artifact 2: TypeScript Prover Package (`@trustless-state/prover`)
+### Artifact 2: TypeScript Prover Package (`@elseware/prover`)
 npm-installable package. Public API:
 
 ```typescript
-import { Prover } from '@trustless-state/prover';
+import { Prover } from '@elseware/prover';
 
 const prover = new Prover({
   ethRpcUrl: 'https://ethereum-sepolia.publicnode.com',
@@ -322,7 +322,7 @@ Internal modules:
 ## Repository Structure
 
 ```
-trustless-state/
+elseware/
 ├── README.md                       # Public-facing overview
 ├── PROJECT_BRIEF.md                # This document
 ├── contracts/
