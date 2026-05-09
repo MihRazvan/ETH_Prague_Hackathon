@@ -15,7 +15,7 @@ export class EthereumRpcClient {
     return this.#request({
       method: "eth_blockNumber",
       params: [],
-      parser: (value) => BigInt(value),
+      parser: (value) => parseBigIntField(value, "blockNumber"),
     });
   }
 

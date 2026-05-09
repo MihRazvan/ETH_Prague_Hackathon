@@ -69,7 +69,11 @@ export class BeaconApiClient {
 
   async findExecutionAnchor(blockHash: Hex): Promise<BeaconExecutionAnchor> {
     const head = await this.#fetchJson<BeaconHeaderResponse>("/eth/v1/beacon/headers/head");
-    const headSlot = BigInt(head.data.header.message.slot);
+    const headMessage = expectObject(
+      expectObject(expectObject(expectObject(head, "beacon head response").data, "beacon head response.data").header, "beacon head response.data.header").message,
+      "beacon head response.data.header.message",
+    );
+    const headSlot = parseBigIntField(headMessage.slot, "beacon head response.data.header.message.slot");
 
     for (let offset = 0; offset < this.#searchWindowSlots; offset++) {
       const slot = headSlot - BigInt(offset);

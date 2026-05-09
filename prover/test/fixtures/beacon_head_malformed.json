@@ -1,0 +1,16 @@
+{
+  "status": 200,
+  "json": {
+    "execution_optimistic": false,
+    "finalized": false,
+    "data": {
+      "root": "0x0eba3a8365a7172f3643410d75fffa2d742defd4998c25913f6fd59a74e8ec67",
+      "canonical": true,
+      "header": {
+        "message": {
+          "slot": 10218922
+        }
+      }
+    }
+  }
+}

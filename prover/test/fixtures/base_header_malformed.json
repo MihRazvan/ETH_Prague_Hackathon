@@ -1,0 +1,12 @@
+{
+  "status": 200,
+  "json": {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+      "number": "0x275fec0",
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "parentBeaconRoot": "0x0eba3a8365a7172f3643410d75fffa2d742defd4998c25913f6fd59a74e8ec67"
+    }
+  }
+}

@@ -14,12 +14,15 @@ const sourceBlockFixture = readJson("fixtures/eth_getBlockByNumber.source.json")
 const sourceBlockMalformedFixture = readJson("fixtures/eth_getBlockByNumber.malformed.json") as RpcFixture;
 const ethGetProofFixture = readJson("fixtures/eth_getProof.source.json") as RpcFixture;
 const ethGetProofMalformedFixture = readJson("fixtures/eth_getProof.malformed.json") as RpcFixture;
+const ethBlockNumberMalformedFixture = readJson("fixtures/eth_blockNumber.malformed.json") as RpcFixture;
 const beaconHeadFixture = readJson("fixtures/beacon_headers_head.json") as RestFixture;
+const beaconHeadMalformedFixture = readJson("fixtures/beacon_head_malformed.json") as RestFixture;
 const beaconHeaderFixture = readJson("fixtures/beacon_header_10218922.json") as RestFixture;
 const beaconHeaderMalformedFixture = readJson("fixtures/beacon_header_malformed.json") as RestFixture;
 const blindedBlockFixture = readJson("fixtures/beacon_blinded_block_10218922.json") as RestFixture;
 const blindedBlock404Fixture = readJson("fixtures/beacon_blinded_block_404.json") as RestFixture;
 const blindedBlockMalformedFixture = readJson("fixtures/beacon_blinded_block_malformed.json") as RestFixture;
+const baseHeaderMalformedFixture = readJson("fixtures/base_header_malformed.json") as RpcFixture;
 const destinationHeadersFixture = readJson("fixtures/base_headers_search_window.json") as DestinationHeaderFixture[];
 const destinationHeadersNoMatchFixture = readJson("fixtures/base_headers_no_match.json") as DestinationHeaderFixture[];
 const liveBundleFixture = readLiveBundleFixture();
@@ -172,6 +175,27 @@ describe("record/replay integration", () => {
     );
   });
 
+  it("fails cleanly when the latest block number response is malformed", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === DESTINATION_RPC_URL) {
+        const body = JSON.parse(String(init?.body ?? "{}")) as { method: string };
+        if (body.method === "eth_blockNumber") {
+          return jsonResponse(ethBlockNumberMalformedFixture.json, ethBlockNumberMalformedFixture.status);
+        }
+      }
+
+      return routeFetch(url, init);
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+    const rpc = new EthereumRpcClient(DESTINATION_RPC_URL);
+
+    await expect(rpc.getBlockNumber()).rejects.toThrow(
+      "Malformed RPC response: expected blockNumber to be a string",
+    );
+  });
+
   it("fails cleanly when the eth_getProof response is malformed", async () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);
@@ -222,6 +246,28 @@ describe("record/replay integration", () => {
 
     await expect(client.findExecutionAnchor(liveBundleFixture.bundle.executionHeader.blockHash)).rejects.toThrow(
       "Could not find beacon block",
+    );
+  });
+
+  it("fails cleanly when the beacon head payload is malformed", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url === `${BEACON_API_URL}/eth/v1/beacon/headers/head`) {
+        return jsonResponse(beaconHeadMalformedFixture.json, beaconHeadMalformedFixture.status);
+      }
+
+      return routeFetch(url);
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+    const client = new BeaconApiClient({
+      ethRpcUrl: SOURCE_RPC_URL,
+      beaconApiUrl: BEACON_API_URL,
+      searchWindowSlots: 1,
+    });
+
+    await expect(client.findExecutionAnchor(liveBundleFixture.bundle.executionHeader.blockHash)).rejects.toThrow(
+      "Malformed beacon API response: expected beacon head response.data.header.message.slot to be a string",
     );
   });
 
@@ -337,6 +383,43 @@ describe("record/replay integration", () => {
         TARGET_EXECUTION_TIMESTAMP,
       ),
     ).rejects.toThrow("Could not find destination-chain timestamp");
+  });
+
+  it("fails cleanly when a destination header payload is malformed", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === DESTINATION_RPC_URL) {
+        const body = JSON.parse(String(init?.body ?? "{}")) as {
+          method: string;
+        };
+
+        if (body.method === "eth_blockNumber") {
+          return jsonResponse({ jsonrpc: "2.0", id: 1, result: toHex(DESTINATION_BLOCK_NUMBER) }, 200);
+        }
+        if (body.method === "eth_getBlockByNumber") {
+          return jsonResponse(baseHeaderMalformedFixture.json, baseHeaderMalformedFixture.status);
+        }
+      }
+
+      throw new Error(`Unhandled fetch request: ${url}`);
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+    const client = new BeaconApiClient({
+      ethRpcUrl: SOURCE_RPC_URL,
+      beaconApiUrl: BEACON_API_URL,
+      destinationRpcUrl: DESTINATION_RPC_URL,
+      destinationSearchWindowBlocks: 8,
+    });
+    const destinationRpc = new EthereumRpcClient(DESTINATION_RPC_URL);
+
+    await expect(
+      client.findDestinationTimestamp(
+        destinationRpc,
+        TARGET_BEACON_ROOT,
+        TARGET_EXECUTION_TIMESTAMP,
+      ),
+    ).rejects.toThrow("Malformed RPC response: expected block.timestamp to be a string");
   });
 });
 

@@ -7,7 +7,8 @@ import { BeaconStateProof } from "../src/BeaconStateProof.sol";
 import { IBeaconStateProof } from "../src/interfaces/IBeaconStateProof.sol";
 import { SSZ } from "../src/lib/SSZ.sol";
 import { MockBeaconRoots } from "./mocks/MockBeaconRoots.sol";
-import { UnexpectedString, ContentLengthMismatch } from "../src/lib/RLPErrors.sol";
+import { UnexpectedString, ContentLengthMismatch, UnexpectedList } from "../src/lib/RLPErrors.sol";
+import { BeaconStateProofHarness } from "./mocks/BeaconStateProofHarness.sol";
 
 contract BeaconStateProofTest is Test {
     using stdJson for string;
@@ -20,6 +21,7 @@ contract BeaconStateProofTest is Test {
     }
 
     BeaconStateProof internal verifier;
+    BeaconStateProofHarness internal harness;
     MockBeaconRoots internal beaconRoots;
     IBeaconStateProof.ProofBundle internal fixtureProof;
     ExpectedResult internal fixtureExpected;
@@ -27,6 +29,7 @@ contract BeaconStateProofTest is Test {
     function setUp() external {
         beaconRoots = new MockBeaconRoots();
         verifier = new BeaconStateProof(address(beaconRoots));
+        harness = new BeaconStateProofHarness();
         (fixtureProof, fixtureExpected) = _loadFixture();
     }
 
@@ -141,6 +144,35 @@ contract BeaconStateProofTest is Test {
 
         vm.expectRevert(ContentLengthMismatch.selector);
         verifier.verifyStorageSlot(proof, 0);
+    }
+
+    function test_revertsForAccountRlpWithWrongFieldCount() external {
+        vm.expectRevert(BeaconStateProof.InvalidAccountRlp.selector);
+        harness.extractStorageRoot(hex"c3808080");
+    }
+
+    function test_revertsForAccountRlpWithEmptyStorageRoot() external {
+        vm.expectRevert(BeaconStateProof.InvalidAccountProof.selector);
+        harness.extractStorageRoot(hex"c480808080");
+    }
+
+    function test_revertsForAccountRlpWithOversizedStorageRoot() external {
+        bytes memory accountRlp = bytes.concat(hex"e58080a1", new bytes(33), hex"80");
+
+        vm.expectRevert(BeaconStateProof.InvalidStorageValue.selector);
+        harness.extractStorageRoot(accountRlp);
+    }
+
+    function test_revertsForStorageValueLongerThan32Bytes() external {
+        bytes memory storageRlp = bytes.concat(hex"a1", new bytes(33));
+
+        vm.expectRevert(BeaconStateProof.InvalidStorageValue.selector);
+        harness.decodeStorageValue(storageRlp);
+    }
+
+    function test_revertsForStorageValueEncodedAsList() external {
+        vm.expectRevert(UnexpectedList.selector);
+        harness.decodeStorageValue(hex"c180");
     }
 
     function _setAnchorRoot(IBeaconStateProof.ProofBundle memory proof) internal {
