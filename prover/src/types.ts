@@ -49,6 +49,20 @@ export interface ProveStorageSlotArgs {
   blockNumber?: bigint;
 }
 
+export interface ProveMappingValueArgs {
+  account: `0x${string}`;
+  keyAddress: `0x${string}`;
+  mappingSlot?: bigint;
+  blockNumber?: bigint;
+}
+
+export interface ProveVaultLockArgs {
+  vault: `0x${string}`;
+  borrower: `0x${string}`;
+  mappingSlot?: bigint;
+  blockNumber?: bigint;
+}
+
 export interface PreflightReport {
   source: {
     ok: boolean;

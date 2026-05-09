@@ -4,6 +4,7 @@ import { assembleBundle } from "./bundle.js";
 import type { PreflightReport, ProofBundle, ProveStorageSlotArgs, ProverConfig } from "./types.js";
 
 export * from "./errors.js";
+export * from "./format.js";
 export * from "./sdk.js";
 export * from "./types.js";
 

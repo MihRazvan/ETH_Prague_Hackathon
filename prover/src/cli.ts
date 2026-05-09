@@ -3,10 +3,10 @@ import { dirname, resolve } from "node:path";
 
 import { getAddress, isAddress, pad, type Address, type Hex } from "viem";
 
-import { ElsewareClient, computeMappingSlot } from "./index.js";
-import type { ProofBundle, ProverConfig } from "./types.js";
+import { ElsewareClient, computeMappingSlot, serializeUnknown } from "./index.js";
+import type { ProverConfig } from "./index.js";
 
-type Command = "prove-slot" | "vault-slot" | "doctor";
+type Command = "prove-slot" | "prove-vault-lock" | "vault-slot" | "doctor";
 
 async function main(): Promise<void> {
   const [command, ...rest] = process.argv.slice(2) as [Command | undefined, ...string[]];
@@ -36,7 +36,7 @@ async function main(): Promise<void> {
 
     const bundle = await client.proveStorageSlot({ account, slot, blockNumber });
     const output = {
-      bundle: normalizeBundle(bundle),
+      ...client.toBundleEnvelope(bundle),
       metadata: {
         rpc: config.ethRpcUrl,
         beaconApi: config.beaconApiUrl,
@@ -52,11 +52,43 @@ async function main(): Promise<void> {
     return;
   }
 
+  if (command === "prove-vault-lock") {
+    const config = loadConfig(args);
+    const client = new ElsewareClient(config);
+    const vault = requiredAddress(args.vault, "--vault");
+    const borrower = requiredAddress(args.borrower, "--borrower");
+    const mappingSlot = args["mapping-slot"] ? BigInt(args["mapping-slot"]) : 0n;
+    const blockNumber = args["block-number"] ? BigInt(args["block-number"]) : undefined;
+
+    const bundle = await client.proveVaultLock({ vault, borrower, mappingSlot, blockNumber });
+    const output = {
+      ...client.toBundleEnvelope(bundle),
+      metadata: {
+        rpc: config.ethRpcUrl,
+        beaconApi: config.beaconApiUrl,
+        vault,
+        borrower,
+        mappingSlot: mappingSlot.toString(),
+        slot: client.computeMappingSlot(borrower, mappingSlot),
+        blockNumber: blockNumber?.toString() ?? bundle.executionHeader.blockNumber.toString(),
+        executionPayloadProofLength: bundle.executionHeaderProof.length,
+      },
+    };
+
+    await maybeWriteJson(args.out, output);
+    console.log(JSON.stringify(output, null, 2));
+    return;
+  }
+
   if (command === "doctor") {
     const config = loadConfig(args);
     const client = new ElsewareClient(config);
     const report = await client.preflight();
-    console.log(JSON.stringify(normalizeUnknown(report), null, 2));
+    if (args.json) {
+      console.log(JSON.stringify(serializeUnknown(report), null, 2));
+    } else {
+      printDoctorReport(serializeUnknown(report) as DoctorReport, config);
+    }
     if (!report.overallOk) {
       process.exitCode = 1;
     }
@@ -66,12 +98,16 @@ async function main(): Promise<void> {
   throw new Error(`Unknown command: ${command}`);
 }
 
-function parseArgs(argv: string[]): Record<string, string> & { help?: string } {
-  const args: Record<string, string> & { help?: string } = {};
+function parseArgs(argv: string[]): Record<string, string> & { help?: string; json?: string } {
+  const args: Record<string, string> & { help?: string; json?: string } = {};
   for (let i = 0; i < argv.length; i++) {
     const current = argv[i];
     if (current === "--help" || current === "-h") {
       args.help = "1";
+      continue;
+    }
+    if (current === "--json") {
+      args.json = "1";
       continue;
     }
 
@@ -124,18 +160,6 @@ function requiredHex32(value: string | undefined, flagName: string): Hex {
   return pad(value as Hex);
 }
 
-function normalizeBundle(bundle: ProofBundle) {
-  return JSON.parse(
-    JSON.stringify(bundle, (_, value) => (typeof value === "bigint" ? value.toString() : value)),
-  ) as Record<string, unknown>;
-}
-
-function normalizeUnknown(payload: unknown) {
-  return JSON.parse(
-    JSON.stringify(payload, (_, value) => (typeof value === "bigint" ? value.toString() : value)),
-  ) as Record<string, unknown>;
-}
-
 async function maybeWriteJson(out: string | undefined, payload: unknown): Promise<void> {
   if (!out) {
     return;
@@ -146,11 +170,69 @@ async function maybeWriteJson(out: string | undefined, payload: unknown): Promis
   await writeFile(path, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
 }
 
+function printDoctorReport(report: DoctorReport, config: ProverConfig): void {
+  const lines = [
+    "Elseware doctor",
+    `  source RPC: ${report.source.ok ? "ok" : "failed"} (${config.ethRpcUrl})`,
+    report.source.ok
+      ? `    latest block: ${report.source.latestBlockNumber} @ ${report.source.latestBlockTimestamp}`
+      : `    error: ${report.source.error}`,
+    `  beacon API: ${report.beacon.ok ? "ok" : "failed"} (${config.beaconApiUrl})`,
+    report.beacon.ok
+      ? `    head slot: ${report.beacon.headSlot}`
+      : `    error: ${report.beacon.error}`,
+  ];
+
+  if (report.destination) {
+    lines.push(`  destination RPC: ${report.destination.ok ? "ok" : "failed"} (${config.destinationRpcUrl})`);
+    lines.push(
+      report.destination.ok
+        ? `    latest block: ${report.destination.latestBlockNumber} @ ${report.destination.latestBlockTimestamp}`
+        : `    error: ${report.destination.error}`,
+    );
+    if (report.destination.ok) {
+      lines.push(
+        `    beacon root field: ${report.destination.supportsBeaconRootField ? "present" : "missing"}`,
+      );
+    }
+  }
+
+  lines.push(`  overall: ${report.overallOk ? "ready" : "not ready"}`);
+  if (!report.overallOk) {
+    lines.push("  next step: check the failing endpoint above or rerun with --json for machine-readable output");
+  }
+
+  console.log(lines.join("\n"));
+}
+
+type DoctorReport = {
+  source: {
+    ok: boolean;
+    latestBlockNumber?: string;
+    latestBlockTimestamp?: string;
+    error?: string;
+  };
+  beacon: {
+    ok: boolean;
+    headSlot?: string;
+    error?: string;
+  };
+  destination?: {
+    ok: boolean;
+    latestBlockNumber?: string;
+    latestBlockTimestamp?: string;
+    supportsBeaconRootField?: boolean;
+    error?: string;
+  };
+  overallOk: boolean;
+};
+
 function printHelp(): void {
   console.log(`Usage:
   pnpm --filter @elseware/prover cli vault-slot --borrower 0x... [--mapping-slot 0] [--out tmp/slot.json]
   pnpm --filter @elseware/prover cli prove-slot --account 0x... --slot 0x... [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
-  pnpm --filter @elseware/prover cli doctor [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL]
+  pnpm --filter @elseware/prover cli prove-vault-lock --vault 0x... --borrower 0x... [--mapping-slot 0] [--block-number 123] [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--out tmp/bundle.json]
+  pnpm --filter @elseware/prover cli doctor [--eth-rpc URL] [--beacon-api URL] [--destination-rpc URL] [--json]
 
 Environment variables:
   ETH_RPC_URL

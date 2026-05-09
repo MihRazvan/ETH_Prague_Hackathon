@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { ElsewareClient, RpcResponseShapeError } from "../src/index.js";
+import { BUNDLE_VERSION, ElsewareClient, RpcResponseShapeError } from "../src/index.js";
 
 const SOURCE_RPC_URL = "https://source.example";
 const DESTINATION_RPC_URL = "https://destination.example";
@@ -20,6 +20,59 @@ describe("ElsewareClient", () => {
     expect(client.computeMappingSlot("0x92AAe0857979a139344f5b6F008e71F27A507522")).toBe(
       "0x72b3e5216fb2e942730ef6ca919ec6b688ed45f0e881ff7d07f299fd8e722e18",
     );
+  });
+
+  it("exposes a stable bundle version and envelope helper", () => {
+    const client = new ElsewareClient({
+      ethRpcUrl: SOURCE_RPC_URL,
+      beaconApiUrl: BEACON_API_URL,
+    });
+
+    const envelope = client.toBundleEnvelope({
+      timestamp: 1n,
+      slot: 2n,
+      proposerIndex: 3n,
+      parentRoot: "0x11",
+      stateRoot: "0x22",
+      bodyRoot: "0x33",
+      executionPayloadGIndex: 25n,
+      executionHeader: {
+        parentHash: "0x44",
+        feeRecipient: "0x0000000000000000000000000000000000000456",
+        stateRoot: "0x55",
+        receiptsRoot: "0x66",
+        logsBloom: `0x${"00".repeat(256)}`,
+        prevRandao: "0x77",
+        blockNumber: 4n,
+        gasLimit: 5n,
+        gasUsed: 6n,
+        timestamp: 7n,
+        extraData: "0x",
+        baseFeePerGas: 8n,
+        blockHash: "0x88",
+        transactionsRoot: "0x99",
+        withdrawalsRoot: "0xaa",
+        blobGasUsed: 0n,
+        excessBlobGas: 0n,
+      },
+      executionHeaderProof: ["0xbb"],
+      account: "0x0000000000000000000000000000000000000123",
+      slotKey: "0xcc",
+      accountProof: ["0xdd"],
+      storageProof: ["0xee"],
+    });
+
+    expect(client.bundleVersion).toBe(BUNDLE_VERSION);
+    expect(envelope).toMatchObject({
+      bundleVersion: 1,
+      bundle: {
+        timestamp: "1",
+        executionPayloadGIndex: "25",
+        executionHeader: {
+          blockNumber: "4",
+        },
+      },
+    });
   });
 
   it("returns a healthy preflight report when endpoints are compatible", async () => {
@@ -129,6 +182,25 @@ describe("ElsewareClient", () => {
     await expect(
       new (await import("../src/eth-getProof.js")).EthereumRpcClient(SOURCE_RPC_URL).getBlockNumber(),
     ).rejects.toBeInstanceOf(RpcResponseShapeError);
+  });
+
+  it("builds the same vault slot through the opinionated vault-lock flow", async () => {
+    const client = new ElsewareClient({
+      ethRpcUrl: SOURCE_RPC_URL,
+      beaconApiUrl: BEACON_API_URL,
+    });
+    const spy = vi.spyOn(client, "proveStorageSlot").mockResolvedValue({} as never);
+
+    await client.proveVaultLock({
+      vault: "0x0Dcc90C54b4c4AC9f8E490678843760006723Bbd",
+      borrower: "0x92AAe0857979a139344f5b6F008e71F27A507522",
+    });
+
+    expect(spy).toHaveBeenCalledWith({
+        account: "0x0Dcc90C54b4c4AC9f8E490678843760006723Bbd",
+        slot: "0x72b3e5216fb2e942730ef6ca919ec6b688ed45f0e881ff7d07f299fd8e722e18",
+        blockNumber: undefined,
+      });
   });
 });
 
