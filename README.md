@@ -3,8 +3,9 @@
 
 Anyware is a trustless cross-chain state verification system that lets EVM rollups verify recent Ethereum state directly onchain using EIP-4788 beacon roots.
 
-**Project Brief:** [PROJECT_BRIEF.md](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/PROJECT_BRIEF.md)
-**Submission:** [Devfolio](https://devfolio.co/projects/ag-1f6a)
+[Project Brief](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/PROJECT_BRIEF.md) | [Devfolio](https://devfolio.co/projects/ag-1f6a)
+
+---
 
 [Landing Page]() | [Demo App]() | [Showcase]() | [Quickstart](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/QUICKSTART.md) | [Solidity Integration](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/SOLIDITY_INTEGRATION.md) | [Technical Architecture](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/ARCHITECTURE.md) | [Docs](https://github.com/MihRazvan/ETH_Prague_Hackathon/tree/main/docs)
 
@@ -16,12 +17,11 @@ Most cross-chain systems still depend on trust: A relayer says an event happened
 
 That extra trust layer has repeatedly become the weakest point in cross-chain infrastructure.
 
-Anyware exists to remove that dependency.
+<img width="4981" height="1927" alt="landing page 8" src="https://github.com/user-attachments/assets/64b7f31c-24d9-406e-9ac4-68acbadb4452" />
 
-Instead of importing trust from an external network, it imports cryptographic evidence directly from Ethereum itself.
+Anyware exists to remove that dependency. Instead of importing trust from an external network, it imports cryptographic evidence directly from Ethereum itself.
 
-The destination chain independently verifies:
-
+**The destination chain independently verifies:**
 - the beacon block really existed in Ethereum consensus
 - the execution block was included inside that beacon block
 - the execution stateRoot is authentic
@@ -159,4 +159,4 @@ EIP-4788 beacon root → Beacon block header root → Execution payload inclusio
 
 ---
 
-Built during ETHPrague 2026.
+Built with <3 during ETHPrague 2026.
