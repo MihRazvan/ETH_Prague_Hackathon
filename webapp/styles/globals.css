@@ -570,20 +570,20 @@ main {
 }
 
 .lpFeaturesHeader {
-  padding-top: 88px;
+  padding-top: 48px;
 }
 
 .lpFeaturesHeader h2 {
   margin: 0;
-  max-width: 980px;
-  font-size: clamp(3rem, 7vw, 6rem);
+  max-width: none;
+  font-size: clamp(3rem, 5.5vw, 5.2rem);
   line-height: 0.98;
   letter-spacing: -0.05em;
 }
 
 .lpFeaturesHeader span {
-  display: block;
-  margin-top: 14px;
+  display: inline;
+  margin-left: 24px;
   color: #e22906;
 }
 
@@ -591,56 +591,14 @@ main {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 18px;
-  margin-top: 70px;
+  margin-top: 48px;
 }
 
-.lpFeatureCard {
-  display: grid;
-  gap: 16px;
-  padding: 16px;
+.lpFeatureFrame {
+  width: 100%;
+  height: auto;
   border-radius: 24px;
-  background: rgba(217, 217, 217, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(22px);
-}
-
-.lpFeatureCard p {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.lpFeatureMock {
-  display: grid;
-  align-items: center;
-  justify-items: center;
-  height: 220px;
-  border-radius: 18px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03)),
-    rgba(0, 0, 0, 0.42);
-  overflow: hidden;
-}
-
-.lpFeatureMockTop,
-.lpFeatureMockBottom {
-  width: calc(100% - 32px);
-  height: 18px;
-  border-radius: 999px;
-  background: rgba(28, 213, 248, 0.35);
-}
-
-.lpFeatureMockCenter {
-  display: grid;
-  place-items: center;
-  width: 84px;
-  height: 84px;
-  border-radius: 50%;
-  border: 2px solid rgba(227, 40, 7, 0.8);
-  color: #fffefe;
-  font-size: 1.9rem;
-  font-weight: 800;
+  object-fit: contain;
 }
 
 .lpInstallHeader {

@@ -8,12 +8,12 @@ const githubPortraitAsset = "https://www.figma.com/api/mcp/asset/40e45857-dba9-4
 const githubGlitchTopAsset = "https://www.figma.com/api/mcp/asset/e80bd386-71da-4788-b0b1-4f25397c2c76";
 const githubGlitchBottomAsset = "https://www.figma.com/api/mcp/asset/a1d0d896-e666-4d39-828d-bc644e27ff72";
 
-const featureCards = [
-  "Works with EVM out of the box.",
-  "Verifies state directly via EIP-4788.",
-  "Replaces trusted messaging.",
-  "Keeps applications fully onchain.",
-  "Eliminates bridge and oracles.",
+const featureFrames = [
+  "/landing/Frame_1.png",
+  "/landing/Frame_2.png",
+  "/landing/Frame_3.png",
+  "/landing/Frame_4.png",
+  "/landing/Frame_5.png",
 ];
 
 export default function HomePage() {
@@ -125,21 +125,16 @@ export default function HomePage() {
           <div className="lpShell">
             <div className="lpFeaturesHeader">
               <h2>
-                Cross-chain truth was never native.
+                Cross-chain was
+                <br />
+                spiritually broken.
                 <span>{">>> Until Now!"}</span>
               </h2>
             </div>
 
             <div className="lpFeatureGrid">
-              {featureCards.map((card, index) => (
-                <article className="lpFeatureCard" key={card}>
-                  <div className="lpFeatureMock" aria-hidden="true">
-                    <div className="lpFeatureMockTop" />
-                    <div className="lpFeatureMockCenter">{index + 1}</div>
-                    <div className="lpFeatureMockBottom" />
-                  </div>
-                  <p>{card}</p>
-                </article>
+              {featureFrames.map((frame) => (
+                <img className="lpFeatureFrame" key={frame} alt="" src={frame} />
               ))}
             </div>
           </div>
