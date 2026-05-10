@@ -863,6 +863,16 @@ main {
   border-color: rgba(227, 40, 7, 0.7);
 }
 
+.demoWalletConnected {
+  border-color: rgba(118, 255, 176, 0.3);
+  background: rgba(118, 255, 176, 0.08);
+}
+
+.demoWalletConnected:hover {
+  border-color: rgba(227, 40, 7, 0.5);
+  background: rgba(227, 40, 7, 0.12);
+}
+
 .demoWorkbench {
   display: grid;
   gap: 16px;
@@ -924,6 +934,48 @@ main {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.demoChainIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: all 250ms ease;
+}
+
+.demoChainIndicatorDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 250ms ease;
+}
+
+.demoChainIndicator.is-eth {
+  background: rgba(98, 126, 234, 0.12);
+  border: 1px solid rgba(98, 126, 234, 0.3);
+  color: #a4b4f4;
+}
+
+.demoChainIndicator.is-eth .demoChainIndicatorDot {
+  background: #627eea;
+  box-shadow: 0 0 6px rgba(98, 126, 234, 0.6);
+}
+
+.demoChainIndicator.is-base {
+  background: rgba(0, 82, 255, 0.12);
+  border: 1px solid rgba(0, 82, 255, 0.3);
+  color: #6ea8ff;
+}
+
+.demoChainIndicator.is-base .demoChainIndicatorDot {
+  background: #0052ff;
+  box-shadow: 0 0 6px rgba(0, 82, 255, 0.6);
 }
 
 .demoProgress {
@@ -1012,30 +1064,45 @@ main {
 }
 
 /* Success state */
-.demoProgressStep.is-success .demoProgressDot {
+.demoProgressStep.is-done .demoProgressDot {
   border-color: #e32807;
   background: #e32807;
 }
 
-.demoProgressStep.is-success .demoProgressDotInner {
+.demoProgressStep.is-done .demoProgressDotInner {
   color: #fffefe;
 }
 
-.demoProgressStep.is-success .demoProgressLine {
+.demoProgressStep.is-done .demoProgressLine {
   background: #e32807;
 }
 
-.demoProgressStep.is-success .demoProgressLabel span {
+.demoProgressStep.is-done .demoProgressLabel span {
   color: rgba(255, 255, 255, 0.5);
 }
 
-.demoProgressStep.is-success .demoProgressLabel strong {
+.demoProgressStep.is-done .demoProgressLabel strong {
   color: #fffefe;
 }
 
 /* Active step line shows partial progress */
 .demoProgressStep.is-active .demoProgressLine {
   background: linear-gradient(90deg, #e32807, #1cd5f8);
+}
+
+/* Error state */
+.demoProgressStep.is-error .demoProgressDot {
+  border-color: #ff4444;
+  background: rgba(255, 68, 68, 0.15);
+}
+
+.demoProgressStep.is-error .demoProgressDotInner {
+  color: #ff4444;
+}
+
+.demoProgressStep.is-error .demoProgressLabel span,
+.demoProgressStep.is-error .demoProgressLabel strong {
+  color: #ff4444;
 }
 
 .demoMarketStat span,
@@ -1416,6 +1483,243 @@ main {
   background: rgba(0, 0, 0, 0.15);
 }
 
+/* ── Split-Chain Layout ── */
+
+.demoSplit {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  gap: 0;
+  align-items: stretch;
+}
+
+.demoChainPanel {
+  padding: 20px;
+  border-radius: 14px;
+  background: rgba(15, 15, 15, 0.55);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.demoChainHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 16px;
+}
+
+.demoChainHeader strong {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.demoChainHeader span {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.demoChainDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.demoChainDotEth {
+  background: #627eea;
+  box-shadow: 0 0 8px rgba(98, 126, 234, 0.5);
+}
+
+.demoChainDotBase {
+  background: #0052ff;
+  box-shadow: 0 0 8px rgba(0, 82, 255, 0.5);
+}
+
+.demoChainBody {
+  display: grid;
+  gap: 16px;
+  flex: 1;
+}
+
+.demoChainSection {
+  display: grid;
+  gap: 4px;
+}
+
+.demoChainLabel {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.demoChainValue {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.92rem;
+}
+
+.demoChainMono {
+  font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+  font-size: 0.85rem;
+}
+
+.demoChainHighlight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demoChainHighlight strong {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fffefe;
+}
+
+.demoChainBadgeGreen {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: rgba(118, 255, 176, 0.1);
+  border: 1px solid rgba(118, 255, 176, 0.25);
+  color: rgba(118, 255, 176, 0.9);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.demoChainStats {
+  display: flex;
+  gap: 20px;
+}
+
+.demoChainStats div {
+  display: grid;
+  gap: 2px;
+}
+
+.demoChainStats span {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.demoChainStats strong {
+  color: #fffefe;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.demoChainLink {
+  color: #1cd5f8;
+  font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(28, 213, 248, 0.3);
+}
+
+.demoExplorerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(28, 213, 248, 0.06);
+  border: 1px solid rgba(28, 213, 248, 0.15);
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.demoExplorerBtn:hover {
+  background: rgba(28, 213, 248, 0.12);
+  border-color: rgba(28, 213, 248, 0.35);
+}
+
+.demoExplorerHash {
+  color: #fffefe;
+  font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.demoExplorerArrow {
+  color: #1cd5f8;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.demoChainAction {
+  margin-top: auto;
+  width: 100%;
+  min-height: 44px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.demoChainAction:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Bridge / center connector */
+.demoBridge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 8px;
+}
+
+.demoBridgeLine {
+  flex: 1;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background 300ms ease;
+}
+
+.demoBridgeLine.is-active {
+  background: linear-gradient(180deg, #627eea, #1cd5f8, #0052ff);
+}
+
+.demoBridgeLabel {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  white-space: nowrap;
+  transition: color 300ms ease;
+}
+
+.demoBridgeLabel.is-active {
+  color: #1cd5f8;
+}
+
+/* Status & Done */
+.demoStatus {
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(28, 213, 248, 0.06);
+  border: 1px solid rgba(28, 213, 248, 0.15);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
 .demoError {
   margin: 0;
   padding: 12px 16px;
@@ -1424,6 +1728,129 @@ main {
   border: 1px solid rgba(227, 40, 7, 0.3);
   color: #ffb8a6;
   font-size: 0.88rem;
+  text-align: center;
+}
+
+.demoDoneCard {
+  padding: 24px;
+  border-radius: 14px;
+  background: rgba(118, 255, 176, 0.06);
+  border: 1px solid rgba(118, 255, 176, 0.2);
+  text-align: center;
+}
+
+.demoDoneCard strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+  color: rgba(118, 255, 176, 0.9);
+}
+
+.demoDoneCard p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* Pool info rows */
+.demoPoolInfo {
+  display: grid;
+  gap: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.demoPoolRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.82rem;
+}
+
+.demoPoolRow:last-child {
+  border-bottom: none;
+}
+
+.demoPoolRow span {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.demoPoolRow strong {
+  color: #fffefe;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.demoPoolRowSub {
+  padding: 4px 0;
+}
+
+.demoPoolRowSub span {
+  font-size: 0.72rem;
+}
+
+/* Proof details panel */
+.demoProofDetails {
+  padding: 18px;
+  border-radius: 14px;
+  background: rgba(15, 15, 15, 0.55);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.demoProofDetailsTitle {
+  color: rgba(118, 255, 176, 0.7);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.demoProofGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.demoProofItem {
+  display: grid;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.demoProofItem span {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.demoProofItem strong {
+  color: #fffefe;
+  font-size: 0.82rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.demoProofItemWide {
+  grid-column: span 2;
+}
+
+.demoProofItem strong.demoChainMono {
+  font-size: 0.72rem;
 }
 
 /* ── Unused demo classes kept for compatibility ── */

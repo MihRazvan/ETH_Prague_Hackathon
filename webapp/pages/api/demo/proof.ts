@@ -9,6 +9,7 @@ import { ensureDemoEnvLoaded } from "../../../lib/server-env";
 
 interface ProofRequestBody {
   sourceId?: string;
+  borrower?: string;
 }
 
 const DEMO_PROOF_TIMEOUT_MS = 45_000;
@@ -26,8 +27,7 @@ export default async function handler(
 
   ensureDemoEnvLoaded();
 
-  const { sourceId } = (req.body ?? {}) as ProofRequestBody;
-  const source = DEMO_SOURCE_FACTS.find((fact) => fact.id === sourceId) ?? DEMO_SOURCE_FACTS[0];
+  const { sourceId, borrower: rawBorrower } = (req.body ?? {}) as ProofRequestBody;
 
   const vaultAddress = process.env.VAULT_ADDRESS as `0x${string}` | undefined;
   const ethRpcUrl = process.env.ETH_RPC_URL;
@@ -55,7 +55,16 @@ export default async function handler(
 
     const latestBlockNumber = await sourceClient.getBlockNumber();
     const startedAt = Date.now();
-    const normalizedBorrower = getAddress(source.borrower);
+
+    // Use explicitly provided borrower address, fall back to source facts
+    let borrowerAddress: string;
+    if (rawBorrower) {
+      borrowerAddress = rawBorrower;
+    } else {
+      const source = DEMO_SOURCE_FACTS.find((fact) => fact.id === sourceId) ?? DEMO_SOURCE_FACTS[0];
+      borrowerAddress = source.borrower;
+    }
+    const normalizedBorrower = getAddress(borrowerAddress);
     const errors: string[] = [];
 
     for (const offset of DEMO_SAFE_BLOCK_OFFSETS) {
@@ -76,7 +85,7 @@ export default async function handler(
 
         res.status(200).json({
           ok: true,
-          sourceId: source.id,
+          sourceId: sourceId ?? "wallet-lock",
           borrower: normalizedBorrower,
           blockNumber: bundle.executionHeader.blockNumber.toString(),
           blockOffset: offset.toString(),
@@ -94,7 +103,7 @@ export default async function handler(
 
     res.status(500).json({
       ok: false,
-      error: `Could not assemble a live proof for ${source.label}. Tried ${DEMO_SAFE_BLOCK_OFFSETS.length} mature source blocks. Last error: ${errors.at(-1) ?? "Unknown error."}`,
+      error: `Could not assemble a live proof for ${normalizedBorrower}. Tried ${DEMO_SAFE_BLOCK_OFFSETS.length} mature source blocks. Last error: ${errors.at(-1) ?? "Unknown error."}`,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown proof generation error.";

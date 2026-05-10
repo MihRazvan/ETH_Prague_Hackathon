@@ -12,7 +12,7 @@ export const DEMO_SOURCE_FACTS = [
     blurb: "A live ETH lock already sits on Ethereum and can be proven on Base right now.",
   },
 ] as const satisfies readonly DemoSourceFactDefinition[];
-export const DEMO_SAFE_BLOCK_OFFSETS = [12n, 24n, 36n, 48n] as const;
+export const DEMO_SAFE_BLOCK_OFFSETS = [4n, 8n, 12n, 24n] as const;
 
 export interface DemoSourceFactDefinition {
   id: string;
@@ -172,11 +172,106 @@ export const verifierAbi = [
   },
 ] as const;
 
+export const lenderAbi = [
+  {
+    type: "function",
+    name: "borrow",
+    stateMutability: "nonpayable",
+    inputs: [
+      {
+        name: "proof",
+        type: "tuple",
+        components: [
+          { name: "timestamp", type: "uint64" },
+          { name: "slot", type: "uint64" },
+          { name: "proposerIndex", type: "uint64" },
+          { name: "parentRoot", type: "bytes32" },
+          { name: "stateRoot", type: "bytes32" },
+          { name: "bodyRoot", type: "bytes32" },
+          { name: "executionPayloadGIndex", type: "uint256" },
+          {
+            name: "executionHeader",
+            type: "tuple",
+            components: [
+              { name: "parentHash", type: "bytes32" },
+              { name: "feeRecipient", type: "address" },
+              { name: "stateRoot", type: "bytes32" },
+              { name: "receiptsRoot", type: "bytes32" },
+              { name: "logsBloom", type: "bytes" },
+              { name: "prevRandao", type: "bytes32" },
+              { name: "blockNumber", type: "uint64" },
+              { name: "gasLimit", type: "uint64" },
+              { name: "gasUsed", type: "uint64" },
+              { name: "timestamp", type: "uint64" },
+              { name: "extraData", type: "bytes" },
+              { name: "baseFeePerGas", type: "uint256" },
+              { name: "blockHash", type: "bytes32" },
+              { name: "transactionsRoot", type: "bytes32" },
+              { name: "withdrawalsRoot", type: "bytes32" },
+              { name: "blobGasUsed", type: "uint64" },
+              { name: "excessBlobGas", type: "uint64" },
+            ],
+          },
+          { name: "executionHeaderProof", type: "bytes32[]" },
+          { name: "account", type: "address" },
+          { name: "slotKey", type: "bytes32" },
+          { name: "accountProof", type: "bytes[]" },
+          { name: "storageProof", type: "bytes[]" },
+        ],
+      },
+    ],
+    outputs: [
+      { name: "loanId", type: "uint256" },
+      { name: "debtAmount", type: "uint256" },
+    ],
+  },
+  {
+    type: "function",
+    name: "loans",
+    stateMutability: "view",
+    inputs: [{ name: "", type: "uint256" }],
+    outputs: [
+      { name: "borrower", type: "address" },
+      { name: "collateralWei", type: "uint256" },
+      { name: "debtAmount", type: "uint256" },
+      { name: "sourceBlockNumber", type: "uint64" },
+      { name: "repaid", type: "bool" },
+      { name: "active", type: "bool" },
+    ],
+  },
+  {
+    type: "function",
+    name: "activeLoanIds",
+    stateMutability: "view",
+    inputs: [{ name: "", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+] as const;
+
+export const mockUsdcAbi = [
+  {
+    type: "function",
+    name: "balanceOf",
+    stateMutability: "view",
+    inputs: [{ name: "", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "decimals",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint8" }],
+  },
+] as const;
+
 export interface DemoConfig {
   ethRpcUrl: string;
   baseRpcUrl: string;
   vaultAddress: `0x${string}`;
   verifierAddress: `0x${string}`;
+  lenderAddress: `0x${string}`;
+  mockUsdcAddress: `0x${string}`;
   lockAmountEth: string;
   maxProofAgeSeconds: string;
   sources: DemoSourceFactSnapshot[];

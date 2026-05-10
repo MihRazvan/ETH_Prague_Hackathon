@@ -5,7 +5,6 @@ import { IBeaconStateProof } from "../interfaces/IBeaconStateProof.sol";
 import { MockUSDC } from "./MockUSDC.sol";
 
 contract Lender {
-    error LoanAlreadyActive();
     error InvalidSourceAccount(address expected, address actual);
     error InvalidSourceSlot(bytes32 expected, bytes32 actual);
     error InvalidLockState(uint8 status);
@@ -37,6 +36,9 @@ contract Lender {
     uint256 public immutable maxProofAge;
 
     uint256 public nextLoanId;
+    uint256 public totalLoansIssued;
+    uint256 public totalCollateralLocked;
+    uint256 public totalDebtIssued;
 
     mapping(uint256 => Loan) public loans;
     mapping(address => uint256) public activeLoanIds;
@@ -50,6 +52,7 @@ contract Lender {
     );
     event Repaid(uint256 indexed loanId, address indexed borrower, uint256 debtAmount);
     event Settled(uint256 indexed loanId, address indexed borrower);
+    event LoanClosed(uint256 indexed loanId, address indexed borrower);
 
     constructor(address verifier_, address vault_, uint256 ltvBps_, uint256 maxProofAge_) {
         verifier = IBeaconStateProof(verifier_);
@@ -59,8 +62,23 @@ contract Lender {
         stablecoin = new MockUSDC(address(this));
     }
 
+    /// @notice Borrow hUSDC against a proven Ethereum vault lock.
+    ///         If the caller already has an active loan, it is closed first.
     function borrow(IBeaconStateProof.ProofBundle calldata proof) external returns (uint256 loanId, uint256 debtAmount) {
-        if (activeLoanIds[msg.sender] != 0) revert LoanAlreadyActive();
+        // Auto-close any existing active loan for this borrower
+        uint256 existingLoanId = activeLoanIds[msg.sender];
+        if (existingLoanId != 0 && loans[existingLoanId].active) {
+            Loan storage oldLoan = loans[existingLoanId];
+            // Burn any remaining stablecoin balance (best-effort)
+            uint256 balance = stablecoin.balanceOf(msg.sender);
+            if (balance > 0) {
+                uint256 burnAmount = balance < oldLoan.debtAmount ? balance : oldLoan.debtAmount;
+                stablecoin.burnFrom(msg.sender, burnAmount);
+            }
+            oldLoan.active = false;
+            oldLoan.repaid = true;
+            emit LoanClosed(existingLoanId, msg.sender);
+        }
 
         (bytes32 verifiedValue, uint64 sourceBlockNumber, address sourceAccount, bytes32 sourceSlot) =
             verifier.verifyStorageSlot(proof, maxProofAge);
@@ -95,6 +113,10 @@ contract Lender {
             active: true
         });
         activeLoanIds[msg.sender] = loanId;
+
+        totalLoansIssued++;
+        totalCollateralLocked += collateralWei;
+        totalDebtIssued += debtAmount;
 
         stablecoin.mint(msg.sender, debtAmount);
         emit Borrowed(loanId, msg.sender, collateralWei, debtAmount, sourceBlockNumber);
@@ -142,6 +164,33 @@ contract Lender {
         loan.active = false;
         activeLoanIds[msg.sender] = 0;
         emit Settled(loanId, msg.sender);
+    }
+
+    // ── View helpers ──
+
+    /// @notice Get protocol-level stats for the frontend
+    function getProtocolStats() external view returns (
+        uint256 _totalLoansIssued,
+        uint256 _totalCollateralLocked,
+        uint256 _totalDebtIssued,
+        uint256 _nextLoanId
+    ) {
+        return (totalLoansIssued, totalCollateralLocked, totalDebtIssued, nextLoanId);
+    }
+
+    /// @notice Get a borrower's active loan details
+    function getActiveLoan(address borrower) external view returns (
+        uint256 loanId,
+        uint256 collateralWei,
+        uint256 debtAmount,
+        uint64 sourceBlockNumber,
+        bool repaid,
+        bool active
+    ) {
+        loanId = activeLoanIds[borrower];
+        if (loanId == 0) return (0, 0, 0, 0, false, false);
+        Loan storage loan = loans[loanId];
+        return (loanId, loan.collateralWei, loan.debtAmount, loan.sourceBlockNumber, loan.repaid, loan.active);
     }
 
     function _vaultSlot(address borrower) internal pure returns (bytes32) {

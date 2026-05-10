@@ -15,8 +15,10 @@ export default async function handler(
   const baseRpcUrl = process.env.BASE_RPC_URL;
   const vaultAddress = process.env.VAULT_ADDRESS as `0x${string}` | undefined;
   const verifierAddress = process.env.VERIFIER_ADDRESS as `0x${string}` | undefined;
+  const lenderAddress = process.env.LENDER_ADDRESS as `0x${string}` | undefined;
+  const mockUsdcAddress = process.env.MOCK_USDC_ADDRESS as `0x${string}` | undefined;
 
-  if (!ethRpcUrl || !baseRpcUrl || !vaultAddress || !verifierAddress) {
+  if (!ethRpcUrl || !baseRpcUrl || !vaultAddress || !verifierAddress || !lenderAddress || !mockUsdcAddress) {
     res.status(500).json({ error: "Missing demo environment configuration." });
     return;
   }
@@ -54,6 +56,8 @@ export default async function handler(
       baseRpcUrl,
       vaultAddress,
       verifierAddress,
+      lenderAddress,
+      mockUsdcAddress,
       lockAmountEth: process.env.LOCK_AMOUNT_ETH ?? "0.01",
       maxProofAgeSeconds: process.env.MAX_PROOF_AGE ?? "3600",
       sources,
