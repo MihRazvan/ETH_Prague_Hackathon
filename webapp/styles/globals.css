@@ -313,8 +313,7 @@ main {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 73% 13%, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.2) 12%, transparent 24%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.38));
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.42));
 }
 
 .lpNav {
@@ -448,43 +447,28 @@ main {
 }
 
 .lpHeroVisual {
-  display: flex;
-  justify-content: flex-end;
-  align-items: stretch;
-  position: relative;
-  min-height: 100%;
-  padding-right: 10px;
-  overflow: visible;
-}
-
-.lpHeroVisualAura {
-  position: absolute;
-  top: -8%;
-  right: 4%;
-  width: 520px;
-  height: 520px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.22) 44%, transparent 72%);
-  filter: blur(34px);
+  position: static;
 }
 
 .lpHeroFigure {
   position: absolute;
   z-index: 1;
-  right: 10px;
+  right: -140px;
   bottom: 0;
   width: auto;
-  height: calc(100% + 36px);
-  max-width: min(100%, 720px);
+  height: 92vh;
+  max-width: none;
   max-height: none;
   object-fit: contain;
   object-position: right bottom;
-  transform: none;
   filter: drop-shadow(0 24px 80px rgba(0, 0, 0, 0.4));
 }
 
-.lpStatementSection .lpShell,
+.lpStatementSection .lpShell {
+  padding-top: 118px;
+  padding-bottom: 0;
+}
+
 .lpFeaturesSection .lpShell,
 .lpInstallSection .lpShell,
 .lpGithubSection .lpShell {
@@ -493,21 +477,22 @@ main {
 
 .lpStatementScene {
   position: relative;
-  min-height: calc(100vh - 138px);
+  height: calc(100vh - 118px);
+  overflow: hidden;
 }
 
 .lpStatementGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.98fr);
-  gap: 54px;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
   align-items: start;
-  padding-top: 54px;
+  padding-top: 32px;
 }
 
 .lpStatementTitle h2 {
   margin: 0;
   max-width: 690px;
-  font-size: clamp(3.35rem, 4.8vw, 4.95rem);
+  font-size: clamp(2.6rem, 3.6vw, 3.8rem);
   font-weight: 700;
   line-height: 0.97;
   letter-spacing: -0.05em;
@@ -518,10 +503,10 @@ main {
 }
 
 .lpStatementIntro {
-  margin: 28px 0 0 6px;
+  margin: 24px 0 0 6px;
   max-width: 640px;
   color: #fffefe;
-  font-size: clamp(1.25rem, 1.52vw, 1.58rem);
+  font-size: clamp(1.1rem, 1.3vw, 1.4rem);
   font-weight: 600;
   line-height: 1.42;
 }
@@ -537,26 +522,28 @@ main {
 
 .lpStatementAside p {
   margin: 0;
-  max-width: 700px;
+  max-width: 780px;
   color: #fffefe;
-  font-size: clamp(2.2rem, 3.2vw, 3.35rem);
+  font-size: clamp(1.8rem, 2.6vw, 2.8rem);
   font-weight: 700;
-  line-height: 1.06;
+  line-height: 1.08;
   letter-spacing: -0.035em;
 }
 
 .lpStatementBand {
   display: grid;
   gap: 2px;
-  width: min(100%, 920px);
-  margin-top: 48px;
-  margin-left: clamp(320px, 30vw, 390px);
-  padding: 20px 26px 18px;
-  background: rgba(79, 79, 79, 0.6);
-  backdrop-filter: blur(22px);
-  font-size: clamp(2.55rem, 3.7vw, 4rem);
+  margin-top: 32px;
+  margin-left: clamp(240px, 28vw, 380px);
+  margin-right: calc(-1 * (100vw - 100%) / 2);
+  padding: 22px 28px 20px;
+  border: none;
+  border-radius: 0;
+  background: rgba(217, 217, 217, 0.1);
+  backdrop-filter: blur(14px);
+  font-size: clamp(2rem, 3vw, 3.2rem);
   font-weight: 800;
-  line-height: 1.02;
+  line-height: 1.08;
   letter-spacing: -0.045em;
   position: relative;
   z-index: 2;
@@ -565,32 +552,33 @@ main {
 .lpStatementFooter {
   display: grid;
   justify-items: start;
-  margin-left: clamp(500px, 44vw, 620px);
-  padding-top: 12px;
+  margin-left: clamp(380px, 38vw, 520px);
+  padding-top: 14px;
   position: relative;
   z-index: 2;
 }
 
 .lpStatementFooter p {
   margin: 0;
-  font-size: clamp(2.1rem, 2.7vw, 3rem);
+  font-size: clamp(1.6rem, 2.2vw, 2.4rem);
   font-weight: 500;
   letter-spacing: -0.04em;
 }
 
 .lpStatementFooter .lpPrimaryButton {
-  margin-top: 18px;
+  margin-top: 14px;
 }
 
 .lpStatementCharacter {
   position: absolute;
-  right: -18px;
+  right: -40px;
   bottom: 0;
-  width: min(100%, 420px);
-  max-height: 58vh;
+  width: auto;
+  height: 58vh;
+  max-width: none;
   object-fit: contain;
   object-position: right bottom;
-  z-index: 1;
+  z-index: 3;
   pointer-events: none;
 }
 

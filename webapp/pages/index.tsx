@@ -45,7 +45,7 @@ export default function HomePage() {
                   Anywhere.
                 </h1>
                 <p className="lpEyebrow">
-                  SOLIDITY LIBRARY AND TYPSCRIPT PROVER
+                  SOLIDITY LIBRARY AND TYPESCRIPT PROVER
                   <br />
                   THAT LETS ROLLUPS VERIFY ETHEREUM STATE
                 </p>
@@ -57,7 +57,6 @@ export default function HomePage() {
               </div>
 
               <div className="lpHeroVisual" aria-hidden="true">
-                <div className="lpHeroVisualAura" />
                 <img className="lpHeroFigure" alt="" src="/landing/character-section-1-2000.png" />
               </div>
             </div>
@@ -73,7 +72,7 @@ export default function HomePage() {
                   <h2>
                     Ethereum was <span>never</span>
                     <br />
-                    meant to be <span>trusted</span>
+                    meant to be <span>trust</span>ed
                     <br />
                     through <span>middleman</span>.
                   </h2>
@@ -112,13 +111,13 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              <img
-                alt=""
-                className="lpStatementCharacter"
-                src="/landing/character-section-2-1800.png"
-              />
             </div>
           </div>
+          <img
+            alt=""
+            className="lpStatementCharacter"
+            src="/landing/character-section-2-1800.png"
+          />
         </section>
 
         <section className="lpSection lpFeaturesSection">
