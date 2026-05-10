@@ -1,110 +1,166 @@
-# anyware
+# ANYWARE
+<img width="1920" height="360" alt="banner" src="https://github.com/user-attachments/assets/63058357-9802-420a-b31e-373184737080" />
 
-Trustless cross-chain state verification for Ethereum-aligned rollups. This repo contains:
+Elseware is a trustless cross-chain state verification system that lets EVM rollups verify recent Ethereum state directly onchain using EIP-4788 beacon roots.
 
-- `contracts/`: the on-chain verifier plus demo vault/lender contracts
-- `prover/`: a TypeScript package that assembles proof bundles from public RPC + beacon APIs
-- `webapp/`: a thin Next.js demo shell for the verifier playground and lending flow
-- `docs/`: architecture and demo notes
+**Project Brief:** [PROJECT_BRIEF.md](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/PROJECT_BRIEF.md)
 
-## For integrators
+[Landing Page]()| [Demo]() | [Quickstart](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/QUICKSTART.md) | [Solidity Integration](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/SOLIDITY_INTEGRATION.md) | [Technical Architecture](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/ARCHITECTURE.md) | [Docs](https://github.com/MihRazvan/ETH_Prague_Hackathon/tree/main/docs)
 
-Start here:
-- [docs/QUICKSTART.md](/Users/razvan/Repos/ETH_Prague_Hackathon/docs/QUICKSTART.md)
-- [docs/SOLIDITY_INTEGRATION.md](/Users/razvan/Repos/ETH_Prague_Hackathon/docs/SOLIDITY_INTEGRATION.md)
-- [prover/README.md](/Users/razvan/Repos/ETH_Prague_Hackathon/prover/README.md)
+---
 
-## Current v1 shape
+## Problem First
 
-This first build focuses on the contract architecture and the prover boundary. The verifier contract is fully structured around:
+Most cross-chain systems still depend on trust: A relayer says an event happened. A bridge signs a message. An oracle forwards state between chains.
 
-1. EIP-4788 beacon-root lookup
-2. SSZ verification of the beacon header
-3. SSZ verification of the execution payload header root against the beacon body root
-4. Ethereum state-trie account proof verification
-5. Ethereum storage-trie slot proof verification
-6. A freshness check based on source block timestamp
+That extra trust layer has repeatedly become the weakest point in cross-chain infrastructure.
 
-The lending demo uses a single packed storage slot per borrower so both the active lock and released lock states are provable with inclusion proofs.
+Anyware exists to remove that dependency.
 
-## What is working today
+Instead of importing trust from an external network, it imports cryptographic evidence directly from Ethereum itself.
 
-- Solidity contracts compile and the Foundry test suite passes.
-- The prover builds and can locate the matching blinded beacon block for a live Sepolia execution block, then generate the SSZ sibling path for `execution_payload_header`.
-- The prover can now assemble a full live Sepolia storage proof bundle and resolve the matching Base Sepolia EIP-4788 timestamp for on-chain verification.
-- The native demo flow has successfully borrowed against the real Base Sepolia lender using a proof sourced from Sepolia vault state.
-- The webapp builds as a static Next.js shell for the verifier and lending demo.
+The destination chain independently verifies:
 
-## Honest current limitation
+- the beacon block really existed in Ethereum consensus
+- the execution block was included inside that beacon block
+- the execution stateRoot is authentic
+- the account exists under that state root
+- the storage slot exists under that account storage root
+- the slot value matches the claimed state
 
-The live path is still RPC-sensitive. Historical `eth_getProof` support varies across Sepolia providers, and Base Sepolia public RPCs can intermittently return `502` during repeated block lookups. The prover now retries transient failures and uses a timestamp-guided destination scan, but for demos you should still prefer reliable RPC endpoints.
+No relayer trust. No multisig bridge trust. No oracle trust. Only Ethereum consensus and cryptographic inclusion proofs.
 
-## Workspace quick start
+---
 
-```bash
-cd contracts
-forge build
+## Overview
 
-cd ../prover
-pnpm install
-pnpm build
+Anyware is a two-part system:
+- An offchain prover
+- An onchain verifier
 
-cd ../webapp
-pnpm install
-pnpm dev
-```
+The prover gathers publicly available Ethereum execution and beacon-chain data, assembles trie proofs and SSZ proofs, and packages them into a portable bundle. The verifier consumes that bundle and validates it entirely onchain against the destination chain’s native EIP-4788 beacon-root oracle.
 
-## SDK / CLI highlights
+### Core Principles
 
-Compute the Sepolia vault slot for a borrower:
+1. **Trust Ethereum Consensus, Not Middleware**
+   Ethereum already exposes consensus roots through EIP-4788. Anyware builds directly on top of that trust anchor.
 
-```bash
-pnpm --filter anyware-prover cli vault-slot \
-  --borrower 0xYourBorrowerAddress
-```
+2. **Proofs Over Messages**
+   The system verifies state cryptographically instead of accepting externally signed claims.
 
-Generate a live proof bundle for a known slot:
+3. **Verification Happens Onchain**
+  Offchain infrastructure assembles evidence. Smart contracts decide truth. Cross-Chain Reads Should Feel Native
+Ethereum state becomes locally verifiable on any EVM exposing beacon roots.
 
-```bash
-pnpm --filter anyware-prover cli prove-slot \
-  --account 0xVaultAddress \
-  --slot 0xYourComputedSlotKey \
-  --block-number 10821452 \
-  --out tmp/bundle.json
-```
+4. **Cross-Chain Reads Should Feel Native**
+   Ethereum state becomes locally verifiable on any EVM chain exposing beacon roots.
 
-Generate a vault lock proof directly:
+---
 
-```bash
-pnpm --filter anyware-prover cli prove-vault-lock \
-  --vault 0xVaultAddress \
-  --borrower 0xYourBorrowerAddress \
-  --out tmp/bundle.json
-```
+## How It Works
 
-Check endpoint compatibility first:
+At a high level, Anyware proves this statement:
 
-```bash
-pnpm --filter anyware-prover cli doctor
-```
+> *This exact Ethereum storage slot had this exact value in this exact execution block, and that execution block was really finalized by Ethereum consensus.*
 
-Run the scripted lock-and-borrow flow after deployment:
+<img width="4981" height="2378" alt="flow 1" src="https://github.com/user-attachments/assets/e77ede6d-7fb0-4764-b80b-48d86959f487" />
 
-```bash
-pnpm --filter anyware-prover live-demo
-```
+### Offchain prover
 
-The live scripts read defaults from [.env.example](/Users/razvan/Repos/ETH_Prague_Hackathon/.env.example).
+**The prover:**
+1. fetches Ethereum execution-state proofs using eth_getProof
+2. gathers account and storage trie branches
+3. finds the matching beacon block
+4. builds the SSZ Merkle branch for the execution payload header
+5. resolves the destination-chain EIP-4788 timestamp anchor
+6. packages everything into a portable proof bundle
 
-For live historical Sepolia proofs, `ETH_RPC_URL=https://sepolia.gateway.tenderly.co` is a safer default than many public endpoints.
+> *The prover assembles publicly verifiable evidence.*
 
-## Repo map
+### Onchain Verifier
 
-```text
-contracts/src/BeaconStateProof.sol  Main verifier contract
-contracts/src/lib/                  EIP-4788, SSZ, RLP, MPT helpers
-contracts/src/demo/                 Vault, lender, mock USDC
-prover/src/                         Proof-bundle assembly package
-webapp/pages/                       Playground and lending demo shells
-docs/                               Architecture and demo notes
-```
+**The Solidity verifier:**
+1. reads the beacon root through EIP-4788
+2. recomputes the beacon block header root
+3. proves the execution payload header is included in the beacon block
+4. derives the trusted execution stateRoot
+5. walks the Ethereum account trie
+6. walks the Ethereum storage trie
+7. recovers the proven storage slot value
+
+> *If every proof passes, the destination contract can safely act on Ethereum state as if it had verified it locally.*
+
+---
+
+## Demo: Trustless Lending
+
+The included demo shows trustless cross-chain lending between Ethereum Sepolia and Base Sepolia.
+
+**Flow:**
+A user locks ETH inside a vault contract on Ethereum Sepolia. The prover assembles a proof bundle for the vault storage state. The proof is submitted to Base Sepolia. The verifier validates the proof against the chain’s EIP-4788 beacon root. The lender contract issues demo USDC based on the verified collateral state.
+
+**The lender never trusts:**
+
+A relayer, bridge operator, message signer, or an oracle network. It trusts only Ethereum consensus proofs.
+
+### Anyware can power:
+
+trustless lending | governance verification | proof-of-reserves systems | identity attestations | cross-chain reputation | state-aware rollup interoperability
+
+---
+
+## The Verification Path
+
+Anyware puts together two different proof systems:
+
+1. **Beacon-Chain Consensus Proofs:** Used to prove the execution payload header belongs to a real Ethereum beacon block.
+
+- SSZ Merkleization
+- SHA-256 hashing
+- generalized indices
+
+> *This links execution state to Ethereum consensus.*
+
+2. **Ethereum Execution-State Proofs:** Used to prove the account and storage slot under the execution stateRoot.
+
+- Merkle Patricia Tries
+- Keccak-256
+- RLP decoding
+
+> *This links the storage slot to the execution state root.*
+
+### Full Trust Path
+
+EIP-4788 beacon root → Beacon block header root → Execution payload inclusion proof → Execution stateRoot → Ethereum account proof → Ethereum storage proof → Verified storage slot value
+
+> *That is the complete trust path from Ethereum consensus to an application-level fact on L2.*
+
+---
+
+## Tech Stack
+
+| Component        | Technology                   | Purpose                                  |
+| ---------------- | ---------------------------- | ---------------------------------------- |
+| Consensus Anchor | **EIP-4788**                 | Native Ethereum beacon-root access       |
+| Consensus Proofs | **SSZ + SHA-256**            | Beacon-chain inclusion verification      |
+| Execution Proofs | **MPT + RLP + Keccak-256**   | Ethereum state verification              |
+| Verifier         | **Solidity**                 | Onchain proof verification               |
+| Prover           | **TypeScript**               | Proof gathering and assembly             |
+| Target Chains    | **EVM rollups**              | Trust-minimized cross-chain verification |
+
+---
+
+## Deployments
+
+1. [https://www.npmjs.com/package/anyware-prover](https://www.npmjs.com/package/anyware-prover)
+2. [https://www.npmjs.com/package/anyware-solidity](https://www.npmjs.com/package/anyware-solidity)
+
+### Demo
+
+1. **VAULT_ADDRESS:** [0x0Dcc90C54b4c4AC9f8E490678843760006723Bbd](https://sepolia.etherscan.io/address/0x0Dcc90C54b4c4AC9f8E490678843760006723Bbd#code)
+2. **VERIFIER_ADDRESS:** [0x65dCeaa5B29748aFD22b4f93A7A51Ea5bc785081](https://sepolia.basescan.org/address/0x65dCeaa5B29748aFD22b4f93A7A51Ea5bc785081#code)
+3. **LENDER_ADDRESS:** [0x37C7bb8c2014A36A0D5335C8D3ecb2E8EF3e0802](https://sepolia.basescan.org/address/0x37C7bb8c2014A36A0D5335C8D3ecb2E8EF3e0802#code)
+
+---
+
+Built during ETHPrague 2026.
