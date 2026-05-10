@@ -174,18 +174,53 @@ export default function HomePage() {
           />
         </section>
 
+        <section className="lpSection lpUseCasesSection">
+          <CollageBackground />
+          <div className="lpShell">
+            <h2 className="lpUseCasesTitle">
+              ONE PRIMITIVE.
+              <br />
+              INFINITE SYSTEMS.&nbsp; {"<3"}&nbsp;
+              <Link className="lpPrimaryButton lpUseCasesCta" href="/demo">
+                View Demo
+              </Link>
+            </h2>
+
+            <div className="lpUseCasesList">
+              <div className="lpUseCase">
+                <h3>Cross-chain lending</h3>
+                <p>Verify vault positions and collateral directly from Ethereum before issuing assets anywhere.</p>
+              </div>
+              <div className="lpUseCase">
+                <h3>Governance &amp; attestations</h3>
+                <p>Prove voting power, identity, or participation without snapshots or offchain indexes.</p>
+              </div>
+              <div className="lpUseCase">
+                <h3>Proof of reserves</h3>
+                <p>Audit balances and liabilities directly from Ethereum storage state.</p>
+              </div>
+              <div className="lpUseCase">
+                <h3>Cross-chain applications</h3>
+                <p>Build apps that read Ethereum natively instead of relying on bridges or APIs.</p>
+              </div>
+              <div className="lpUseCase">
+                <h3>Trustless infrastructure</h3>
+                <p>Replace relayers, oracles, and messaging networks with verifiable state proofs.</p>
+              </div>
+            </div>
+          </div>
+          <img
+            alt=""
+            className="lpUseCasesCharacter"
+            src="/landing/character-section-5-2000.png"
+          />
+        </section>
+
         <section className="lpSection lpGithubSection">
           <CollageBackground />
           <div className="lpShell">
             <div className="lpGithubShowcase">
-              <div className="lpGithubBackground">
-                <img alt="" src={githubBackgroundAsset} />
-              </div>
-              <div className="lpGithubPortrait">
-                <img alt="" className="lpGithubPortraitBase" src={githubPortraitAsset} />
-                <img alt="" className="lpGithubPortraitTop" src={githubGlitchTopAsset} />
-                <img alt="" className="lpGithubPortraitBottom" src={githubGlitchBottomAsset} />
-              </div>
+              <img alt="" className="lpGithubImage" src="/landing/meme-last.png" />
               <div className="lpGithubCopy">
                 <p>This user got door knocked for bringing Ethereum truth anywhere.</p>
               </div>
