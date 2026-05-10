@@ -8,4 +8,6 @@ contracts/lib
 contracts/out
 contracts/cache
 .env
+.env.local
+webapp/.env.local
 .DS_Store

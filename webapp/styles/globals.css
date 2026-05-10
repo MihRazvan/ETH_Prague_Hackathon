@@ -330,6 +330,13 @@ main {
   text-transform: lowercase;
 }
 
+.lpNavUtility {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 160px;
+}
+
 .lpHeroSection .lpShell {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -724,6 +731,410 @@ main {
   font-weight: 800;
 }
 
+.demoPage {
+  min-height: 100vh;
+}
+
+.demoSection {
+  min-height: 100vh;
+}
+
+.demoShell {
+  display: grid;
+  gap: 28px;
+  min-height: 100vh;
+  padding-bottom: 42px;
+}
+
+.demoWalletPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid rgba(28, 213, 248, 0.35);
+  border-radius: 999px;
+  background: rgba(28, 213, 248, 0.08);
+  color: #fffefe;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: lowercase;
+  cursor: pointer;
+}
+
+.demoHero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 18px 8px 0;
+}
+
+.demoOverline {
+  margin: 0 0 10px;
+  color: #1cd5f8;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.demoTitle {
+  margin: 0;
+  max-width: 820px;
+  color: #fffefe;
+  font-size: clamp(3.4rem, 7.6vw, 6.6rem);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+}
+
+.demoTitleMeta {
+  margin: 0 0 14px;
+  max-width: 360px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.demoWorkbench {
+  display: grid;
+  gap: 24px;
+  padding: 28px;
+  border: 2px solid rgba(28, 213, 248, 0.28);
+  border-radius: 28px;
+  background: rgba(22, 22, 22, 0.46);
+  backdrop-filter: blur(28px);
+}
+
+.demoProgress {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.demoProgressStep {
+  display: grid;
+  gap: 4px;
+  padding: 14px 14px 16px;
+  border-top: 2px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.52);
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.demoProgressStep span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.demoProgressStep strong {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.demoProgressStep.is-active {
+  color: #fffefe;
+  border-color: #1cd5f8;
+  background: rgba(28, 213, 248, 0.06);
+}
+
+.demoProgressStep.is-success {
+  color: #fffefe;
+  border-color: #e32807;
+}
+
+.demoColumns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) 330px;
+  gap: 28px;
+}
+
+.demoStage {
+  display: grid;
+  gap: 24px;
+  align-content: start;
+}
+
+.demoGuide {
+  position: relative;
+  max-width: 700px;
+  padding: 22px 24px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fffefe;
+}
+
+.demoGuide::after {
+  content: "";
+  position: absolute;
+  left: 30px;
+  bottom: -11px;
+  width: 22px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  transform: rotate(45deg);
+}
+
+.demoGuide span {
+  display: block;
+  margin-bottom: 8px;
+  color: #1cd5f8;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.demoGuide p {
+  margin: 0;
+  font-size: clamp(1.25rem, 2vw, 1.85rem);
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+}
+
+.demoTrack {
+  display: grid;
+  grid-template-columns: 180px 1fr 180px 1fr 180px;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 0 12px;
+}
+
+.demoNode {
+  display: grid;
+  gap: 8px;
+  padding: 26px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 26px;
+  background: rgba(0, 0, 0, 0.32);
+  color: rgba(255, 255, 255, 0.58);
+  text-align: center;
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.demoNode span {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.demoNode strong {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.demoNode.is-on {
+  color: #fffefe;
+  border-color: rgba(227, 40, 7, 0.85);
+  background: rgba(227, 40, 7, 0.12);
+}
+
+.demoBeam {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.14);
+  position: relative;
+}
+
+.demoBeam.is-on {
+  background: linear-gradient(90deg, rgba(227, 40, 7, 0.28), #1cd5f8);
+}
+
+.demoActionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 8px 0 2px;
+}
+
+.demoActionMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 0.92rem;
+}
+
+.demoPipeline {
+  display: grid;
+  gap: 14px;
+}
+
+.demoPipelineBlock {
+  display: grid;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.demoPipelineHeader {
+  color: #1cd5f8;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.demoPipelineSteps {
+  display: grid;
+  gap: 10px;
+}
+
+.demoPipelineStep {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.demoPipelineStep strong {
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.demoPipelineStep.is-active {
+  color: #fffefe;
+  border-color: rgba(28, 213, 248, 0.7);
+}
+
+.demoPipelineStep.is-success {
+  color: #fffefe;
+  border-color: rgba(227, 40, 7, 0.76);
+}
+
+.demoUnlock {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  margin-top: 8px;
+  padding: 24px 0 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.demoUnlockBadge {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.demoUnlock.is-open .demoUnlockBadge {
+  border-color: #e32807;
+  color: #fffefe;
+  background: radial-gradient(circle at 35% 35%, rgba(227, 40, 7, 0.68), rgba(227, 40, 7, 0.16));
+}
+
+.demoUnlock strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.2rem;
+}
+
+.demoUnlock p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.5;
+}
+
+.demoRail {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.demoMetricBlock {
+  padding-left: 18px;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.demoMetricBlock h2,
+.demoFeed h2 {
+  margin: 0 0 14px;
+  color: #fffefe;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.demoMetricBlock dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.demoMetricBlock dl div {
+  display: grid;
+  gap: 4px;
+}
+
+.demoMetricBlock dt {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.demoMetricBlock dd {
+  margin: 0;
+  color: #fffefe;
+  font-size: 0.96rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.demoFeed {
+  padding-left: 18px;
+  border-left: 2px solid rgba(28, 213, 248, 0.2);
+}
+
+.demoFeed ul {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.demoFeed li {
+  display: grid;
+  gap: 4px;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.demoFeed li strong {
+  color: #fffefe;
+  font-size: 0.95rem;
+}
+
+.demoFeed li.is-good strong {
+  color: #1cd5f8;
+}
+
+.demoFeed li.is-warn strong {
+  color: #ffb8a6;
+}
+
+.demoError {
+  margin: 0;
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: rgba(227, 40, 7, 0.15);
+  color: #fffefe;
+}
+
 @media (max-width: 1180px) {
   .lpHeroLayout,
   .lpStatementGrid,
@@ -767,6 +1178,33 @@ main {
     border-right: 0;
     border-bottom: 3px solid #e22906;
   }
+
+  .demoHero,
+  .demoActionRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .demoTitleMeta,
+  .demoActionMeta {
+    text-align: left;
+    justify-content: flex-start;
+  }
+
+  .demoColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .demoTrack {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .demoBeam {
+    width: 2px;
+    height: 30px;
+    justify-self: center;
+  }
 }
 
 @media (max-width: 800px) {
@@ -797,6 +1235,10 @@ main {
     font-size: 1rem;
   }
 
+  .lpNavUtility {
+    min-width: 0;
+  }
+
   .lpHeroLayout {
     padding-top: 44px;
   }
@@ -814,6 +1256,22 @@ main {
   }
 
   .lpFeatureGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .demoWorkbench {
+    padding: 18px;
+  }
+
+  .demoProgress {
+    grid-template-columns: 1fr;
+  }
+
+  .demoGuide {
+    padding: 18px 18px 20px;
+  }
+
+  .demoUnlock {
     grid-template-columns: 1fr;
   }
 
