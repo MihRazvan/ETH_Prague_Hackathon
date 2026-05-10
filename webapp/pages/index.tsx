@@ -58,10 +58,7 @@ export default function HomePage() {
 
               <div className="lpHeroVisual" aria-hidden="true">
                 <div className="lpHeroVisualAura" />
-                <div className="lpHeroVisualFrame">
-                  <div className="lpHeroVisualTag">NO RELAYER</div>
-                  <div className="lpHeroVisualGlyph">∿</div>
-                </div>
+                <img className="lpHeroFigure" alt="" src={installCharacterAsset} />
               </div>
             </div>
           </div>
@@ -209,7 +206,7 @@ function SiteNav() {
       </div>
       <div className="lpNavLinks">
         <Link href="/demo">try</Link>
-        <a href="#learn">learn</a>
+        <Link href="/learn">learn</Link>
       </div>
     </div>
   );
