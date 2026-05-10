@@ -27,6 +27,10 @@ body {
   font-family: "Segoe UI", "Helvetica Neue", sans-serif;
 }
 
+body {
+  overflow-x: hidden;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -36,6 +40,18 @@ main {
   width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
   padding: 40px 0 72px;
+}
+
+.simplePage {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 40px 0 72px;
+}
+
+.simplePanel {
+  min-height: 50vh;
+  display: grid;
+  align-content: center;
 }
 
 .hero {
@@ -220,4 +236,623 @@ main {
 .statusPill.bad {
   color: var(--danger);
   border-color: rgba(255, 140, 140, 0.24);
+}
+
+.lp {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #2f302e;
+  color: #fffefe;
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+.lpSection {
+  position: relative;
+  min-height: 100vh;
+  overflow: clip;
+  isolation: isolate;
+}
+
+.lpShell {
+  position: relative;
+  z-index: 2;
+  width: min(1440px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 28px 0 80px;
+}
+
+.lpBackground {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #313230;
+}
+
+.lpBackgroundImage {
+  position: absolute;
+  inset: -30%;
+  width: 160%;
+  height: 160%;
+  object-fit: cover;
+  mix-blend-mode: difference;
+  filter: grayscale(1) contrast(1.1);
+}
+
+.lpBackgroundOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.18), transparent 8%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.66), rgba(0, 0, 0, 0.72));
+}
+
+.lpNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 84px;
+  padding: 14px 24px 14px 16px;
+  border: 2px solid #1cd5f8;
+  border-radius: 24px;
+  background: rgba(217, 217, 217, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(28, 213, 248, 0.1);
+  backdrop-filter: blur(20px);
+}
+
+.lpNavBrand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #1cd5f8;
+  font-size: clamp(1.8rem, 2vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.lpNavBrand img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+}
+
+.lpNavLinks {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 4vw, 56px);
+  font-size: clamp(1.15rem, 1.8vw, 1.75rem);
+  font-weight: 700;
+}
+
+.lpNavLinks a {
+  text-transform: lowercase;
+}
+
+.lpHeroSection .lpShell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+.lpHeroLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 40px;
+  align-items: center;
+  padding: 80px 0 40px;
+}
+
+.lpHeroCopy {
+  max-width: 760px;
+}
+
+.lpEyebrow {
+  margin: 0 0 18px;
+  max-width: 520px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: clamp(0.82rem, 1vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.lpHeroTitle {
+  margin: 0;
+  font-size: clamp(4rem, 9vw, 7.8rem);
+  line-height: 0.94;
+  letter-spacing: -0.06em;
+  text-wrap: balance;
+}
+
+.lpHeroActions {
+  margin-top: 36px;
+}
+
+.lpPrimaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 210px;
+  min-height: 68px;
+  padding: 16px 28px;
+  border-radius: 22px;
+  background: #e32807;
+  color: #fffefe;
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow: 0 16px 44px rgba(227, 40, 7, 0.35);
+}
+
+.lpHeroVisual {
+  display: grid;
+  justify-items: end;
+  position: relative;
+  min-height: 460px;
+}
+
+.lpHeroVisualAura {
+  position: absolute;
+  top: 18%;
+  right: 12%;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 40% 40%, rgba(255, 104, 154, 0.88), rgba(255, 104, 154, 0.18) 48%, transparent 72%);
+  filter: blur(18px);
+}
+
+.lpHeroVisualFrame {
+  position: relative;
+  width: min(100%, 420px);
+  aspect-ratio: 0.78;
+  margin-top: 28px;
+  border: 2px solid rgba(227, 40, 7, 0.72);
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    radial-gradient(circle at 62% 28%, rgba(255, 134, 182, 0.7), rgba(255, 134, 182, 0.1) 26%, transparent 44%),
+    rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.lpHeroVisualFrame::before,
+.lpHeroVisualFrame::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.lpHeroVisualFrame::after {
+  inset: auto 18px 18px;
+  height: 58px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.lpHeroVisualTag {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(227, 40, 7, 0.9);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.lpHeroVisualGlyph {
+  position: absolute;
+  right: 28px;
+  bottom: 46px;
+  color: rgba(28, 213, 248, 0.92);
+  font-size: clamp(7rem, 10vw, 9rem);
+  line-height: 1;
+  font-weight: 700;
+}
+
+.lpStatementSection .lpShell,
+.lpFeaturesSection .lpShell,
+.lpInstallSection .lpShell,
+.lpGithubSection .lpShell {
+  padding-top: 28px;
+}
+
+.lpStatementGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.7fr);
+  gap: 48px;
+  align-items: start;
+  padding-top: 88px;
+}
+
+.lpStatementTitle h2 {
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 6.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.lpStatementTitle span {
+  color: #e22906;
+}
+
+.lpStatementAside {
+  display: grid;
+  gap: 28px;
+  justify-items: start;
+  padding-top: 22px;
+}
+
+.lpStatementAside p {
+  margin: 0;
+  max-width: 430px;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  line-height: 1.4;
+}
+
+.lpStatementBand {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 88px;
+  padding: 24px 28px;
+  background: rgba(217, 217, 217, 0.1);
+  backdrop-filter: blur(22px);
+  font-size: clamp(1.2rem, 1.9vw, 1.75rem);
+  font-weight: 800;
+  text-align: center;
+}
+
+.lpStatementFooter {
+  padding-top: 38px;
+}
+
+.lpStatementFooter p {
+  margin: 0;
+  font-size: clamp(2.2rem, 4.4vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.lpFeaturesHeader {
+  padding-top: 88px;
+}
+
+.lpFeaturesHeader h2 {
+  margin: 0;
+  max-width: 980px;
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.lpFeaturesHeader span {
+  display: block;
+  margin-top: 14px;
+  color: #e22906;
+}
+
+.lpFeatureGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 70px;
+}
+
+.lpFeatureCard {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 24px;
+  background: rgba(217, 217, 217, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(22px);
+}
+
+.lpFeatureCard p {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.lpFeatureMock {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  height: 220px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03)),
+    rgba(0, 0, 0, 0.42);
+  overflow: hidden;
+}
+
+.lpFeatureMockTop,
+.lpFeatureMockBottom {
+  width: calc(100% - 32px);
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(28, 213, 248, 0.35);
+}
+
+.lpFeatureMockCenter {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: 2px solid rgba(227, 40, 7, 0.8);
+  color: #fffefe;
+  font-size: 1.9rem;
+  font-weight: 800;
+}
+
+.lpInstallHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: end;
+  padding-top: 88px;
+}
+
+.lpInstallHeader h2 {
+  margin: 0;
+  font-size: clamp(3rem, 6vw, 5.8rem);
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+}
+
+.lpInstallCopy {
+  display: grid;
+  justify-items: end;
+  gap: 16px;
+}
+
+.lpInstallCopy p {
+  margin: 0;
+  max-width: 760px;
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
+  font-weight: 500;
+  line-height: 1.05;
+  text-align: right;
+}
+
+.lpInstallCopy span {
+  font-size: clamp(3rem, 4vw, 4.5rem);
+  line-height: 1;
+}
+
+.lpInstallBand {
+  margin-top: 56px;
+  padding: 28px 32px;
+  background: rgba(217, 217, 217, 0.1);
+  backdrop-filter: blur(22px);
+  font-size: clamp(1.6rem, 2.4vw, 2.65rem);
+  font-weight: 800;
+  text-align: center;
+}
+
+.lpInstallCommands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 44px;
+}
+
+.lpInstallCommands code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 86px;
+  padding: 20px 28px;
+  border-radius: 22px;
+  background: #e32807;
+  color: #fffefe;
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  font-weight: 800;
+  box-shadow: 0 16px 44px rgba(227, 40, 7, 0.32);
+}
+
+.lpInstallCharacter {
+  position: absolute;
+  left: max(-180px, calc(50% - 820px));
+  bottom: 0;
+  width: min(320px, 24vw);
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.lpGithubSection .lpShell {
+  min-height: 100vh;
+}
+
+.lpGithubShowcase {
+  position: relative;
+  margin: 120px auto 0;
+  width: min(100%, 1320px);
+  min-height: 460px;
+  padding: 84px 72px 72px 340px;
+  border: 3px solid #e22906;
+  background: rgba(0, 0, 0, 0.86);
+  overflow: hidden;
+}
+
+.lpGithubBackground {
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  mix-blend-mode: color-burn;
+}
+
+.lpGithubBackground img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lpGithubPortrait {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 260px;
+  border-right: 3px solid #e22906;
+  overflow: hidden;
+}
+
+.lpGithubPortraitBase,
+.lpGithubPortraitTop,
+.lpGithubPortraitBottom {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lpGithubPortraitTop {
+  mix-blend-mode: difference;
+  transform: translateY(-2%);
+  opacity: 0.85;
+}
+
+.lpGithubPortraitBottom {
+  top: 38%;
+  height: 34%;
+  mix-blend-mode: difference;
+  opacity: 0.9;
+}
+
+.lpGithubCopy {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  font-family: "Courier New", monospace;
+}
+
+.lpGithubCopy p {
+  margin: 0;
+  font-size: clamp(2.1rem, 4vw, 4rem);
+  font-weight: 700;
+  line-height: 1.24;
+  letter-spacing: -0.02em;
+}
+
+.lpGithubActions {
+  display: flex;
+  justify-content: center;
+  margin-top: 42px;
+}
+
+.lpGithubButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88px;
+  padding: 20px 38px;
+  color: #fffefe;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-weight: 800;
+}
+
+@media (max-width: 1180px) {
+  .lpHeroLayout,
+  .lpStatementGrid,
+  .lpInstallHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .lpHeroVisual {
+    justify-items: start;
+  }
+
+  .lpFeatureGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lpStatementAside,
+  .lpInstallCopy {
+    justify-items: start;
+  }
+
+  .lpInstallCopy p {
+    text-align: left;
+  }
+
+  .lpInstallCharacter {
+    position: static;
+    display: block;
+    width: min(280px, 60vw);
+    margin: 36px auto 0;
+  }
+
+  .lpGithubShowcase {
+    padding: 280px 28px 40px;
+  }
+
+  .lpGithubPortrait {
+    width: 100%;
+    height: 240px;
+    border-right: 0;
+    border-bottom: 3px solid #e22906;
+  }
+}
+
+@media (max-width: 800px) {
+  .lpShell {
+    width: min(100%, calc(100% - 24px));
+    padding-top: 12px;
+    padding-bottom: 56px;
+  }
+
+  .lpNav {
+    min-height: 72px;
+    padding: 10px 14px;
+    border-radius: 18px;
+  }
+
+  .lpNavBrand {
+    gap: 10px;
+    font-size: 1.4rem;
+  }
+
+  .lpNavBrand img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .lpNavLinks {
+    gap: 14px;
+    font-size: 1rem;
+  }
+
+  .lpHeroLayout {
+    padding-top: 44px;
+  }
+
+  .lpStatementBand {
+    grid-template-columns: 1fr;
+  }
+
+  .lpFeatureGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .lpInstallCommands {
+    flex-direction: column;
+  }
+
+  .lpGithubShowcase {
+    margin-top: 72px;
+  }
 }
