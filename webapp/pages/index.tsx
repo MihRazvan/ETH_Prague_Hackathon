@@ -1,23 +1,50 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useCallback, useState } from "react";
 
 import { CollageBackground, SiteNav } from "../components/SiteChrome";
 
-const installCharacterAsset = "https://www.figma.com/api/mcp/asset/dab23af3-18e7-48ac-9cfb-f7c4ade1b349";
 const githubBackgroundAsset = "https://www.figma.com/api/mcp/asset/88a9a2b0-d03f-419f-b2b5-57206bfc1f75";
 const githubPortraitAsset = "https://www.figma.com/api/mcp/asset/40e45857-dba9-4bee-b554-35f44eae66c3";
 const githubGlitchTopAsset = "https://www.figma.com/api/mcp/asset/e80bd386-71da-4788-b0b1-4f25397c2c76";
 const githubGlitchBottomAsset = "https://www.figma.com/api/mcp/asset/a1d0d896-e666-4d39-828d-bc644e27ff72";
 
-const featureCards = [
-  "Works with EVM out of the box.",
-  "Verifies state directly via EIP-4788.",
-  "Replaces trusted messaging.",
-  "Keeps applications fully onchain.",
-  "Eliminates bridge and oracles.",
+const featureFrames = [
+  "/landing/Frame_1.png",
+  "/landing/Frame_2.png",
+  "/landing/Frame_3.png",
+  "/landing/Frame_4.png",
+  "/landing/Frame_5.png",
 ];
 
+interface Heart {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  drift: number;
+}
+
 export default function HomePage() {
+  const [hearts, setHearts] = useState<Heart[]>([]);
+
+  const spawnHearts = useCallback((e: React.MouseEvent) => {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const batch: Heart[] = Array.from({ length: 80 }, (_, i) => ({
+      id: Date.now() + i,
+      x: Math.random() * window.innerWidth,
+      y: window.innerHeight * 0.3 + Math.random() * window.innerHeight * 0.7,
+      size: 14 + Math.random() * 32,
+      drift: (Math.random() - 0.5) * 250,
+    }));
+    setHearts((prev) => [...prev, ...batch]);
+    setTimeout(() => {
+      setHearts((prev) => prev.filter((h) => !batch.includes(h)));
+    }, 3500);
+  }, []);
+
   return (
     <>
       <Head>
@@ -29,25 +56,36 @@ export default function HomePage() {
       </Head>
 
       <main className="lp">
+        <div className="lpGlobalNav">
+          <div className="lpShell lpNavShell">
+            <SiteNav />
+          </div>
+        </div>
+
         <section className="lpSection lpHeroSection">
           <CollageBackground />
           <div className="lpShell">
-            <SiteNav />
-
             <div className="lpHeroLayout">
               <div className="lpHeroCopy">
-                <p className="lpEyebrow">SOLIDITY LIBRARY AND TYPSCRIPT PROVER THAT LETS ROLLUPS VERIFY ETHEREUM STATE</p>
-                <h1 className="lpHeroTitle">Trust Ethereum. Anywhere.</h1>
+                <h1 className="lpHeroTitle">
+                  Trust Ethereum.
+                  <br />
+                  Anywhere.
+                </h1>
+                <p className="lpEyebrow">
+                  SOLIDITY LIBRARY AND TYPESCRIPT PROVER
+                  <br />
+                  THAT LETS ROLLUPS VERIFY ETHEREUM STATE
+                </p>
                 <div className="lpHeroActions">
-                  <Link className="lpPrimaryButton" href="/demo">
-                    Use Anyware now!
-                  </Link>
+                  <a className="lpPrimaryButton" href="#install">
+                    Try Anyware now!
+                  </a>
                 </div>
               </div>
 
               <div className="lpHeroVisual" aria-hidden="true">
-                <div className="lpHeroVisualAura" />
-                <img className="lpHeroFigure" alt="" src={installCharacterAsset} />
+                <img className="lpHeroFigure" alt="" src="/landing/character-section-1-2000.png" />
               </div>
             </div>
           </div>
@@ -56,81 +94,92 @@ export default function HomePage() {
         <section className="lpSection lpStatementSection" id="learn">
           <CollageBackground />
           <div className="lpShell">
-            <SiteNav />
+            <div className="lpStatementScene">
+              <div className="lpStatementGrid">
+                <div className="lpStatementTitle">
+                  <h2>
+                    Ethereum was <span>never</span>
+                    <br />
+                    meant to be <span>trust</span>ed
+                    <br />
+                    through <span>middleman</span>.
+                  </h2>
+                  <p className="lpStatementIntro">
+                    Anyware lets L2s read Ethereum directly.
+                    <br />
+                    No priests. No federation. No "trust me
+                    <br />
+                    bro" middleware.
+                  </p>
+                </div>
 
-            <div className="lpStatementGrid">
-              <div className="lpStatementTitle">
-                <h2>
-                  Ethereum was <span>never</span> meant to be <span>trusted</span> through <span>middleman</span>.
-                </h2>
+                <div className="lpStatementAside">
+                  <p>
+                    It is a cross-chain verification
+                    <br />
+                    system that lets any rollup verify
+                    <br />
+                    Ethereum facts directly against
+                    <br />
+                    consensus.
+                  </p>
+                </div>
               </div>
 
-              <div className="lpStatementAside">
-                <p>
-                  It is a cross-chain verification system that lets any rollup verify Ethereum facts directly against consensus.
-                </p>
-                <Link className="lpPrimaryButton" href="/demo">
+              <div className="lpStatementBand">
+                <span>No relayers.</span>
+                <span>No multisigs.</span>
+                <span>No oracle committees.</span>
+              </div>
+
+              <div className="lpStatementFooter">
+                <p>Just Ethereum, proven.</p>
+                <button className="lpPrimaryButton" type="button" onClick={spawnHearts}>
                   accept
-                </Link>
+                </button>
               </div>
-            </div>
 
-            <div className="lpStatementBand">
-              <span>No messages.</span>
-              <span>No assumptions.</span>
-              <span>No trust layers in between.</span>
-            </div>
-
-            <div className="lpStatementFooter">
-              <p>Just Ethereum, proven.</p>
             </div>
           </div>
+          <img
+            alt=""
+            className="lpStatementCharacter"
+            src="/landing/character-section-2-1800.png"
+          />
         </section>
 
         <section className="lpSection lpFeaturesSection">
           <CollageBackground />
           <div className="lpShell">
-            <SiteNav />
-
             <div className="lpFeaturesHeader">
               <h2>
-                Cross-chain truth was never native.
+                Cross-chain was
+                <br />
+                spiritually broken.
                 <span>{">>> Until Now!"}</span>
               </h2>
             </div>
 
             <div className="lpFeatureGrid">
-              {featureCards.map((card, index) => (
-                <article className="lpFeatureCard" key={card}>
-                  <div className="lpFeatureMock" aria-hidden="true">
-                    <div className="lpFeatureMockTop" />
-                    <div className="lpFeatureMockCenter">{index + 1}</div>
-                    <div className="lpFeatureMockBottom" />
-                  </div>
-                  <p>{card}</p>
-                </article>
+              {featureFrames.map((frame) => (
+                <img className="lpFeatureFrame" key={frame} alt="" src={frame} />
               ))}
             </div>
           </div>
         </section>
 
-        <section className="lpSection lpInstallSection">
+        <section className="lpSection lpInstallSection" id="install">
           <CollageBackground />
           <div className="lpShell">
-            <SiteNav />
-
-            <div className="lpInstallHeader">
-              <div>
-                <h2>
-                  One proof.
-                  <br />
-                  Any chain.
-                </h2>
-              </div>
-              <div className="lpInstallCopy">
-                <p>Verify Ethereum state anywhere in just a single call.</p>
-                <span>{"<3"}</span>
-              </div>
+            <div className="lpInstallContent">
+              <h2>
+                One proof.
+                <br />
+                Any chain.
+              </h2>
+              <p className="lpInstallSub">
+                Verify Ethereum state anywhere in just a single call.
+              </p>
             </div>
 
             <div className="lpInstallBand">
@@ -138,32 +187,68 @@ export default function HomePage() {
             </div>
 
             <div className="lpInstallCommands">
-              <code>npm install anyware-prover</code>
-              <code>npm install anyware-solidity</code>
+              <a href="https://www.npmjs.com/package/anyware-prover" target="_blank" rel="noreferrer">
+                npm install anyware-prover
+              </a>
+              <a href="https://www.npmjs.com/package/anyware-solidity" target="_blank" rel="noreferrer">
+                npm install anyware-solidity
+              </a>
             </div>
-
-            <img
-              alt=""
-              className="lpInstallCharacter"
-              src={installCharacterAsset}
-            />
           </div>
+          <img
+            alt=""
+            className="lpInstallCharacter"
+            src="/landing/character-section-4-2000.png"
+          />
+        </section>
+
+        <section className="lpSection lpUseCasesSection">
+          <CollageBackground />
+          <div className="lpShell">
+            <h2 className="lpUseCasesTitle">
+              ONE PRIMITIVE.
+              <br />
+              INFINITE SYSTEMS.&nbsp; {"<3"}&nbsp;
+              <Link className="lpPrimaryButton lpUseCasesCta" href="/demo">
+                View Demo
+              </Link>
+            </h2>
+
+            <div className="lpUseCasesList">
+              <div className="lpUseCase">
+                <h3>Cross-chain lending</h3>
+                <p>Verify vault positions and collateral directly from Ethereum before issuing assets anywhere.</p>
+              </div>
+              <div className="lpUseCase">
+                <h3>Governance &amp; attestations</h3>
+                <p>Prove voting power, identity, or participation without snapshots or offchain indexes.</p>
+              </div>
+              <div className="lpUseCase">
+                <h3>Proof of reserves</h3>
+                <p>Audit balances and liabilities directly from Ethereum storage state.</p>
+              </div>
+              <div className="lpUseCase">
+                <h3>Cross-chain applications</h3>
+                <p>Build apps that read Ethereum natively instead of relying on bridges or APIs.</p>
+              </div>
+              <div className="lpUseCase">
+                <h3>Trustless infrastructure</h3>
+                <p>Replace relayers, oracles, and messaging networks with verifiable state proofs.</p>
+              </div>
+            </div>
+          </div>
+          <img
+            alt=""
+            className="lpUseCasesCharacter"
+            src="/landing/character-section-5-2000.png"
+          />
         </section>
 
         <section className="lpSection lpGithubSection">
           <CollageBackground />
           <div className="lpShell">
-            <SiteNav />
-
             <div className="lpGithubShowcase">
-              <div className="lpGithubBackground">
-                <img alt="" src={githubBackgroundAsset} />
-              </div>
-              <div className="lpGithubPortrait">
-                <img alt="" className="lpGithubPortraitBase" src={githubPortraitAsset} />
-                <img alt="" className="lpGithubPortraitTop" src={githubGlitchTopAsset} />
-                <img alt="" className="lpGithubPortraitBottom" src={githubGlitchBottomAsset} />
-              </div>
+              <img alt="" className="lpGithubImage" src="/landing/meme-last.png" />
               <div className="lpGithubCopy">
                 <p>This user got door knocked for bringing Ethereum truth anywhere.</p>
               </div>
@@ -181,6 +266,20 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        {hearts.map((h) => (
+          <span
+            key={h.id}
+            className="lpHeart"
+            style={{
+              left: h.x,
+              top: h.y,
+              fontSize: h.size,
+              "--drift": `${h.drift}px`,
+            } as React.CSSProperties}
+          >
+            &#10084;
+          </span>
+        ))}
       </main>
     </>
   );
