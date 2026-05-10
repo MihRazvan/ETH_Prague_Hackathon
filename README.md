@@ -7,7 +7,7 @@ Anyware is a trustless cross-chain state verification system that lets EVM rollu
 
 ---
 
-[Landing Page]() | [Demo App]() | [Showcase]() | [Quickstart](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/QUICKSTART.md) | [Solidity Integration](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/SOLIDITY_INTEGRATION.md) | [Technical Architecture](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/ARCHITECTURE.md) | [Docs](https://github.com/MihRazvan/ETH_Prague_Hackathon/tree/main/docs)
+[Landing Page](https://eth-prague-hackathon-chgx.vercel.app/) | [Demo App](https://eth-prague-hackathon-chgx.vercel.app/demo) | [Showcase]() | [Quickstart](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/QUICKSTART.md) | [Solidity Integration](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/SOLIDITY_INTEGRATION.md) | [Technical Architecture](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/ARCHITECTURE.md) | [Docs](https://github.com/MihRazvan/ETH_Prague_Hackathon/tree/main/docs)
 
 ---
 
