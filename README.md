@@ -1,7 +1,7 @@
 # ANYWARE
 <img width="1920" height="360" alt="banner" src="https://github.com/user-attachments/assets/63058357-9802-420a-b31e-373184737080" />
 
-Anyware is a trustless cross-chain state verification system that lets EVM rollups verify recent Ethereum state directly onchain using EIP-4788 beacon roots.
+Anyware is a trustless cross-chain state verification system that lets EVM rollups verify recent Ethereum state directly onchain using [EIP-4788](https://eips.ethereum.org/EIPS/eip-4788) beacon roots.
 
 [Project Brief](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/PROJECT_BRIEF.md) | [Devfolio](https://devfolio.co/projects/ag-1f6a)
 
