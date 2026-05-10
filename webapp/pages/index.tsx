@@ -39,11 +39,19 @@ export default function HomePage() {
           <div className="lpShell">
             <div className="lpHeroLayout">
               <div className="lpHeroCopy">
-                <h1 className="lpHeroTitle">Trust Ethereum. Anywhere.</h1>
-                <p className="lpEyebrow">SOLIDITY LIBRARY AND TYPSCRIPT PROVER THAT LETS ROLLUPS VERIFY ETHEREUM STATE</p>
+                <h1 className="lpHeroTitle">
+                  Trust Ethereum.
+                  <br />
+                  Anywhere.
+                </h1>
+                <p className="lpEyebrow">
+                  SOLIDITY LIBRARY AND TYPSCRIPT PROVER
+                  <br />
+                  THAT LETS ROLLUPS VERIFY ETHEREUM STATE
+                </p>
                 <div className="lpHeroActions">
                   <Link className="lpPrimaryButton" href="/demo">
-                    Use Anyware now!
+                    Try Anyware now!
                   </Link>
                 </div>
               </div>
@@ -59,31 +67,56 @@ export default function HomePage() {
         <section className="lpSection lpStatementSection" id="learn">
           <CollageBackground />
           <div className="lpShell">
-            <div className="lpStatementGrid">
-              <div className="lpStatementTitle">
-                <h2>
-                  Ethereum was <span>never</span> meant to be <span>trusted</span> through <span>middleman</span>.
-                </h2>
+            <div className="lpStatementScene">
+              <div className="lpStatementGrid">
+                <div className="lpStatementTitle">
+                  <h2>
+                    Ethereum was <span>never</span>
+                    <br />
+                    meant to be <span>trusted</span>
+                    <br />
+                    through <span>middleman</span>.
+                  </h2>
+                  <p className="lpStatementIntro">
+                    Anyware lets L2s read Ethereum directly.
+                    <br />
+                    No priests. No federation. No "trust me
+                    <br />
+                    bro" middleware.
+                  </p>
+                </div>
+
+                <div className="lpStatementAside">
+                  <p>
+                    It is a cross-chain verification
+                    <br />
+                    system that lets any rollup verify
+                    <br />
+                    Ethereum facts directly against
+                    <br />
+                    consensus.
+                  </p>
+                </div>
               </div>
 
-              <div className="lpStatementAside">
-                <p>
-                  It is a cross-chain verification system that lets any rollup verify Ethereum facts directly against consensus.
-                </p>
+              <div className="lpStatementBand">
+                <span>No relayers.</span>
+                <span>No multisigs.</span>
+                <span>No oracle committees.</span>
+              </div>
+
+              <div className="lpStatementFooter">
+                <p>Just Ethereum, proven.</p>
                 <Link className="lpPrimaryButton" href="/demo">
                   accept
                 </Link>
               </div>
-            </div>
 
-            <div className="lpStatementBand">
-              <span>No messages.</span>
-              <span>No assumptions.</span>
-              <span>No trust layers in between.</span>
-            </div>
-
-            <div className="lpStatementFooter">
-              <p>Just Ethereum, proven.</p>
+              <img
+                alt=""
+                className="lpStatementCharacter"
+                src="/landing/character-section-2-1800.png"
+              />
             </div>
           </div>
         </section>

@@ -264,6 +264,7 @@ main {
 }
 
 .lpNavShell {
+  width: min(1320px, calc(100% - 24px));
   padding-top: 18px;
   padding-bottom: 0;
 }
@@ -285,7 +286,7 @@ main {
 .lpShell {
   position: relative;
   z-index: 2;
-  width: min(1280px, calc(100% - 72px));
+  width: min(1280px, calc(100% - 48px));
   margin: 0 auto;
   padding: 18px 0 80px;
 }
@@ -304,16 +305,16 @@ main {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  mix-blend-mode: difference;
-  filter: grayscale(1) contrast(1.08);
+  mix-blend-mode: normal;
+  filter: grayscale(1) contrast(0.92) brightness(0.72);
 }
 
 .lpBackgroundOverlay {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 73% 13%, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.34) 12%, transparent 24%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.72));
+    radial-gradient(circle at 73% 13%, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.2) 12%, transparent 24%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.38));
 }
 
 .lpNav {
@@ -322,7 +323,7 @@ main {
   justify-content: space-between;
   gap: 24px;
   min-height: 78px;
-  padding: 12px 32px 12px 14px;
+  padding: 10px 9px 10px 6px;
   border: 2px solid #5bd3ff;
   border-radius: 18px;
   background: rgba(217, 217, 217, 0.1);
@@ -365,7 +366,7 @@ main {
   display: flex;
   align-items: center;
   gap: clamp(30px, 4vw, 62px);
-  padding-right: 8px;
+  padding-right: 2px;
   font-size: clamp(1.45rem, 1.9vw, 2rem);
   font-weight: 700;
   line-height: 1;
@@ -386,38 +387,41 @@ main {
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 100vh;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .lpHeroLayout {
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(460px, 1.08fr);
+  grid-template-columns: minmax(0, 1.12fr) minmax(400px, 0.88fr);
   gap: 0;
   align-items: center;
-  padding: 128px 0 12px;
+  min-height: calc(100vh - 112px);
+  padding: 52px 0 0;
 }
 
 .lpHeroCopy {
-  max-width: 650px;
-  padding-left: 70px;
-  padding-top: 52px;
+  max-width: 780px;
+  padding-left: 22px;
+  padding-top: 24px;
 }
 
 .lpEyebrow {
   margin: 22px 0 0;
-  max-width: 720px;
+  max-width: 760px;
   color: rgba(255, 255, 255, 0.96);
-  font-size: clamp(1.12rem, 1.35vw, 1.42rem);
-  font-weight: 800;
+  font-size: clamp(1.18rem, 1.42vw, 1.52rem);
+  font-weight: 500;
   letter-spacing: 0.015em;
-  line-height: 1.32;
+  line-height: 1.36;
   text-transform: uppercase;
 }
 
 .lpHeroTitle {
   margin: 0;
-  max-width: 760px;
+  max-width: 820px;
   color: #ffffff;
-  font-size: clamp(4.9rem, 7vw, 6.9rem);
+  font-size: clamp(4.6rem, 6.1vw, 6.2rem);
   font-weight: 700;
   line-height: 0.92;
   letter-spacing: -0.065em;
@@ -431,13 +435,13 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 252px;
-  min-height: 58px;
-  padding: 14px 22px;
+  min-width: 244px;
+  min-height: 52px;
+  padding: 10px 18px;
   border-radius: 18px;
   background: #e32807;
   color: #fffefe;
-  font-size: 1rem;
+  font-size: 1.14rem;
   font-weight: 800;
   letter-spacing: 0.01em;
   box-shadow: 0 10px 32px rgba(227, 40, 7, 0.28);
@@ -448,8 +452,8 @@ main {
   justify-content: flex-end;
   align-items: stretch;
   position: relative;
-  min-height: 720px;
-  padding-right: 0;
+  min-height: 100%;
+  padding-right: 10px;
   overflow: visible;
 }
 
@@ -466,16 +470,17 @@ main {
 }
 
 .lpHeroFigure {
-  position: relative;
+  position: absolute;
   z-index: 1;
-  align-self: stretch;
+  right: 10px;
+  bottom: 0;
   width: auto;
-  height: 100%;
+  height: calc(100% + 36px);
   max-width: min(100%, 720px);
   max-height: none;
   object-fit: contain;
-  object-position: right center;
-  transform: translateX(52px);
+  object-position: right bottom;
+  transform: none;
   filter: drop-shadow(0 24px 80px rgba(0, 0, 0, 0.4));
 }
 
@@ -486,18 +491,25 @@ main {
   padding-top: 118px;
 }
 
+.lpStatementScene {
+  position: relative;
+  min-height: calc(100vh - 138px);
+}
+
 .lpStatementGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.7fr);
-  gap: 48px;
+  grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.98fr);
+  gap: 54px;
   align-items: start;
-  padding-top: 88px;
+  padding-top: 54px;
 }
 
 .lpStatementTitle h2 {
   margin: 0;
-  font-size: clamp(3rem, 7vw, 6.2rem);
-  line-height: 0.98;
+  max-width: 690px;
+  font-size: clamp(3.35rem, 4.8vw, 4.95rem);
+  font-weight: 700;
+  line-height: 0.97;
   letter-spacing: -0.05em;
 }
 
@@ -505,42 +517,81 @@ main {
   color: #e22906;
 }
 
+.lpStatementIntro {
+  margin: 28px 0 0 6px;
+  max-width: 640px;
+  color: #fffefe;
+  font-size: clamp(1.25rem, 1.52vw, 1.58rem);
+  font-weight: 600;
+  line-height: 1.42;
+}
+
 .lpStatementAside {
   display: grid;
-  gap: 28px;
+  gap: 0;
   justify-items: start;
-  padding-top: 22px;
+  padding-top: 2px;
+  position: relative;
+  z-index: 2;
 }
 
 .lpStatementAside p {
   margin: 0;
-  max-width: 430px;
-  font-size: clamp(1.2rem, 2vw, 1.7rem);
-  line-height: 1.4;
+  max-width: 700px;
+  color: #fffefe;
+  font-size: clamp(2.2rem, 3.2vw, 3.35rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
 }
 
 .lpStatementBand {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 88px;
-  padding: 24px 28px;
-  background: rgba(217, 217, 217, 0.1);
+  gap: 2px;
+  width: min(100%, 920px);
+  margin-top: 48px;
+  margin-left: clamp(320px, 30vw, 390px);
+  padding: 20px 26px 18px;
+  background: rgba(79, 79, 79, 0.6);
   backdrop-filter: blur(22px);
-  font-size: clamp(1.2rem, 1.9vw, 1.75rem);
+  font-size: clamp(2.55rem, 3.7vw, 4rem);
   font-weight: 800;
-  text-align: center;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  position: relative;
+  z-index: 2;
 }
 
 .lpStatementFooter {
-  padding-top: 38px;
+  display: grid;
+  justify-items: start;
+  margin-left: clamp(500px, 44vw, 620px);
+  padding-top: 12px;
+  position: relative;
+  z-index: 2;
 }
 
 .lpStatementFooter p {
   margin: 0;
-  font-size: clamp(2.2rem, 4.4vw, 3.6rem);
-  font-weight: 700;
+  font-size: clamp(2.1rem, 2.7vw, 3rem);
+  font-weight: 500;
   letter-spacing: -0.04em;
+}
+
+.lpStatementFooter .lpPrimaryButton {
+  margin-top: 18px;
+}
+
+.lpStatementCharacter {
+  position: absolute;
+  right: -18px;
+  bottom: 0;
+  width: min(100%, 420px);
+  max-height: 58vh;
+  object-fit: contain;
+  object-position: right bottom;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .lpFeaturesHeader {
@@ -1446,7 +1497,6 @@ main {
 
 @media (max-width: 1180px) {
   .lpHeroLayout,
-  .lpStatementGrid,
   .lpInstallHeader {
     grid-template-columns: 1fr;
   }
@@ -1474,9 +1524,35 @@ main {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .lpStatementGrid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
   .lpStatementAside,
   .lpInstallCopy {
     justify-items: start;
+  }
+
+  .lpStatementAside p {
+    max-width: 760px;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+  }
+
+  .lpStatementBand {
+    width: calc(100% - 220px);
+    margin-top: 34px;
+    margin-left: 160px;
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+
+  .lpStatementFooter {
+    margin-left: 200px;
+  }
+
+  .lpStatementCharacter {
+    width: min(40vw, 340px);
+    max-height: 44vh;
   }
 
   .lpInstallCopy p {
@@ -1542,6 +1618,7 @@ main {
   }
 
   .lpNavShell {
+    width: min(100%, calc(100% - 12px));
     padding-top: 12px;
   }
 
@@ -1591,7 +1668,22 @@ main {
   }
 
   .lpStatementBand {
-    grid-template-columns: 1fr;
+    width: 100%;
+    margin-top: 28px;
+    margin-left: 0;
+    padding: 18px 18px 16px;
+    font-size: clamp(1.9rem, 7vw, 2.6rem);
+  }
+
+  .lpStatementFooter {
+    margin-left: 0;
+    padding-top: 18px;
+  }
+
+  .lpStatementCharacter {
+    width: min(58vw, 280px);
+    max-height: 36vh;
+    right: -10px;
   }
 
   .lpFeatureGrid {
