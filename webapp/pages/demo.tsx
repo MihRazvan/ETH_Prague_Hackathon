@@ -340,9 +340,9 @@ export default function DemoPage() {
     }
 
     return (
-      <a className="lpPrimaryButton" href="/learn">
-        Enter the side quest
-      </a>
+      <button className="lpPrimaryButton" disabled type="button">
+        Builder Pass unlocked
+      </button>
     );
   }
 
@@ -397,37 +397,8 @@ export default function DemoPage() {
                 ))}
               </div>
 
-              <div className="demoMarketStats" role="list" aria-label="Demo state summary">
-                <div className="demoMarketStat" role="listitem">
-                  <span>Source</span>
-                  <strong>{selectedSource ? `${formatEther(BigInt(selectedSource.amountWei))} ETH locked` : "Choose fact"}</strong>
-                </div>
-                <div className="demoMarketStat" role="listitem">
-                  <span>Bundle</span>
-                  <strong>{proofBundleSizeBytes ? `${proofBundleSizeBytes} bytes` : "Not generated"}</strong>
-                </div>
-                <div className="demoMarketStat" role="listitem">
-                  <span>Verification</span>
-                  <strong>{verification ? "Accepted on Base" : "Pending"}</strong>
-                </div>
-                <div className="demoMarketStat" role="listitem">
-                  <span>Access</span>
-                  <strong>{accessGranted ? "Builder Pass unlocked" : "Locked"}</strong>
-                </div>
-              </div>
-
               <div className="demoAppGrid">
                 <section className="demoMarketSurface">
-                  <div className="demoSurfaceHeader">
-                    <div>
-                      <span>Live source facts</span>
-                      <strong>Available Ethereum locks</strong>
-                    </div>
-                    <button className="demoMutedButton" onClick={() => selectedSource && selectSource(selectedSource)} type="button">
-                      refresh selection
-                    </button>
-                  </div>
-
                   <div className="demoFactsTable" role="table" aria-label="Live source facts">
                     <div className="demoFactsHead" role="row">
                       <span>Fact</span>
@@ -486,6 +457,29 @@ export default function DemoPage() {
                         <strong>{config ? `${config.maxProofAgeSeconds}s` : "—"}</strong>
                       </div>
                     </div>
+                    <div className="demoTerminalBlock">
+                      <div className="demoTerminalHeader">
+                        <span>proof trace</span>
+                      </div>
+                      <div className="demoTerminalStream">
+                        {proofPipelineLabels.map((step, index) => (
+                          <TerminalLine
+                            key={step}
+                            index={index + 1}
+                            label={step}
+                            state={proofPipeline[step] ?? (proofBundle ? "success" : "pending")}
+                          />
+                        ))}
+                        {verifyPipelineLabels.map((step, index) => (
+                          <TerminalLine
+                            key={step}
+                            index={proofPipelineLabels.length + index + 1}
+                            label={step}
+                            state={verifyPipeline[step] ?? (verification ? "success" : "pending")}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </details>
                 </section>
 
@@ -521,27 +515,7 @@ export default function DemoPage() {
 
                   <div className="demoActionRow">
                     {actionButton()}
-                    <div className="demoActionMeta">
-                      <span>{selectedSource?.label ?? "No fact selected"}</span>
-                      <span>{verification ? "verification accepted" : "awaiting Base verification"}</span>
-                    </div>
-                  </div>
-
-                  <div className="demoPipeline">
-                    {(busy === "prove" || proofBundle) && (
-                      <Pipeline
-                        label="Proof assembly"
-                        statuses={proofPipeline}
-                        steps={proofPipelineLabels}
-                      />
-                    )}
-                    {(busy === "verify" || verification) && (
-                      <Pipeline
-                        label="Base verification"
-                        statuses={verifyPipeline}
-                        steps={verifyPipelineLabels}
-                      />
-                    )}
+                    <div className="demoActionMeta" />
                   </div>
 
                   <div className={`demoUnlock ${accessGranted ? "is-open" : ""}`}>
@@ -576,27 +550,21 @@ export default function DemoPage() {
   );
 }
 
-function Pipeline({
+function TerminalLine({
+  index,
   label,
-  statuses,
-  steps,
+  state,
 }: {
+  index: number;
   label: string;
-  statuses: Record<string, StepState>;
-  steps: readonly string[];
+  state: StepState;
 }) {
   return (
-    <div className="demoPipelineBlock">
-      <div className="demoPipelineHeader">
-        <span>{label}</span>
-      </div>
-      <div className="demoPipelineSteps">
-        {steps.map((step) => (
-          <div className={`demoPipelineStep is-${statuses[step] ?? "pending"}`} key={step}>
-            <strong>{step}</strong>
-          </div>
-        ))}
-      </div>
+    <div className={`demoTerminalLine is-${state}`}>
+      <span className="demoTerminalIndex">{String(index).padStart(2, "0")}</span>
+      <span className="demoTerminalPrompt">&gt;</span>
+      <strong>{label}</strong>
+      <span className="demoTerminalState">{state}</span>
     </div>
   );
 }

@@ -1192,26 +1192,16 @@ main {
 }
 
 .demoActionMeta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: flex-end;
-  color: rgba(255, 255, 255, 0.64);
-  font-size: 0.92rem;
+  display: none;
 }
 
-.demoPipeline {
+.demoTerminalBlock {
   display: grid;
   gap: 12px;
+  padding-top: 16px;
 }
 
-.demoPipelineBlock {
-  display: grid;
-  gap: 12px;
-  padding-top: 4px;
-}
-
-.demoPipelineHeader {
+.demoTerminalHeader {
   color: #1cd5f8;
   font-size: 0.82rem;
   font-weight: 800;
@@ -1219,32 +1209,56 @@ main {
   text-transform: uppercase;
 }
 
-.demoPipelineSteps {
-  display: flex;
-  flex-wrap: wrap;
+.demoTerminalStream {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(4, 10, 8, 0.82);
+  border: 1px solid rgba(28, 213, 248, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.demoTerminalLine {
+  display: grid;
+  grid-template-columns: 34px 16px minmax(0, 1fr) auto;
   gap: 10px;
+  align-items: center;
+  color: rgba(118, 255, 176, 0.74);
+  font-family: "IBM Plex Mono", "SFMono-Regular", "SF Mono", Consolas, monospace;
+  font-size: 0.88rem;
+  line-height: 1.4;
 }
 
-.demoPipelineStep {
-  padding: 10px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.48);
-  border-radius: 14px;
+.demoTerminalIndex,
+.demoTerminalPrompt,
+.demoTerminalState {
+  color: rgba(118, 255, 176, 0.46);
 }
 
-.demoPipelineStep strong {
-  font-size: 0.98rem;
-  font-weight: 700;
+.demoTerminalLine strong {
+  font-weight: 600;
 }
 
-.demoPipelineStep.is-active {
-  color: #fffefe;
-  border-color: rgba(28, 213, 248, 0.7);
+.demoTerminalLine.is-active,
+.demoTerminalLine.is-active .demoTerminalIndex,
+.demoTerminalLine.is-active .demoTerminalPrompt,
+.demoTerminalLine.is-active .demoTerminalState {
+  color: #1cd5f8;
 }
 
-.demoPipelineStep.is-success {
-  color: #fffefe;
-  border-color: rgba(227, 40, 7, 0.76);
+.demoTerminalLine.is-success,
+.demoTerminalLine.is-success .demoTerminalIndex,
+.demoTerminalLine.is-success .demoTerminalPrompt,
+.demoTerminalLine.is-success .demoTerminalState {
+  color: rgba(118, 255, 176, 0.92);
+}
+
+.demoTerminalLine.is-pending,
+.demoTerminalLine.is-pending .demoTerminalIndex,
+.demoTerminalLine.is-pending .demoTerminalPrompt,
+.demoTerminalLine.is-pending .demoTerminalState {
+  color: rgba(118, 255, 176, 0.34);
 }
 
 .demoUnlock {
