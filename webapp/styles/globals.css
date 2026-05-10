@@ -1652,7 +1652,341 @@ main {
     flex-direction: column;
   }
 
-  .lpGithubShowcase {
+.lpGithubShowcase {
     margin-top: 72px;
+  }
+}
+
+/* ── Learn / Docs Page (GitBook-style) ── */
+
+.learnPage {
+  min-height: 100vh;
+  background: #0d0d0d;
+  color: #fffefe;
+}
+
+.learnMain {
+  margin-left: 260px;
+}
+
+.learnSidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 260px;
+  overflow-y: auto;
+  padding: 24px 16px 32px;
+  background: #141414;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  z-index: 10;
+}
+
+.learnSidebarInner {
+  display: grid;
+  gap: 18px;
+}
+
+.learnSidebarBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px;
+  margin-bottom: 8px;
+  color: #1cd5f8;
+  font-family: "Matao Free Demo", var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.learnSidebarLogo {
+  height: 32px;
+  width: auto;
+}
+
+.learnSidebarLabel {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0 8px;
+}
+
+.learnSidebarNav {
+  display: grid;
+  gap: 1px;
+}
+
+.learnSidebarLink {
+  display: block;
+  padding: 7px 12px;
+  margin-left: calc(var(--depth, 0) * 14px);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.learnSidebarLink.is-section {
+  margin-top: 16px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  padding: 4px 12px;
+}
+
+.learnSidebarLink:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.learnSidebarLink.is-active {
+  background: rgba(28, 213, 248, 0.08);
+  color: #ffffff;
+  border-left: 2px solid #1cd5f8;
+  border-radius: 0 8px 8px 0;
+  padding-left: 10px;
+}
+
+
+.learnTopbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 14px 32px;
+  background: rgba(13, 13, 13, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.learnBreadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.82rem;
+}
+
+.learnBreadcrumb a {
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 120ms ease;
+}
+
+.learnBreadcrumb a:hover {
+  color: #1cd5f8;
+}
+
+.learnContent {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 48px;
+  width: 100%;
+  padding: 40px 48px 72px;
+}
+
+.learnArticle {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.learnMarkdown {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.learnMarkdown h1,
+.learnMarkdown h2,
+.learnMarkdown h3 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: #fffefe;
+}
+
+.learnMarkdown h1 {
+  margin-bottom: 20px;
+  font-size: clamp(2rem, 3vw, 2.6rem);
+}
+
+.learnMarkdown h2 {
+  margin-top: 48px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: clamp(1.4rem, 2vw, 1.7rem);
+}
+
+.learnMarkdown h3 {
+  margin-top: 28px;
+  margin-bottom: 10px;
+  font-size: 1.15rem;
+}
+
+.learnMarkdown p,
+.learnMarkdown ul,
+.learnMarkdown pre {
+  margin: 0 0 18px;
+}
+
+.learnMarkdown ul {
+  padding-left: 22px;
+}
+
+.learnMarkdown li + li {
+  margin-top: 6px;
+}
+
+.learnMarkdown a {
+  color: #1cd5f8;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(28, 213, 248, 0.3);
+  transition: border-color 120ms ease;
+}
+
+.learnMarkdown a:hover {
+  border-color: #1cd5f8;
+}
+
+.learnMarkdown code {
+  padding: 0.15em 0.4em;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffd4c8;
+  font-family: "SFMono-Regular", "SF Mono", Consolas, monospace;
+  font-size: 0.88em;
+}
+
+.learnMarkdown pre {
+  overflow-x: auto;
+  padding: 16px 18px;
+  border-radius: 10px;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.learnMarkdown pre code {
+  padding: 0;
+  background: transparent;
+  color: #e8ecf0;
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.learnToc {
+  position: relative;
+}
+
+.learnTocInner {
+  position: sticky;
+  top: 70px;
+  display: grid;
+  gap: 10px;
+}
+
+.learnTocLinks {
+  display: grid;
+  gap: 1px;
+}
+
+.learnTocLink {
+  display: block;
+  padding: 5px 10px;
+  margin-left: calc(var(--depth, 0) * 10px);
+  border-radius: 6px;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  transition: color 120ms ease;
+}
+
+.learnTocLink:hover {
+  color: #ffffff;
+  background: transparent;
+}
+
+.learnTocEmpty {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.learnPager {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.learnPagerLink {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  transition: border-color 120ms ease;
+}
+
+.learnPagerLink:hover {
+  border-color: rgba(28, 213, 248, 0.3);
+}
+
+.learnPagerLink span {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.learnPagerLink strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.learnPagerLinkNext {
+  text-align: right;
+}
+
+@media (max-width: 1080px) {
+  .learnContent {
+    grid-template-columns: 1fr;
+  }
+
+  .learnToc {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .learnPage {
+    grid-template-columns: 1fr;
+  }
+
+  .learnSidebar {
+    position: static;
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 18px 16px;
+  }
+
+  .learnContent {
+    padding: 24px 18px 48px;
+  }
+
+  .learnPager {
+    grid-template-columns: 1fr;
   }
 }
