@@ -657,7 +657,7 @@ function getConnectorClient() {
   return createWalletClient({ transport: custom(provider) });
 }
 
-async function ensureChain(client: ReturnType<typeof createWalletClient>, chain: typeof baseSepolia) {
+async function ensureChain(client: ReturnType<typeof createWalletClient>, chain: typeof baseSepolia | typeof sepolia) {
   try {
     await client.switchChain({ id: chain.id });
   } catch {
