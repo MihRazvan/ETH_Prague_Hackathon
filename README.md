@@ -1,11 +1,12 @@
 # ANYWARE
 <img width="1920" height="360" alt="banner" src="https://github.com/user-attachments/assets/63058357-9802-420a-b31e-373184737080" />
 
-Elseware is a trustless cross-chain state verification system that lets EVM rollups verify recent Ethereum state directly onchain using EIP-4788 beacon roots.
+Anyware is a trustless cross-chain state verification system that lets EVM rollups verify recent Ethereum state directly onchain using EIP-4788 beacon roots.
 
 **Project Brief:** [PROJECT_BRIEF.md](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/PROJECT_BRIEF.md)
+**Submission:** [Devfolio](https://devfolio.co/projects/ag-1f6a)
 
-[Landing Page]()| [Demo]() | [Quickstart](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/QUICKSTART.md) | [Solidity Integration](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/SOLIDITY_INTEGRATION.md) | [Technical Architecture](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/ARCHITECTURE.md) | [Docs](https://github.com/MihRazvan/ETH_Prague_Hackathon/tree/main/docs)
+[Landing Page]() | [Demo App]() | [Showcase]() | [Quickstart](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/QUICKSTART.md) | [Solidity Integration](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/SOLIDITY_INTEGRATION.md) | [Technical Architecture](https://github.com/MihRazvan/ETH_Prague_Hackathon/blob/main/docs/ARCHITECTURE.md) | [Docs](https://github.com/MihRazvan/ETH_Prague_Hackathon/tree/main/docs)
 
 ---
 
@@ -42,18 +43,13 @@ The prover gathers publicly available Ethereum execution and beacon-chain data, 
 
 ### Core Principles
 
-1. **Trust Ethereum Consensus, Not Middleware**
-   Ethereum already exposes consensus roots through EIP-4788. Anyware builds directly on top of that trust anchor.
+1. **Trust Ethereum Consensus, Not Middleware:** Ethereum already exposes consensus roots through EIP-4788. Anyware builds directly on top of that trust anchor.
 
-2. **Proofs Over Messages**
-   The system verifies state cryptographically instead of accepting externally signed claims.
+2. **Proofs Over Messages:** The system verifies state cryptographically instead of accepting externally signed claims.
 
-3. **Verification Happens Onchain**
-  Offchain infrastructure assembles evidence. Smart contracts decide truth. Cross-Chain Reads Should Feel Native
-Ethereum state becomes locally verifiable on any EVM exposing beacon roots.
+3. **Verification Happens Onchain:** Offchain infrastructure assembles evidence. Smart contracts decide truth. Cross-Chain reads should feel native. Ethereum state becomes locally verifiable on any EVM exposing beacon roots.
 
-4. **Cross-Chain Reads Should Feel Native**
-   Ethereum state becomes locally verifiable on any EVM chain exposing beacon roots.
+4. **Cross-Chain Reads Should Feel Native:** Ethereum state becomes locally verifiable on any EVM chain exposing beacon roots.
 
 ---
 
