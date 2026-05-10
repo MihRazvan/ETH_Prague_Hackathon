@@ -143,18 +143,15 @@ export default function HomePage() {
         <section className="lpSection lpInstallSection">
           <CollageBackground />
           <div className="lpShell">
-            <div className="lpInstallHeader">
-              <div>
-                <h2>
-                  One proof.
-                  <br />
-                  Any chain.
-                </h2>
-              </div>
-              <div className="lpInstallCopy">
-                <p>Verify Ethereum state anywhere in just a single call.</p>
-                <span>{"<3"}</span>
-              </div>
+            <div className="lpInstallContent">
+              <h2>
+                One proof.
+                <br />
+                Any chain.
+              </h2>
+              <p className="lpInstallSub">
+                Verify Ethereum state anywhere in just a single call.
+              </p>
             </div>
 
             <div className="lpInstallBand">
@@ -162,16 +159,19 @@ export default function HomePage() {
             </div>
 
             <div className="lpInstallCommands">
-              <code>npm install anyware-prover</code>
-              <code>npm install anyware-solidity</code>
+              <a href="https://www.npmjs.com/package/anyware-prover" target="_blank" rel="noreferrer">
+                npm install anyware-prover
+              </a>
+              <a href="https://www.npmjs.com/package/anyware-solidity" target="_blank" rel="noreferrer">
+                npm install anyware-solidity
+              </a>
             </div>
-
-            <img
-              alt=""
-              className="lpInstallCharacter"
-              src="/landing/character-section-1-2000.png"
-            />
           </div>
+          <img
+            alt=""
+            className="lpInstallCharacter"
+            src="/landing/character-section-4-2000.png"
+          />
         </section>
 
         <section className="lpSection lpGithubSection">
