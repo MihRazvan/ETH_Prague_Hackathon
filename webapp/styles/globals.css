@@ -322,7 +322,7 @@ main {
   justify-content: space-between;
   gap: 24px;
   min-height: 78px;
-  padding: 10px 9px 10px 6px;
+  padding: 12px 24px 12px 14px;
   border: 2px solid #5bd3ff;
   border-radius: 18px;
   background: rgba(217, 217, 217, 0.1);
@@ -352,7 +352,7 @@ main {
   display: flex;
   align-items: center;
   gap: clamp(30px, 4vw, 62px);
-  padding-right: 2px;
+  padding-right: 8px;
   font-size: clamp(1.45rem, 1.9vw, 2rem);
   font-weight: 400;
   line-height: 1;

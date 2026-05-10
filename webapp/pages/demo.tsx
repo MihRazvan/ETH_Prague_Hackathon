@@ -367,14 +367,18 @@ export default function DemoPage() {
       <main className="lp demoPage">
         <section className="lpSection demoSection">
           <CollageBackground />
+          <div className="lpGlobalNav">
+            <div className="lpShell lpNavShell">
+              <SiteNav
+                rightSlot={
+                  <button className="demoWalletPill" onClick={connectWallet} type="button">
+                    {walletAddress ? truncateAddress(walletAddress) : "connect"}
+                  </button>
+                }
+              />
+            </div>
+          </div>
           <div className="lpShell demoShell">
-            <SiteNav
-              rightSlot={
-                <button className="demoWalletPill" onClick={connectWallet} type="button">
-                  {walletAddress ? truncateAddress(walletAddress) : "connect"}
-                </button>
-              }
-            />
 
             <section className="demoWorkbench">
               <div className="demoTopbar">
