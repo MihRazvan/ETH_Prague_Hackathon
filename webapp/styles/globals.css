@@ -1667,6 +1667,9 @@ main {
 
 .learnMain {
   margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .learnSidebar {
