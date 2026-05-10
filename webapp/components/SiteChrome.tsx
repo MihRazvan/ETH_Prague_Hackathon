@@ -18,9 +18,7 @@ export function SiteNav({ rightSlot }: SiteNavProps) {
   return (
     <div className="lpNav">
       <div className="lpNavBrand">
-        <div aria-hidden="true" className="lpNavMark">
-          <span>@</span>
-        </div>
+        <img className="lpNavLogo" alt="Anyware" src="/landing/anyware-logo.png" />
         <Link href="/">anyware</Link>
       </div>
       <div className="lpNavLinks">
