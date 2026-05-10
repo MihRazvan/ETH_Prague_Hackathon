@@ -1,7 +1,26 @@
+import type { Address } from "viem";
 import { baseSepolia, sepolia } from "viem/chains";
 
 export const DEMO_LOCK_AMOUNT_ETH = "0.01";
 export const MAX_PROOF_AGE_SECONDS = 3600n;
+export const DEMO_SOURCE_FACTS = [
+  {
+    id: "genesis-lock",
+    label: "Genesis Lock",
+    eyebrow: "Live Sepolia vault",
+    borrower: "0x92AAe0857979a139344f5b6F008e71F27A507522",
+    blurb: "A live ETH lock already sits on Ethereum and can be proven on Base right now.",
+  },
+] as const satisfies readonly DemoSourceFactDefinition[];
+export const DEMO_SAFE_BLOCK_OFFSETS = [12n, 24n, 36n, 48n] as const;
+
+export interface DemoSourceFactDefinition {
+  id: string;
+  label: string;
+  eyebrow: string;
+  borrower: Address;
+  blurb: string;
+}
 
 export interface DemoExecutionPayloadHeader {
   parentHash: `0x${string}`;
@@ -160,11 +179,25 @@ export interface DemoConfig {
   verifierAddress: `0x${string}`;
   lockAmountEth: string;
   maxProofAgeSeconds: string;
+  sources: DemoSourceFactSnapshot[];
+}
+
+export interface DemoSourceFactSnapshot {
+  id: string;
+  label: string;
+  eyebrow: string;
+  borrower: Address;
+  blurb: string;
+  amountWei: string;
+  status: number;
 }
 
 export interface DemoProofResponse {
   ok: true;
+  sourceId: string;
+  borrower: Address;
   blockNumber: string;
+  blockOffset: string;
   lockSlot: `0x${string}`;
   proofLatencyMs: number;
   proofBundleSizeBytes: number;
@@ -220,4 +253,11 @@ export function chainName(chainId?: number | null): string {
   if (chainId === sepolia.id) return "Ethereum Sepolia";
   if (chainId === baseSepolia.id) return "Base Sepolia";
   return "Unknown network";
+}
+
+export function statusLabel(status?: number | null): string {
+  if (status === 1) return "Active";
+  if (status === 2) return "Released";
+  if (status === 0) return "Empty";
+  return "Unknown";
 }

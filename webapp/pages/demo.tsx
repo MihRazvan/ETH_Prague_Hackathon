@@ -1,23 +1,25 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import { createPublicClient, createWalletClient, custom, formatEther, http, parseEther, type Address, type Hex } from "viem";
-import { baseSepolia, sepolia } from "viem/chains";
+import { createPublicClient, createWalletClient, custom, formatEther, http, type Address } from "viem";
+import { baseSepolia } from "viem/chains";
 
 import { CollageBackground, SiteNav } from "../components/SiteChrome";
 import {
   chainName,
   decodeLockValue,
   deserializeBundle,
+  statusLabel,
+  truncateAddress,
   type DemoConfig,
   type DemoErrorResponse,
   type DemoProofResponse,
+  type DemoSourceFactSnapshot,
   type VerificationSummary,
   verifierAbi,
-  vaultAbi,
 } from "../lib/demo";
 
-type FlowKey = "connect" | "lock" | "prove" | "verify" | "unlock";
+type FlowKey = "connect" | "select" | "prove" | "verify" | "unlock";
 type StepState = "pending" | "active" | "success" | "error";
 type FeedTone = "neutral" | "good" | "warn";
 
@@ -36,8 +38,8 @@ interface StepVisual {
 
 const flowSteps: StepVisual[] = [
   { key: "connect", label: "Connect wallet", eyebrow: "Auth" },
-  { key: "lock", label: "Lock on Ethereum", eyebrow: "Sepolia" },
-  { key: "prove", label: "Assemble proof", eyebrow: "Anyware" },
+  { key: "select", label: "Pick live fact", eyebrow: "Ethereum" },
+  { key: "prove", label: "Generate proof", eyebrow: "Anyware" },
   { key: "verify", label: "Verify on Base", eyebrow: "Base" },
   { key: "unlock", label: "Unlock access", eyebrow: "App" },
 ];
@@ -64,14 +66,13 @@ export default function DemoPage() {
   const [configError, setConfigError] = useState<string | null>(null);
   const [walletAddress, setWalletAddress] = useState<Address | null>(null);
   const [activeChainId, setActiveChainId] = useState<number | null>(null);
-  const [sourceBlockNumber, setSourceBlockNumber] = useState<bigint | null>(null);
-  const [sourceTxHash, setSourceTxHash] = useState<Hex | null>(null);
-  const [lockAmountWei, setLockAmountWei] = useState<bigint | null>(null);
-  const [lockStatus, setLockStatus] = useState<number | null>(null);
-  const [lockSlot, setLockSlot] = useState<Hex | null>(null);
+  const [selectedSourceId, setSelectedSourceId] = useState<string | null>(null);
   const [proofBundle, setProofBundle] = useState<ReturnType<typeof deserializeBundle> | null>(null);
   const [proofLatencyMs, setProofLatencyMs] = useState<number | null>(null);
   const [proofBundleSizeBytes, setProofBundleSizeBytes] = useState<number | null>(null);
+  const [proofSourceBlockNumber, setProofSourceBlockNumber] = useState<bigint | null>(null);
+  const [proofSourceOffset, setProofSourceOffset] = useState<bigint | null>(null);
+  const [lockSlot, setLockSlot] = useState<`0x${string}` | null>(null);
   const [verification, setVerification] = useState<VerificationSummary | null>(null);
   const [accessGranted, setAccessGranted] = useState(false);
   const [activeFlow, setActiveFlow] = useState<FlowKey>("connect");
@@ -81,9 +82,22 @@ export default function DemoPage() {
   const [proofPipeline, setProofPipeline] = useState<Record<string, StepState>>({});
   const [verifyPipeline, setVerifyPipeline] = useState<Record<string, StepState>>({});
 
+  const selectedSource = useMemo(
+    () => config?.sources.find((source) => source.id === selectedSourceId) ?? config?.sources[0] ?? null,
+    [config, selectedSourceId],
+  );
+  const recentFeed = feed.slice(0, 2);
+
   useEffect(() => {
     void loadConfig();
   }, []);
+
+  useEffect(() => {
+    if (!selectedSourceId && config?.sources[0]) {
+      setSelectedSourceId(config.sources[0].id);
+      setActiveFlow("select");
+    }
+  }, [config, selectedSourceId]);
 
   useEffect(() => {
     const provider = getInjectedProvider();
@@ -117,7 +131,8 @@ export default function DemoPage() {
         throw new Error("error" in payload ? payload.error : "Failed to load demo config.");
       }
       setConfig(payload);
-      appendFeed("Demo ready", "Live Sepolia and Base endpoints loaded.", "good");
+      appendFeed("Demo ready", "Live Ethereum and Base endpoints are online.", "good");
+      appendFeed("Source fact loaded", `${payload.sources.length} live Ethereum fact${payload.sources.length === 1 ? "" : "s"} ready.`, "neutral");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to load demo config.";
       setConfigError(message);
@@ -141,8 +156,8 @@ export default function DemoPage() {
       const chainId = await connector.getChainId();
       setWalletAddress(address);
       setActiveChainId(chainId);
-      setActiveFlow("lock");
-      appendFeed("Wallet connected", `${address} on ${chainName(chainId)}.`, "good");
+      setActiveFlow("select");
+      appendFeed("Wallet connected", `${truncateAddress(address)} on ${chainName(chainId)}.`, "good");
     } catch (error) {
       handleError("Wallet connection failed.", error, "connect");
     } finally {
@@ -150,101 +165,38 @@ export default function DemoPage() {
     }
   }
 
-  async function lockOnEthereum() {
-    if (!config || !walletAddress) return;
-
-    try {
-      setBusy("lock");
-      setErrorMessage(null);
-      setActiveFlow("lock");
-      appendFeed("Switching source chain", "Requesting Ethereum Sepolia in wallet.", "neutral");
-
-      const connector = getConnectorClient();
-      await ensureChain(connector, sepolia);
-      setActiveChainId(sepolia.id);
-
-      const publicClient = createPublicClient({
-        chain: sepolia,
-        transport: http(config.ethRpcUrl),
-      });
-
-      const existingLock = await publicClient.readContract({
-        address: config.vaultAddress,
-        abi: vaultAbi,
-        functionName: "locks",
-        args: [walletAddress],
-      });
-      const currentStatus = Number(existingLock & 0xffn);
-      if (currentStatus === 1) {
-        const latestBlock = await publicClient.getBlockNumber();
-        const decoded = decodeLockValue(existingLock);
-        setSourceBlockNumber(latestBlock);
-        setLockAmountWei(decoded.amountWei);
-        setLockStatus(decoded.status);
-        setActiveFlow("prove");
-        appendFeed("Active lock detected", `${formatEther(decoded.amountWei)} ETH is already locked on Sepolia.`, "warn");
-        return;
-      }
-
-      appendFeed("Waiting for signature", `Locking ${config.lockAmountEth} ETH in the source vault.`, "neutral");
-      const writeClient = createWalletClient({
-        transport: custom(getInjectedProvider()),
-      });
-      const txHash = await writeClient.writeContract({
-        account: walletAddress,
-        chain: sepolia,
-        address: config.vaultAddress,
-        abi: vaultAbi,
-        functionName: "lock",
-        args: [],
-        value: parseEther(config.lockAmountEth),
-      });
-      setSourceTxHash(txHash);
-      appendFeed("Source transaction sent", txHash, "neutral");
-
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
-      const refreshedLock = await publicClient.readContract({
-        address: config.vaultAddress,
-        abi: vaultAbi,
-        functionName: "locks",
-        args: [walletAddress],
-      });
-      const decoded = decodeLockValue(refreshedLock);
-
-      setSourceBlockNumber(receipt.blockNumber);
-      setLockAmountWei(decoded.amountWei);
-      setLockStatus(decoded.status);
-      setActiveFlow("prove");
-
-      appendFeed(
-        "Collateral locked",
-        `${formatEther(decoded.amountWei)} ETH confirmed in block ${receipt.blockNumber.toString()}.`,
-        "good",
-      );
-    } catch (error) {
-      handleError("Ethereum lock failed.", error, "lock");
-    } finally {
-      setBusy(null);
-    }
+  function selectSource(source: DemoSourceFactSnapshot) {
+    setSelectedSourceId(source.id);
+    setProofBundle(null);
+    setProofLatencyMs(null);
+    setProofBundleSizeBytes(null);
+    setProofSourceBlockNumber(null);
+    setProofSourceOffset(null);
+    setLockSlot(null);
+    setVerification(null);
+    setAccessGranted(false);
+    setProofPipeline({});
+    setVerifyPipeline({});
+    setErrorMessage(null);
+    setActiveFlow(walletAddress ? "prove" : "select");
+    appendFeed("Live fact selected", `${source.label} is staged for proof generation.`, "neutral");
   }
 
   async function generateProof() {
-    if (!walletAddress || !sourceBlockNumber) return;
+    if (!selectedSource) return;
 
     try {
       setBusy("prove");
       setErrorMessage(null);
       setActiveFlow("prove");
       setProofPipeline({});
-      await runPipeline(proofPipelineLabels, setProofPipeline, 280);
+      appendFeed("Proof request started", `Assembling a fresh bundle for ${selectedSource.label}.`, "neutral");
+      await runPipeline(proofPipelineLabels, setProofPipeline, 240);
 
       const response = await fetch("/api/demo/proof", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          borrower: walletAddress,
-          blockNumber: sourceBlockNumber.toString(),
-        }),
+        body: JSON.stringify({ sourceId: selectedSource.id }),
       });
 
       const payload = (await response.json()) as DemoProofResponse | DemoErrorResponse;
@@ -256,11 +208,13 @@ export default function DemoPage() {
       setLockSlot(payload.lockSlot);
       setProofLatencyMs(payload.proofLatencyMs);
       setProofBundleSizeBytes(payload.proofBundleSizeBytes);
+      setProofSourceBlockNumber(BigInt(payload.blockNumber));
+      setProofSourceOffset(BigInt(payload.blockOffset));
       setActiveFlow("verify");
 
       appendFeed(
         "Proof assembled",
-        `${payload.proofBundleSizeBytes} bytes bundled in ${payload.proofLatencyMs}ms.`,
+        `${payload.proofBundleSizeBytes} bytes from Sepolia block ${payload.blockNumber} in ${payload.proofLatencyMs}ms.`,
         "good",
       );
     } catch (error) {
@@ -271,19 +225,19 @@ export default function DemoPage() {
   }
 
   async function verifyOnBase() {
-    if (!config || !proofBundle) return;
+    if (!config || !proofBundle || !selectedSource) return;
 
     try {
       setBusy("verify");
       setErrorMessage(null);
       setActiveFlow("verify");
-      appendFeed("Switching destination chain", "Preparing Base verification context.", "neutral");
+      appendFeed("Switching to Base", "Preparing the Base verification context.", "neutral");
 
       const connector = getConnectorClient();
       await ensureChain(connector, baseSepolia);
       setActiveChainId(baseSepolia.id);
       setVerifyPipeline({});
-      await runPipeline(verifyPipelineLabels, setVerifyPipeline, 260);
+      await runPipeline(verifyPipelineLabels, setVerifyPipeline, 220);
 
       const client = createPublicClient({
         chain: baseSepolia,
@@ -312,7 +266,7 @@ export default function DemoPage() {
 
       appendFeed(
         "Proof accepted on Base",
-        `${formatEther(decoded.amountWei)} ETH reconstructed from Ethereum-authenticated state.`,
+        `${selectedSource.label} reconstructed ${formatEther(decoded.amountWei)} ETH from Ethereum state.`,
         "good",
       );
     } catch (error) {
@@ -325,7 +279,7 @@ export default function DemoPage() {
   function unlockAccess() {
     setAccessGranted(true);
     setActiveFlow("unlock");
-    appendFeed("Access unlocked", "Verified Mode is now active on Base.", "good");
+    appendFeed("Builder access unlocked", "Verified Mode is now active on Base.", "good");
   }
 
   function handleError(prefix: string, error: unknown, flow: FlowKey) {
@@ -336,12 +290,12 @@ export default function DemoPage() {
   }
 
   function currentInstruction() {
-    if (accessGranted) return "Ethereum truth accepted. Base access is now open.";
-    if (!walletAddress) return "Connect your wallet to begin the live proof flow.";
-    if (!sourceBlockNumber) return "Lock a small amount on Ethereum Sepolia to create the fact.";
-    if (!proofBundle) return "Assemble the proof bundle from live Ethereum + beacon data.";
-    if (!verification) return "Run the Base verification path and reconstruct the slot onchain.";
-    return "Verification passed. Unlock the Base-side reward and finish the demo.";
+    if (accessGranted) return "Base accepted the Ethereum fact. The experience is now unlocked.";
+    if (!walletAddress) return "Connect a wallet to run the live Base-side verification flow.";
+    if (!selectedSource) return "Pick the live Ethereum fact you want to test.";
+    if (!proofBundle) return "Generate a fresh bundle from a live Ethereum lock that already exists.";
+    if (!verification) return "Verify the bundle on Base and reconstruct the exact locked state.";
+    return "Verification passed. Unlock the Base-side result and finish the flow.";
   }
 
   function actionButton() {
@@ -361,18 +315,10 @@ export default function DemoPage() {
       );
     }
 
-    if (!sourceBlockNumber) {
-      return (
-        <button className="lpPrimaryButton" disabled={busy !== null || !config} onClick={lockOnEthereum} type="button">
-          {busy === "lock" ? "Locking..." : "Lock on Ethereum"}
-        </button>
-      );
-    }
-
     if (!proofBundle) {
       return (
-        <button className="lpPrimaryButton" disabled={busy !== null} onClick={generateProof} type="button">
-          {busy === "prove" ? "Assembling..." : "Generate proof"}
+        <button className="lpPrimaryButton" disabled={busy !== null || !selectedSource} onClick={generateProof} type="button">
+          {busy === "prove" ? "Generating..." : "Generate live proof"}
         </button>
       );
     }
@@ -388,7 +334,7 @@ export default function DemoPage() {
     if (!accessGranted) {
       return (
         <button className="lpPrimaryButton" disabled={busy !== null} onClick={unlockAccess} type="button">
-          Unlock Builder Mode
+          Unlock Builder Pass
         </button>
       );
     }
@@ -402,12 +348,12 @@ export default function DemoPage() {
 
   const progressStates = flowSteps.map((step) => {
     if (accessGranted) return { ...step, state: "success" as StepState };
-    if (step.key === activeFlow && busy) return { ...step, state: "active" as StepState };
     if (step.key === "connect" && walletAddress) return { ...step, state: "success" as StepState };
-    if (step.key === "lock" && sourceBlockNumber) return { ...step, state: "success" as StepState };
+    if (step.key === "select" && selectedSource) return { ...step, state: "success" as StepState };
     if (step.key === "prove" && proofBundle) return { ...step, state: "success" as StepState };
     if (step.key === "verify" && verification) return { ...step, state: "success" as StepState };
     if (step.key === "unlock" && accessGranted) return { ...step, state: "success" as StepState };
+    if (step.key === activeFlow && busy) return { ...step, state: "active" as StepState };
     if (step.key === activeFlow) return { ...step, state: "active" as StepState };
     return { ...step, state: "pending" as StepState };
   });
@@ -425,22 +371,23 @@ export default function DemoPage() {
             <SiteNav
               rightSlot={
                 <button className="demoWalletPill" onClick={connectWallet} type="button">
-                  {walletAddress ? chainName(activeChainId) : "connect"}
+                  {walletAddress ? truncateAddress(walletAddress) : "connect"}
                 </button>
               }
             />
 
-            <div className="demoHero">
-              <div>
-                <p className="demoOverline">Live proof flow</p>
-                <h1 className="demoTitle">Lock on Ethereum. Unlock on Base.</h1>
-              </div>
-              <p className="demoTitleMeta">
-                One live fact. One proof bundle. One Base-side unlock.
-              </p>
-            </div>
-
             <section className="demoWorkbench">
+              <div className="demoTopbar">
+                <div className="demoTopbarLabel">
+                  <span>live demo</span>
+                  <strong>dashboard</strong>
+                </div>
+                <div className="demoTopbarMeta">
+                  <span>{walletAddress ? "wallet live" : "wallet required"}</span>
+                  <span>{activeChainId ? chainName(activeChainId) : "no chain selected"}</span>
+                </div>
+              </div>
+
               <div className="demoProgress">
                 {progressStates.map((step) => (
                   <div className={`demoProgressStep is-${step.state}`} key={step.key}>
@@ -450,35 +397,133 @@ export default function DemoPage() {
                 ))}
               </div>
 
-              <div className="demoColumns">
-                <div className="demoStage">
-                  <div className="demoGuide">
+              <div className="demoMarketStats" role="list" aria-label="Demo state summary">
+                <div className="demoMarketStat" role="listitem">
+                  <span>Source</span>
+                  <strong>{selectedSource ? `${formatEther(BigInt(selectedSource.amountWei))} ETH locked` : "Choose fact"}</strong>
+                </div>
+                <div className="demoMarketStat" role="listitem">
+                  <span>Bundle</span>
+                  <strong>{proofBundleSizeBytes ? `${proofBundleSizeBytes} bytes` : "Not generated"}</strong>
+                </div>
+                <div className="demoMarketStat" role="listitem">
+                  <span>Verification</span>
+                  <strong>{verification ? "Accepted on Base" : "Pending"}</strong>
+                </div>
+                <div className="demoMarketStat" role="listitem">
+                  <span>Access</span>
+                  <strong>{accessGranted ? "Builder Pass unlocked" : "Locked"}</strong>
+                </div>
+              </div>
+
+              <div className="demoAppGrid">
+                <section className="demoMarketSurface">
+                  <div className="demoSurfaceHeader">
+                    <div>
+                      <span>Live source facts</span>
+                      <strong>Available Ethereum locks</strong>
+                    </div>
+                    <button className="demoMutedButton" onClick={() => selectedSource && selectSource(selectedSource)} type="button">
+                      refresh selection
+                    </button>
+                  </div>
+
+                  <div className="demoFactsTable" role="table" aria-label="Live source facts">
+                    <div className="demoFactsHead" role="row">
+                      <span>Fact</span>
+                      <span>Borrower</span>
+                      <span>Locked</span>
+                      <span>Status</span>
+                      <span />
+                    </div>
+                    {(config?.sources ?? []).map((source) => {
+                      const isSelected = source.id === selectedSource?.id;
+                      return (
+                        <button
+                          className={`demoFactsRow ${isSelected ? "is-selected" : ""}`}
+                          key={source.id}
+                          onClick={() => selectSource(source)}
+                          type="button"
+                        >
+                          <div className="demoFactsPrimary">
+                            <strong>{source.label}</strong>
+                            <span>{source.eyebrow}</span>
+                          </div>
+                          <span>{truncateAddress(source.borrower)}</span>
+                          <span>{formatEther(BigInt(source.amountWei))} ETH</span>
+                          <span>{statusLabel(source.status)}</span>
+                          <span>{isSelected ? "selected" : "choose"}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <details className="demoInspect">
+                    <summary>Inspect live proof details</summary>
+                    <div className="demoInspectGrid">
+                      <div>
+                        <span>Borrower</span>
+                        <strong>{selectedSource?.borrower ?? "—"}</strong>
+                      </div>
+                      <div>
+                        <span>Status</span>
+                        <strong>{statusLabel(selectedSource?.status ?? null)}</strong>
+                      </div>
+                      <div>
+                        <span>Vault</span>
+                        <strong>{verification?.sourceAccount ?? config?.vaultAddress ?? "—"}</strong>
+                      </div>
+                      <div>
+                        <span>Slot</span>
+                        <strong>{verification?.sourceSlot ?? lockSlot ?? "—"}</strong>
+                      </div>
+                      <div>
+                        <span>Offset</span>
+                        <strong>{proofSourceOffset ? `${proofSourceOffset.toString()} blocks` : "—"}</strong>
+                      </div>
+                      <div>
+                        <span>Window</span>
+                        <strong>{config ? `${config.maxProofAgeSeconds}s` : "—"}</strong>
+                      </div>
+                    </div>
+                  </details>
+                </section>
+
+                <aside className="demoActionPanel">
+                  <div className="demoActionPanelHeader">
+                    <span>Action</span>
+                    <strong>{selectedSource?.label ?? "Select a fact"}</strong>
+                  </div>
+
+                  <div className="demoActionNotice">
                     <span>Now</span>
                     <p>{currentInstruction()}</p>
                   </div>
 
-                  <div className="demoTrack">
-                    <div className={`demoNode ${walletAddress ? "is-on" : ""}`}>
-                      <span>Ethereum</span>
-                      <strong>Lock</strong>
+                  <dl className="demoActionStats">
+                    <div>
+                      <dt>Selected lock</dt>
+                      <dd>{selectedSource ? `${formatEther(BigInt(selectedSource.amountWei))} ETH` : "—"}</dd>
                     </div>
-                    <div className={`demoBeam ${sourceBlockNumber ? "is-on" : ""}`} />
-                    <div className={`demoNode ${proofBundle ? "is-on" : ""}`}>
-                      <span>Anyware</span>
-                      <strong>Prove</strong>
+                    <div>
+                      <dt>Source block</dt>
+                      <dd>{proofSourceBlockNumber?.toString() ?? "—"}</dd>
                     </div>
-                    <div className={`demoBeam ${verification ? "is-on" : ""}`} />
-                    <div className={`demoNode ${accessGranted ? "is-on" : ""}`}>
-                      <span>Base</span>
-                      <strong>Unlock</strong>
+                    <div>
+                      <dt>Proof latency</dt>
+                      <dd>{proofLatencyMs ? `${proofLatencyMs} ms` : "—"}</dd>
                     </div>
-                  </div>
+                    <div>
+                      <dt>Verified result</dt>
+                      <dd>{verification ? `${formatEther(verification.amountWei)} ETH` : "Pending"}</dd>
+                    </div>
+                  </dl>
 
                   <div className="demoActionRow">
                     {actionButton()}
                     <div className="demoActionMeta">
-                      <span>{walletAddress ? "Wallet live" : "Wallet required"}</span>
-                      <span>{activeChainId ? chainName(activeChainId) : "No chain selected"}</span>
+                      <span>{selectedSource?.label ?? "No fact selected"}</span>
+                      <span>{verification ? "verification accepted" : "awaiting Base verification"}</span>
                     </div>
                   </div>
 
@@ -502,91 +547,24 @@ export default function DemoPage() {
                   <div className={`demoUnlock ${accessGranted ? "is-open" : ""}`}>
                     <div className="demoUnlockBadge">{accessGranted ? "verified" : "locked"}</div>
                     <div>
-                      <strong>Builder Mode</strong>
+                      <strong>Builder Pass</strong>
                       <p>
                         {accessGranted
-                          ? "Base accepted the Ethereum fact. Access is open."
-                          : "Verification success will unlock the Base-side experience."}
+                          ? "This wallet now carries a Base-side access state unlocked by Ethereum truth."
+                          : "Base unlocks this pass only after the proof is accepted."}
                       </p>
                     </div>
                   </div>
-                </div>
-
-                <aside className="demoRail">
-                  <section className="demoMetricBlock">
-                    <h2>Session</h2>
-                    <dl>
-                      <div>
-                        <dt>Wallet</dt>
-                        <dd>{walletAddress ?? "Not connected"}</dd>
-                      </div>
-                      <div>
-                        <dt>Source block</dt>
-                        <dd>{sourceBlockNumber?.toString() ?? "—"}</dd>
-                      </div>
-                      <div>
-                        <dt>Lock slot</dt>
-                        <dd>{lockSlot ?? "—"}</dd>
-                      </div>
-                      <div>
-                        <dt>Source tx</dt>
-                        <dd>{sourceTxHash ?? "—"}</dd>
-                      </div>
-                    </dl>
-                  </section>
-
-                  <section className="demoMetricBlock">
-                    <h2>Proof</h2>
-                    <dl>
-                      <div>
-                        <dt>Bundle size</dt>
-                        <dd>{proofBundleSizeBytes ? `${proofBundleSizeBytes} bytes` : "—"}</dd>
-                      </div>
-                      <div>
-                        <dt>Assembly</dt>
-                        <dd>{proofLatencyMs ? `${proofLatencyMs} ms` : "—"}</dd>
-                      </div>
-                      <div>
-                        <dt>Lock amount</dt>
-                        <dd>{lockAmountWei ? `${formatEther(lockAmountWei)} ETH` : "—"}</dd>
-                      </div>
-                      <div>
-                        <dt>Status</dt>
-                        <dd>{lockStatus === 1 ? "Active" : lockStatus === 2 ? "Released" : "—"}</dd>
-                      </div>
-                    </dl>
-                  </section>
-
-                  <section className="demoMetricBlock">
-                    <h2>Verification</h2>
-                    <dl>
-                      <div>
-                        <dt>Decoded</dt>
-                        <dd>{verification ? `${formatEther(verification.amountWei)} ETH` : "—"}</dd>
-                      </div>
-                      <div>
-                        <dt>Source vault</dt>
-                        <dd>{verification?.sourceAccount ?? config?.vaultAddress ?? "—"}</dd>
-                      </div>
-                      <div>
-                        <dt>Proof age</dt>
-                        <dd>{config ? `${config.maxProofAgeSeconds}s window` : "—"}</dd>
-                      </div>
-                    </dl>
-                  </section>
-
-                  <section className="demoFeed">
-                    <h2>Live feed</h2>
-                    <ul>
-                      {feed.map((entry) => (
-                        <li className={`is-${entry.tone}`} key={entry.id}>
-                          <strong>{entry.title}</strong>
-                          <span>{entry.detail}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
                 </aside>
+              </div>
+
+              <div className="demoActivityBar" aria-live="polite">
+                {recentFeed.map((entry) => (
+                  <div className={`demoActivityItem is-${entry.tone}`} key={entry.id}>
+                    <strong>{entry.title}</strong>
+                    <span>{entry.detail}</span>
+                  </div>
+                ))}
               </div>
             </section>
 
@@ -639,7 +617,7 @@ function getConnectorClient() {
   });
 }
 
-async function ensureChain(client: ReturnType<typeof createWalletClient>, chain: typeof sepolia | typeof baseSepolia) {
+async function ensureChain(client: ReturnType<typeof createWalletClient>, chain: typeof baseSepolia) {
   try {
     await client.switchChain({ id: chain.id });
   } catch {
