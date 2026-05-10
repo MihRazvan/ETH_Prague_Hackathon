@@ -381,24 +381,32 @@ export default function DemoPage() {
           <div className="lpShell demoShell">
 
             <section className="demoWorkbench">
-              <div className="demoTopbar">
-                <div className="demoTopbarLabel">
-                  <span>live demo</span>
-                  <strong>dashboard</strong>
-                </div>
-                <div className="demoTopbarMeta">
-                  <span>{walletAddress ? "wallet live" : "wallet required"}</span>
-                  <span>{activeChainId ? chainName(activeChainId) : "no chain selected"}</span>
-                </div>
-              </div>
-
-              <div className="demoProgress">
-                {progressStates.map((step) => (
-                  <div className={`demoProgressStep is-${step.state}`} key={step.key}>
-                    <span>{step.eyebrow}</span>
-                    <strong>{step.label}</strong>
+              <div className="demoHeader">
+                <div className="demoTopbar">
+                  <div className="demoTopbarLabel">
+                    <span>live demo</span>
+                    <strong>dashboard</strong>
                   </div>
-                ))}
+                  <div className="demoTopbarMeta">
+                    <span>{walletAddress ? "wallet live" : "wallet required"}</span>
+                    <span>{activeChainId ? chainName(activeChainId) : "no chain selected"}</span>
+                  </div>
+                </div>
+
+                <div className="demoProgress">
+                  {progressStates.map((step, i) => (
+                    <div className={`demoProgressStep is-${step.state}`} key={step.key}>
+                      {i > 0 && <div className="demoProgressLine" />}
+                      <div className="demoProgressDot">
+                        <span className="demoProgressDotInner">{i + 1}</span>
+                      </div>
+                      <div className="demoProgressLabel">
+                        <span>{step.eyebrow}</span>
+                        <strong>{step.label}</strong>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="demoAppGrid">

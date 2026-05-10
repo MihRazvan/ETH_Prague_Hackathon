@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useCallback, useState } from "react";
 
 import { CollageBackground, SiteNav } from "../components/SiteChrome";
 
@@ -16,7 +17,34 @@ const featureFrames = [
   "/landing/Frame_5.png",
 ];
 
+interface Heart {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  drift: number;
+}
+
 export default function HomePage() {
+  const [hearts, setHearts] = useState<Heart[]>([]);
+
+  const spawnHearts = useCallback((e: React.MouseEvent) => {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const batch: Heart[] = Array.from({ length: 80 }, (_, i) => ({
+      id: Date.now() + i,
+      x: Math.random() * window.innerWidth,
+      y: window.innerHeight * 0.3 + Math.random() * window.innerHeight * 0.7,
+      size: 14 + Math.random() * 32,
+      drift: (Math.random() - 0.5) * 250,
+    }));
+    setHearts((prev) => [...prev, ...batch]);
+    setTimeout(() => {
+      setHearts((prev) => prev.filter((h) => !batch.includes(h)));
+    }, 3500);
+  }, []);
+
   return (
     <>
       <Head>
@@ -50,9 +78,9 @@ export default function HomePage() {
                   THAT LETS ROLLUPS VERIFY ETHEREUM STATE
                 </p>
                 <div className="lpHeroActions">
-                  <Link className="lpPrimaryButton" href="/demo">
+                  <a className="lpPrimaryButton" href="#install">
                     Try Anyware now!
-                  </Link>
+                  </a>
                 </div>
               </div>
 
@@ -106,9 +134,9 @@ export default function HomePage() {
 
               <div className="lpStatementFooter">
                 <p>Just Ethereum, proven.</p>
-                <Link className="lpPrimaryButton" href="/demo">
+                <button className="lpPrimaryButton" type="button" onClick={spawnHearts}>
                   accept
-                </Link>
+                </button>
               </div>
 
             </div>
@@ -140,7 +168,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="lpSection lpInstallSection">
+        <section className="lpSection lpInstallSection" id="install">
           <CollageBackground />
           <div className="lpShell">
             <div className="lpInstallContent">
@@ -238,6 +266,20 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        {hearts.map((h) => (
+          <span
+            key={h.id}
+            className="lpHeart"
+            style={{
+              left: h.x,
+              top: h.y,
+              fontSize: h.size,
+              "--drift": `${h.drift}px`,
+            } as React.CSSProperties}
+          >
+            &#10084;
+          </span>
+        ))}
       </main>
     </>
   );
