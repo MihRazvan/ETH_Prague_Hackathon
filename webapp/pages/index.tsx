@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { CollageBackground, SiteNav } from "../components/SiteChrome";
 
-const installCharacterAsset = "https://www.figma.com/api/mcp/asset/dab23af3-18e7-48ac-9cfb-f7c4ade1b349";
 const githubBackgroundAsset = "https://www.figma.com/api/mcp/asset/88a9a2b0-d03f-419f-b2b5-57206bfc1f75";
 const githubPortraitAsset = "https://www.figma.com/api/mcp/asset/40e45857-dba9-4bee-b554-35f44eae66c3";
 const githubGlitchTopAsset = "https://www.figma.com/api/mcp/asset/e80bd386-71da-4788-b0b1-4f25397c2c76";
@@ -29,15 +28,19 @@ export default function HomePage() {
       </Head>
 
       <main className="lp">
+        <div className="lpGlobalNav">
+          <div className="lpShell lpNavShell">
+            <SiteNav />
+          </div>
+        </div>
+
         <section className="lpSection lpHeroSection">
           <CollageBackground />
           <div className="lpShell">
-            <SiteNav />
-
             <div className="lpHeroLayout">
               <div className="lpHeroCopy">
-                <p className="lpEyebrow">SOLIDITY LIBRARY AND TYPSCRIPT PROVER THAT LETS ROLLUPS VERIFY ETHEREUM STATE</p>
                 <h1 className="lpHeroTitle">Trust Ethereum. Anywhere.</h1>
+                <p className="lpEyebrow">SOLIDITY LIBRARY AND TYPSCRIPT PROVER THAT LETS ROLLUPS VERIFY ETHEREUM STATE</p>
                 <div className="lpHeroActions">
                   <Link className="lpPrimaryButton" href="/demo">
                     Use Anyware now!
@@ -47,7 +50,7 @@ export default function HomePage() {
 
               <div className="lpHeroVisual" aria-hidden="true">
                 <div className="lpHeroVisualAura" />
-                <img className="lpHeroFigure" alt="" src={installCharacterAsset} />
+                <img className="lpHeroFigure" alt="" src="/landing/character-section-1-2000.png" />
               </div>
             </div>
           </div>
@@ -56,8 +59,6 @@ export default function HomePage() {
         <section className="lpSection lpStatementSection" id="learn">
           <CollageBackground />
           <div className="lpShell">
-            <SiteNav />
-
             <div className="lpStatementGrid">
               <div className="lpStatementTitle">
                 <h2>
@@ -90,8 +91,6 @@ export default function HomePage() {
         <section className="lpSection lpFeaturesSection">
           <CollageBackground />
           <div className="lpShell">
-            <SiteNav />
-
             <div className="lpFeaturesHeader">
               <h2>
                 Cross-chain truth was never native.
@@ -117,8 +116,6 @@ export default function HomePage() {
         <section className="lpSection lpInstallSection">
           <CollageBackground />
           <div className="lpShell">
-            <SiteNav />
-
             <div className="lpInstallHeader">
               <div>
                 <h2>
@@ -145,7 +142,7 @@ export default function HomePage() {
             <img
               alt=""
               className="lpInstallCharacter"
-              src={installCharacterAsset}
+              src="/landing/character-section-1-2000.png"
             />
           </div>
         </section>
@@ -153,8 +150,6 @@ export default function HomePage() {
         <section className="lpSection lpGithubSection">
           <CollageBackground />
           <div className="lpShell">
-            <SiteNav />
-
             <div className="lpGithubShowcase">
               <div className="lpGithubBackground">
                 <img alt="" src={githubBackgroundAsset} />
